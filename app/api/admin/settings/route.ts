@@ -4,7 +4,7 @@ import {shopSettings} from "@/lib/shop-settings";
 const settings=z.object({
  bkashEnabled:z.boolean(),bkashNumber:z.string().regex(/^$|^01[0-9]{9}$/),
  nagadEnabled:z.boolean(),nagadNumber:z.string().regex(/^$|^01[0-9]{9}$/),
- codEnabled:z.boolean(),supportEmail:z.union([z.literal(""),z.string().email()]).max(200),
+ codEnabled:z.boolean(),supportEmail:z.union([z.literal(""),z.string().email().max(200)]),
  deliveryNotice:z.string().min(5).max(350),deliveryEstimate:z.string().min(5).max(350)
 }).strict().refine(v=>!v.bkashEnabled||!!v.bkashNumber,"bKash number required").refine(v=>!v.nagadEnabled||!!v.nagadNumber,"Nagad number required");
 export async function GET(req:Request){if(!configured)return bad("Backend unavailable",503);if(!await requireOwner(req))return bad("Forbidden",403);return ok({settings:await shopSettings()});}
