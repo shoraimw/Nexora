@@ -2,6 +2,7 @@ import {checkout} from "@/lib/validation";
 import {configured,db,bad,ok,readBody,sameOrigin,tokenFor,tokenHash,userFromRequest} from "@/lib/server";
 import {rateAllow} from "@/lib/rate";
 import {deliverPendingEmails} from "@/lib/email";
+import {shopSettings} from "@/lib/shop-settings";
 export const dynamic="force-dynamic";
 export async function POST(request:Request){
  if(!configured||process.env.NEXORA_LIVE_ORDERS!=="true")return bad("Checkout is not enabled yet",503);
@@ -10,13 +11,16 @@ export async function POST(request:Request){
  let parsed:ReturnType<typeof checkout.safeParse>;
  try{parsed=checkout.safeParse(await readBody(request));}catch{return bad("Invalid request",400);}
  if(!parsed.success)return bad(parsed.error.issues[0]?.message||"Invalid checkout details",422);
- const x=parsed.data;
+ const x=parsed.data,settings=await shopSettings();
+ if(x.paymentMethod==="bkash"&&(!settings.bkashEnabled||!settings.bkashNumber))return bad("bKash payments unavailable",422);
+ if(x.paymentMethod==="nagad"&&(!settings.nagadEnabled||!settings.nagadNumber))return bad("Nagad payments unavailable",422);
+ if(x.paymentMethod==="cod"&&!settings.codEnabled)return bad("Cash on delivery unavailable",422);
  try{
-  const secret=tokenFor(x.idempotencyKey),user=await userFromRequest(request);
-  const {data,error}=await db().rpc("place_nexora_order",{p_key:x.idempotencyKey,p_track_hash:tokenHash(secret),p_customer_id:user?.id||null,
+  const token=tokenFor(x.idempotencyKey),user=await userFromRequest(request);
+  const {data,error}=await db().rpc("place_nexora_order",{p_key:x.idempotencyKey,p_track_hash:tokenHash(token),p_customer_id:user?.id||null,
    p_details:x.customer,p_lines:x.items,p_method:x.paymentMethod,p_transaction:x.transactionId||null,p_sender:x.senderNumber||null,p_coupon:x.coupon||null});
   if(error)return bad(/duplicate|stock|cart|coupon|transaction|invalid/i.test(error.message)?error.message:"Checkout could not complete",409);
-  try{await deliverPendingEmails(1);}catch{} // Order was already committed; failed email stays queued.
-  return ok({orderNo:data.order_no,orderId:data.id,trackingToken:secret,totalPaisa:data.total_paisa??null,duplicate:data.duplicate??false},201);
- }catch{return bad("Checkout is temporarily unavailable",503);}
+  try{await deliverPendingEmails(1);}catch{}
+  return ok({orderNo:data.order_no,orderId:data.id,trackingToken:token,totalPaisa:data.total_paisa??null,duplicate:data.duplicate??false},201);
+ }catch{return bad("Checkout temporarily unavailable",503);}
 }
