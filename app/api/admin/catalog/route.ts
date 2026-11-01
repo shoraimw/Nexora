@@ -39,6 +39,10 @@ export async function POST(req:Request){
    const x=z.object({code:z.string().trim().min(3).max(25),type:z.enum(["flat","percent"]),amount:z.number().int().positive(),min_subtotal_paisa:z.number().int().nonnegative().default(0),max_uses:z.number().int().positive().nullable().optional(),active:z.boolean().default(true)}).parse(payload);
    if(x.type==="percent"&&x.amount>100)throw Error("Percentage exceeds 100");
    const {data,error}=await s.from("coupons").insert({...x,code:x.code.toUpperCase()}).select().single();if(error)throw error;response=data;
+  }else if(action==="delivery.set"){
+   const x=z.object({district:z.string().trim().min(1).max(100),fee_paisa:z.number().int().min(0).max(10000000),eta_text:z.string().trim().min(4).max(250),active:z.boolean().default(true)}).parse(payload);
+   const zone={...x,district:x.district==="*"?"*":x.district.toLowerCase(),updated_at:new Date().toISOString()};
+   const {data,error}=await s.from("delivery_zones").upsert(zone,{onConflict:"district"}).select().single();if(error)throw error;response=data;
   }else if(action==="faq.create"){
    const x=z.object({question:z.string().min(4).max(300),answer:z.string().min(4).max(3000),active:z.boolean().default(true)}).parse(payload);
    const {data,error}=await s.from("faq_entries").insert(x).select().single();if(error)throw error;response=data;
