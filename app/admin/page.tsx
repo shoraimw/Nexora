@@ -8,8 +8,8 @@ type Variant={id:string;product_id:string;name:string;sku:string;color:string|nu
 type Inventory={variant_id:string;on_hand:number;reserved:number};
 type Order={overpaid_paisa:number;id:string;order_no:string;full_name:string;email:string;phone:string;total_paisa:number;payment_method:string;payment_status:string;order_status:string;created_at:string;address:string;district:string};
 type Claim={id:string;order_id:string;provider:string;transaction_id:string;claimed_paisa:number;status:string};
-type Dashboard={products:Product[];variants:Variant[];inventory:Inventory[];categories:Category[];orders:Order[];claims:Claim[];emails:{id:string;kind:string;status:string}[];coupons:{code:string;type:string;amount:number}[];faqs:{id:string;question:string;answer:string;active:boolean}[];images:{product_id:string;url:string}[]};
-const empty:Dashboard={products:[],variants:[],inventory:[],categories:[],orders:[],claims:[],emails:[],coupons:[],faqs:[],images:[]};
+type Dashboard={products:Product[];variants:Variant[];inventory:Inventory[];categories:Category[];orders:Order[];claims:Claim[];emails:{id:string;kind:string;status:string}[];coupons:{code:string;type:string;amount:number}[];faqs:{id:string;question:string;answer:string;active:boolean}[];zones:{district:string;fee_paisa:number;eta_text:string;active:boolean}[];images:{product_id:string;url:string}[]};
+const empty:Dashboard={products:[],variants:[],inventory:[],categories:[],orders:[],claims:[],emails:[],coupons:[],faqs:[],zones:[],images:[]};
 type Tab="overview"|"products"|"orders"|"categories"|"marketing";
 const money=(n:number)=>"৳"+(n/100).toLocaleString("en-BD");
 export default function Admin(){
@@ -19,6 +19,7 @@ export default function Admin(){
  const [variant,setVariant]=useState({product_id:"",name:"Default",sku:"",color:"",price:"",on_hand:"0"});
  const [coupon,setCoupon]=useState({code:"",type:"percent",amount:"10"});
  const [faq,setFaq]=useState({question:"",answer:""});
+ const [zone,setZone]=useState({district:"*",fee:"",eta:"Within 2–5 business days (estimated)"});
  const [shipping,setShipping]=useState<Record<string,{consignment:string;trackingUrl:string}>>({});
  const [shop,setShop]=useState({bkashEnabled:false,bkashNumber:"",nagadEnabled:false,nagadNumber:"",codEnabled:false,supportEmail:"",deliveryNotice:"Delivery charge will be confirmed by support.",deliveryEstimate:"Delivery ETA depends on district and courier."});
 
@@ -91,6 +92,13 @@ export default function Admin(){
  <label>Delivery charge notice<textarea value={shop.deliveryNotice} onChange={e=>setShop(v=>({...v,deliveryNotice:e.target.value}))}/></label>
  <label>Delivery estimate notice<textarea value={shop.deliveryEstimate} onChange={e=>setShop(v=>({...v,deliveryEstimate:e.target.value}))}/></label>
  <button className="primary-button" disabled={busy} onClick={()=>void saveStoreSettings()}>Save checkout configuration</button>
+ </section>
+ <section className="admin-panel"><h2>Delivery zones & charges</h2><p>Use district name, or * for nationwide fallback. Delivery fee is included atomically in checkout totals.</p>
+ <label>District (* = nationwide fallback)<input value={zone.district} onChange={e=>setZone(z=>({...z,district:e.target.value}))}/></label>
+ <label>Fee (BDT)<input type="number" step=".01" min="0" value={zone.fee} onChange={e=>setZone(z=>({...z,fee:e.target.value}))}/></label>
+ <label>Estimated delivery time<input value={zone.eta} onChange={e=>setZone(z=>({...z,eta:e.target.value}))}/></label>
+ <button className="primary-button" disabled={busy||zone.fee===""} onClick={()=>void mutation("delivery.set",{district:zone.district,fee_paisa:Math.round(Number(zone.fee)*100),eta_text:zone.eta,active:true})}>Save delivery fee</button>
+ {data.zones.map(z=><p key={z.district}>{z.district==="*"?"All other areas":z.district}: ৳{(z.fee_paisa/100).toLocaleString()} · {z.eta_text}</p>)}
  </section>
  <section className="admin-panel"><h2>Discount coupon</h2><label>Code<input value={coupon.code} onChange={e=>setCoupon(c=>({...c,code:e.target.value.toUpperCase()}))}/></label><label>Type<select value={coupon.type} onChange={e=>setCoupon(c=>({...c,type:e.target.value}))}><option value="percent">Percent</option><option value="flat">Flat BDT</option></select></label><label>Value<input type="number" min="1" value={coupon.amount} onChange={e=>setCoupon(c=>({...c,amount:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("coupon.create",{code:coupon.code,type:coupon.type,amount:coupon.type==="flat"?Math.round(Number(coupon.amount)*100):Number(coupon.amount)})}>Create coupon</button>{data.coupons.map(c=><p key={c.code}>{c.code} · {c.type==="percent"?c.amount+"%":money(c.amount)}</p>)}</section>
  <section className="admin-panel"><h2>Chatbot FAQ</h2><label>Question<input value={faq.question} onChange={e=>setFaq(f=>({...f,question:e.target.value}))}/></label><label>Verified answer<textarea value={faq.answer} onChange={e=>setFaq(f=>({...f,answer:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("faq.create",{...faq,active:true})}>Add FAQ</button>{data.faqs.map(f=><p key={f.id}><strong>{f.question}</strong><br/>{f.answer}</p>)}</section>
