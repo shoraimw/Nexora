@@ -1,0 +1,3 @@
+import Link from "next/link";
+import {ArrowLeft,LockKeyhole} from "lucide-react";
+export default function AdminPage(){return <main className="container locked-admin"><div className="locked-icon"><LockKeyhole size={40}/></div><p className="eyebrow">NEXORA / OWNER CONTROL CENTER</p><h1>Admin is locked.</h1><p>Secure two-owner authentication, role-based permissions and inventory management will be enabled after the database and access policies are configured. There is deliberately no demo admin password or public management interface.</p><Link className="outline-btn" href="/"><ArrowLeft size={16}/> Return to storefront</Link></main>;}
