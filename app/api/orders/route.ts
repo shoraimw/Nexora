@@ -5,7 +5,7 @@ import {deliverPendingEmails} from "@/lib/email";
 import {shopSettings} from "@/lib/shop-settings";
 export const dynamic="force-dynamic";
 export async function POST(request:Request){
- if(!configured||process.env.NEXORA_LIVE_ORDERS!=="true")return bad("Checkout is not enabled yet",503);
+ if(!configured||process.env.NEXORA_LIVE_ORDERS!=="true"||!process.env.BREVO_API_KEY||!process.env.BREVO_SENDER_EMAIL||(process.env.TRACKING_SECRET||"").length<32)return bad("Checkout is not enabled until secure order emails and tracking are configured",503);
  if(!sameOrigin(request))return bad("Origin rejected",403);
  if(!await rateAllow(request,"checkout",12,60))return bad("Too many checkout attempts",429);
  let parsed:ReturnType<typeof checkout.safeParse>;
