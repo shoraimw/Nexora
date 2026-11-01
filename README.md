@@ -59,7 +59,7 @@ Never commit `.env.local`, API keys, password reset tokens, email recipient list
 
 - Website and API implementation is not the same as tested production operations. Migrations, auth, real email, courier and payment flows still require an actual Supabase instance and end-to-end testing.
 - Do not set `NEXORA_LIVE_ORDERS=true` until migration tests, security verification, official receiving details, delivery fee policy and email sender have passed.
-- Shipping fee computation currently defaults to BDT 0 in the database. A final delivery charge model must be implemented and owner-approved before real paid checkout.
+- Delivery charge uses a district-specific or nationwide fallback rate configured by owners. If no zone matches, checkout fails closed; owners must test actual delivery fees before real sales.
 - **Vercel Hobby cannot be used for commercial selling under its terms**. Development preview is acceptable; select commercial-compatible hosting for customer orders.
 - Real Nexora logo has not been supplied as a transparent original asset. The letter N currently shown is a temporary, independently drawn placeholder.
 
