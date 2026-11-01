@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import Link from "next/link";
-import {ArrowUpRight} from "lucide-react";
+import {ArrowUpRight,Store,PackageSearch,UserRound,LifeBuoy} from "lucide-react";
 import {CartProvider} from "@/components/CartProvider";
 import {HeaderCart} from "@/components/HeaderCart";
 import "./globals.css";
@@ -16,6 +16,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
    <nav className="main-nav" aria-label="Main navigation"><Link href="/shop">Shop all</Link><Link href="/shop">Gadgets</Link><Link href="/track">Track order</Link><Link href="/contact">Support</Link></nav>
    <div className="header-actions"><Link className="menu-link" href="/account">Account</Link><Link className="menu-link" href="/admin">Owners</Link><HeaderCart/></div>
   </div></header>
+  <nav className="mobile-bottom-nav" aria-label="Mobile navigation"><Link href="/shop"><Store size={19}/> Shop</Link><Link href="/track"><PackageSearch size={19}/> Orders</Link><Link href="/account"><UserRound size={19}/> Account</Link><Link href="/contact"><LifeBuoy size={19}/> Help</Link></nav>
   {children}
   <footer className="footer"><div className="container footer-inner"><div><Link href="/" className="brand footer-brand"><span className="brand-mark">N<span>.</span></span><span className="brand-type">nexora<small>CONNECT WITH MODERN WORLD</small></span></Link><p>Thoughtfully curated gadget finds. Built in Bangladesh.</p></div><div><strong>Explore</strong><Link href="/shop">All products</Link><Link href="/cart">Your bag</Link><Link href="/track">Track order</Link><Link href="/account">My account</Link></div><div><strong>Support</strong><Link href="/contact">Get help</Link><Link href="/policies">Delivery, returns & privacy</Link><Link href="/admin">Owner dashboard</Link><p>Secure manual payment review. Never share OTPs.</p></div></div><div className="container footer-bottom">© 2026 Nexora · Connect with Modern World <ArrowUpRight size={14}/></div></footer>
  </CartProvider></body></html>;
