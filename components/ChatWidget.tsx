@@ -2,15 +2,43 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {Bot,MessageCircle,Send,X,Trash2} from "lucide-react";
-type Message={role:"assistant"|"user";text:string;links?:{slug:string;name:string}[]};
-const initial:Message[]=[{role:"assistant",text:"Hi! I'm Nexora's preview shopping assistant. Ask about demo gadgets, payments or delivery. Live catalog is not connected yet."}];
+import {authHeaders,browserDb} from "@/lib/browser";
+type LinkResult={slug:string;name:string;image?:string;variants?:{name:string;price:string;available:number}[]};
+type Message={role:"assistant"|"user";text:string;links?:LinkResult[]};
+const greeting:Message={role:"assistant",text:"Hi! Welcome to Nexora. Ask me about a gadget, color, price, stock, delivery or warranty. I'll check verified information when the live catalog is connected."};
 export function ChatWidget(){
- const [open,setOpen]=useState(false),[text,setText]=useState(""),[messages,setMessages]=useState<Message[]>(initial),[save,setSave]=useState(false),[loading,setLoading]=useState(false);
- useEffect(()=>{try{if(localStorage.getItem("nexora_chat_consent")==="yes"){setSave(true);const stored=JSON.parse(localStorage.getItem("nexora_chat_history")||"[]");if(Array.isArray(stored)&&stored.length)setMessages(stored.slice(-30));}}catch{}},[]);
- useEffect(()=>{if(save)localStorage.setItem("nexora_chat_history",JSON.stringify(messages.slice(-30)));},[messages,save]);
- function consent(checked:boolean){setSave(checked);if(checked)localStorage.setItem("nexora_chat_consent","yes");else{localStorage.removeItem("nexora_chat_consent");localStorage.removeItem("nexora_chat_history");}}
- function clear(){setMessages(initial);localStorage.removeItem("nexora_chat_history");}
- async function send(){const q=text.trim().slice(0,280);if(!q||loading)return;setMessages(m=>[...m,{role:"user",text:q}]);setText("");setLoading(true);try{const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q})});if(!res.ok)throw new Error("Chat unavailable");const reply=await res.json();setMessages(m=>[...m,{role:"assistant",text:reply.answer,links:reply.links}]);}catch{setMessages(m=>[...m,{role:"assistant",text:"The preview assistant is temporarily unavailable. Please browse the collection."}]);}finally{setLoading(false);}}
- return <div className="chat-wrap">{open&&<section className="chat-panel" aria-label="Nexora shopping assistant"><div className="chat-heading"><div className="chat-avatar"><Bot size={20}/></div><div><strong>Nexora Assist</strong><small>Preview catalog support</small></div><button onClick={()=>setOpen(false)} aria-label="Close chat"><X size={18}/></button></div><div className="chat-scroll">{messages.map((m,i)=><div key={i} className={"message "+m.role}><p>{m.text}</p>{m.links?.length?<div className="chat-links">{m.links.map(l=><Link href={"/product/"+l.slug} key={l.slug}>{l.name} ↗</Link>)}</div>:null}</div>)}{loading&&<p className="chat-loading">Searching demo products…</p>}</div><div className="chat-consent"><label><input type="checkbox" checked={save} onChange={e=>consent(e.target.checked)}/> Remember this chat on this device</label><button title="Clear history" onClick={clear}><Trash2 size={15}/></button></div><form className="chat-input" onSubmit={e=>{e.preventDefault();void send();}}><input maxLength={280} value={text} onChange={e=>setText(e.target.value)} placeholder="Ask about gadgets…" aria-label="Chat message"/><button disabled={loading||!text.trim()} aria-label="Send message"><Send size={17}/></button></form><small className="chat-disclaimer">No Gemini API or customer data is connected in this demo.</small></section>}
- <button className="chat-toggle" aria-label={open?"Close assistant":"Open shopping assistant"} onClick={()=>setOpen(v=>!v)}>{open?<X size={24}/>:<MessageCircle size={24}/>}<span>{open?"Close":"Need help?"}</span></button></div>;
+ const [open,setOpen]=useState(false),[input,setInput]=useState(""),[messages,setMessages]=useState<Message[]>([greeting]),[save,setSave]=useState(false),[loading,setLoading]=useState(false),[sessionId,setSessionId]=useState<string|undefined>(),[authenticated,setAuthenticated]=useState(false);
+ useEffect(()=>{
+  try{if(localStorage.getItem("nexora_chat_consent")==="yes"){setSave(true);const local=JSON.parse(localStorage.getItem("nexora_chat_history")||"[]");if(Array.isArray(local)&&local.length)setMessages(local.slice(-40));}}
+  catch{}
+  const supabase=browserDb();if(supabase){void supabase.auth.getUser().then(({data})=>setAuthenticated(!!data.user));const {data}=supabase.auth.onAuthStateChange((_event,session)=>setAuthenticated(!!session?.user));return()=>data.subscription.unsubscribe();}
+ },[]);
+ useEffect(()=>{if(save){try{localStorage.setItem("nexora_chat_history",JSON.stringify(messages.slice(-40)));}catch{}}},[messages,save]);
+ function toggleSave(value:boolean){setSave(value);if(value)localStorage.setItem("nexora_chat_consent","yes");else{localStorage.removeItem("nexora_chat_consent");localStorage.removeItem("nexora_chat_history");}}
+ function clearHistory(){setMessages([greeting]);setSessionId(undefined);localStorage.removeItem("nexora_chat_history");}
+ async function send(){
+  const question=input.trim();if(!question||loading)return;
+  setLoading(true);setInput("");setMessages(m=>[...m,{role:"user",text:question}]);
+  try{
+   const response=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({message:question,sessionId})});
+   const value=await response.json();if(!response.ok)throw Error(value.error||"Chat unavailable");
+   if(value.sessionId)setSessionId(value.sessionId);
+   setMessages(m=>[...m,{role:"assistant",text:value.answer,links:value.links}]);
+  }catch(e){setMessages(m=>[...m,{role:"assistant",text:e instanceof Error?e.message:"Please try again."}]);}finally{setLoading(false);}
+ }
+ return <div className="chat-wrap">
+ {open&&<section className="chat-panel" aria-label="Nexora shopping assistant">
+  <div className="chat-heading"><div className="chat-avatar"><Bot size={20}/></div><div><strong>Nexora Assist</strong><small>Smart shopping support</small></div><button onClick={()=>setOpen(false)} aria-label="Close chat"><X size={18}/></button></div>
+  <div className="chat-scroll" role="log" aria-live="polite">{messages.map((m,i)=><div key={i} className={"message "+m.role}><p>{m.text}</p>
+   {m.links?.length?<div className="chat-links">{m.links.map(p=><Link key={p.slug} href={"/product/"+p.slug} onClick={()=>setOpen(false)} className="chat-product-link">
+    {authenticated&&p.image&&<img className="chat-product-image" src={p.image} alt={p.name}/>}
+    <span><b>{p.name}</b>{p.variants?.length&&<small>{p.variants.map(v=>v.name+" "+v.price+(v.available>0?" · In stock":" · Out of stock")).join(" / ")}</small>}</span><span>↗</span>
+   </Link>)}</div>:null}
+  </div>)}{loading&&<span className="chat-loading">Checking Nexora information…</span>}</div>
+  <div className="chat-consent"><label><input type="checkbox" checked={save} onChange={e=>toggleSave(e.target.checked)}/> Remember on this device</label><button onClick={clearHistory} aria-label="Delete local chat"><Trash2 size={15}/></button></div>
+  <form className="chat-input" onSubmit={e=>{e.preventDefault();void send();}}><input maxLength={300} aria-label="Ask Nexora" value={input} onChange={e=>setInput(e.target.value)} placeholder="What gadget do you need?"/><button disabled={!input.trim()||loading} aria-label="Send"><Send size={17}/></button></form>
+  <small className="chat-disclaimer">{authenticated?"Enable account chat history under Profile to sync across devices.":"Sign in for product images in chat and optional account history."} Don't send private payment details.</small>
+ </section>}
+ <button className="chat-toggle" aria-label={open?"Close assistant":"Open assistant"} onClick={()=>setOpen(o=>!o)}>{open?<X size={24}/>:<MessageCircle size={24}/>}<span>{open?"Close":"Need help?"}</span></button>
+ </div>;
 }
