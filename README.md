@@ -1,39 +1,66 @@
-# Nexora — Premium Gadget E-Commerce Project
+# Nexora — Connect with Modern World
 
-> **Status: DEVELOPMENT PREVIEW ONLY — NOT A LIVE SHOP.** This version intentionally uses demo product data and does not collect customer PII, accept orders, verify payments, or send email.
+Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, React, TypeScript and Supabase/PostgreSQL.
 
-### Built for
-Wajidullah Shoraim and the Nexora team. GitHub: https://github.com/shoraimw/Nexora
+> **CURRENT STATE: FULL-STACK IMPLEMENTATION / CONFIGURATION PENDING.**
+> Without Supabase credentials this deploys as a **non-transactional preview**. Do not collect customer data, accept payments or advertise that real checkout works yet.
 
-### Tech
-Next.js (App Router), React, TypeScript, CSS, Lucide icons. No external keys or backend accounts required to preview the site.
+## What exists in the repository
 
-### Local run
+### Customer storefront
+- Responsive home and product discovery with categories, search, price sorting, featured items
+- Real Supabase catalog API (owner-approved products only); demo listings shown when backend is not configured
+- Product page with images, details, specifications, color/variant selection, live available stock and product links
+- Browser shopping cart, guest checkout, coupons, bKash / Nagad manual claims, Cash on Delivery
+- Customer sign-in/sign-up, optional profile photo, delivery details and order list
+- Private guest order tracking, customer order timeline and downloadable PDF invoice
+- Consent-based browser chat history; account-synced chat history after sign-in and opt-in
+- Database-grounded shopping assistant (text for guests, product images for signed-in customers)
+- Optional Gemini Free Tier paraphrasing of **public verified catalog data only**, OFF by default
+- Contact and policies pages, with explicit unconfirmed policy placeholders
+
+### Two-owner admin
+- Role-verified owner dashboard (no default password)
+- Categories, product publishing, variants, images, stock adjustments and SKU data
+- Orders, individual payment-claim review and overpayment alerts
+- Manual refund records (does not send/refund money automatically)
+- Consignment ID / tracking URL for Steadfast dispatch managed by owners
+- Coupon creation, verified chatbot FAQs, receiving payment numbers and public notices
+- Email outbox status and retry; optional Brevo Free transactional delivery
+
+### Security primitives
+- Atomic SQL checkout and stock reservations; server-derived prices
+- Separate bearer-JWT verification and owner role authorization on server routes
+- Row Level Security and revoked direct public table privileges
+- Guest tracking tokens hashed in database; upload magic byte + size checks
+- Rate limiting backed by PostgreSQL (per-window budget), idempotency keys, DB uniqueness
+- Audited owner changes, payment claim reviews and refund records
+- No card payment APIs, paid AI APIs or billing account integrations
+
+## Quick preview (no credentials)
+
 ```bash
 npm install
-npm run dev
 npm run typecheck
 npm run build
+npm run dev
 ```
-Visit http://localhost:3000.
 
-### Implemented now
-- Responsive homepage with curated category tabs, demo products and search
-- Product-detail routes and localStorage demo cart
-- bKash, Nagad and COD checkout *preview* (submission disabled)
-- Basic catalog/FAQ chatbot at /api/chat (no Gemini, no live product inventory)
-- Optional device-local chat history (consent control + delete)
-- Locked /admin page; no insecure public dashboard
-- Security headers; robots noindex; sample data visibly labelled
-- Zero API keys, zero payment acceptance, zero paid services
+Open http://localhost:3000. Preview catalog data is illustrative, and checkout is disabled.
 
-### Next
-Connect Supabase (free plan), migrate owner-confirmed product catalog, configure private admin accounts with MFA, implement stock-safe server-side orders, transaction ID reconciliation, invoicing and email, Steadfast shipping, then add Gemini only if appropriate free-tier eligibility and customer privacy terms are met. See docs/ROADMAP.md.
+## Full backend setup (later, when owners are ready)
 
-### Deploy
-Import this repository into a Vercel project configured as **development preview**. Next.js should auto-detect; no environment variables are required. Do not enable real orders on a Vercel Hobby plan: it restricts commercial use even for student businesses. For commercial launch choose hosting that permits sales without billing, or a plan separately approved by owners.
+Read **[docs/SETUP.md](docs/SETUP.md)** and **[docs/GO_LIVE_CHECKLIST.md](docs/GO_LIVE_CHECKLIST.md)**.
+Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`.
 
-### Branding
-The included N icon is a **temporary placeholder**, not Nexora's final approved logo. Replace it with the actual transparent branding asset when supplied.
+Never commit `.env.local`, API keys, password reset tokens, email recipient lists or real transactions.
 
-**Never commit secrets**, especially SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY, receiving-account information or customer data. No billing accounts, paid APIs or automatic upgrades are configured.
+## IMPORTANT: launch boundaries
+
+- Website and API implementation is not the same as tested production operations. Migrations, auth, real email, courier and payment flows still require an actual Supabase instance and end-to-end testing.
+- Do not set `NEXORA_LIVE_ORDERS=true` until migration tests, security verification, official receiving details, delivery fee policy and email sender have passed.
+- Shipping fee computation currently defaults to BDT 0 in the database. A final delivery charge model must be implemented and owner-approved before real paid checkout.
+- **Vercel Hobby cannot be used for commercial selling under its terms**. Development preview is acceptable; select commercial-compatible hosting for customer orders.
+- Real Nexora logo has not been supplied as a transparent original asset. The letter N currently shown is a temporary, independently drawn placeholder.
+
+Owners maintain complete control of hosting, billing permissions, Supabase, merchant accounts and production switch.
