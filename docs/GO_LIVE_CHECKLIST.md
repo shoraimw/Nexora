@@ -21,7 +21,7 @@
 
 ## Orders and payments
 - [ ] Real checkout behind NEXORA_LIVE_ORDERS flag until sign-off
-- [ ] Shipping fees are modeled and correctly included in server-side total (currently NOT complete)
+- [ ] District delivery zones and server-side final total (migration 005) tested against live PostgreSQL
 - [ ] Official bKash/Nagad receiver numbers published and independently verified
 - [ ] COD zones, cancellation and non-delivery handling confirmed
 - [ ] Simultaneous checkout stock race and transaction rollback tested
