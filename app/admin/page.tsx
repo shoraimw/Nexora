@@ -20,6 +20,8 @@ export default function Admin(){
  const [coupon,setCoupon]=useState({code:"",type:"percent",amount:"10"});
  const [faq,setFaq]=useState({question:"",answer:""});
  const [shipping,setShipping]=useState<Record<string,{consignment:string;trackingUrl:string}>>({});
+ const [shop,setShop]=useState({bkashEnabled:false,bkashNumber:"",nagadEnabled:false,nagadNumber:"",codEnabled:false,supportEmail:"",deliveryNotice:"Delivery charge will be confirmed by support.",deliveryEstimate:"Delivery ETA depends on district and courier."});
+
  async function reload(){
   const auth=browserDb();if(!auth)return;
   const {data:{user}}=await auth.auth.getUser();setUser(user?.email||"");
@@ -28,8 +30,12 @@ export default function Admin(){
   if(r.ok){setData(await r.json());setAuthorized(true);setMessage("");}else{setAuthorized(false);setMessage(r.status===403?"This account is not a Nexora owner. Owner access must be granted securely in Supabase.":"Could not load dashboard.");}
   setLoaded(true);
  }
- useEffect(()=>{void reload();const db=browserDb();const {data:listener}=db?.auth.onAuthStateChange(()=>{setTimeout(()=>{void reload();},0);})||{data:null};return()=>listener?.subscription.unsubscribe();},[]);
+ useEffect(()=>{void reload();void fetch("/api/settings").then(r=>r.json()).then(x=>x.store&&setShop(v=>({...v,...x.store}))).catch(()=>{});const db=browserDb();const {data:listener}=db?.auth.onAuthStateChange(()=>{setTimeout(()=>{void reload();},0);})||{data:null};return()=>listener?.subscription.unsubscribe();},[]);
  async function signIn(e:React.FormEvent){e.preventDefault();const auth=browserDb();if(!auth)return;setBusy(true);const r=await auth.auth.signInWithPassword({email,password});setMessage(r.error?.message||"Signed in");setBusy(false);if(!r.error)await reload();}
+ async function saveStoreSettings(){
+  setBusy(true);
+  try{const r=await fetch("/api/admin/settings",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify(shop)});const x=await r.json();setMessage(r.ok?"Checkout settings saved.":x.error);}catch{setMessage("Settings could not be saved");}finally{setBusy(false);}
+ }
  async function mutation(action:string,payload:unknown){
   setBusy(true);setMessage("");
   try{const r=await fetch("/api/admin/catalog",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({action,payload})});const body=await r.json();if(!r.ok)throw Error(body.error||"Update failed");setMessage("Saved successfully.");await reload();}catch(e){setMessage(e instanceof Error?e.message:"Update failed");}finally{setBusy(false);}
@@ -74,7 +80,19 @@ export default function Admin(){
  {o.order_status==="packing"&&<><label>Steadfast consignment<input placeholder="Consignment ID" value={shipping[o.id]?.consignment||""} onChange={e=>setShipping(s=>({...s,[o.id]:{...s[o.id],consignment:e.target.value,trackingUrl:s[o.id]?.trackingUrl||""}}))}/></label><label>Tracking URL<input placeholder="https://..." value={shipping[o.id]?.trackingUrl||""} onChange={e=>setShipping(s=>({...s,[o.id]:{...s[o.id],consignment:s[o.id]?.consignment||"",trackingUrl:e.target.value}}))}/></label><button disabled={busy} className="outline-btn" onClick={()=>void transition(o,"shipped")}>Mark shipped</button></>}
  {o.order_status==="shipped"&&<button disabled={busy} className="outline-btn" onClick={()=>void transition(o,"delivered")}>Mark delivered</button>}
  {["received","confirmed","packing"].includes(o.order_status)&&<button disabled={busy} className="outline-btn" onClick={()=>void transition(o,"cancelled")}>Cancel</button>}</div></article>;})}</section>}
- {tab==="marketing"&&<div className="admin-columns"><section className="admin-panel"><h2>Discount coupon</h2><label>Code<input value={coupon.code} onChange={e=>setCoupon(c=>({...c,code:e.target.value.toUpperCase()}))}/></label><label>Type<select value={coupon.type} onChange={e=>setCoupon(c=>({...c,type:e.target.value}))}><option value="percent">Percent</option><option value="flat">Flat BDT</option></select></label><label>Value<input type="number" min="1" value={coupon.amount} onChange={e=>setCoupon(c=>({...c,amount:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("coupon.create",{code:coupon.code,type:coupon.type,amount:coupon.type==="flat"?Math.round(Number(coupon.amount)*100):Number(coupon.amount)})}>Create coupon</button>{data.coupons.map(c=><p key={c.code}>{c.code} · {c.type==="percent"?c.amount+"%":money(c.amount)}</p>)}</section>
+ {tab==="marketing"&&<div className="admin-columns">
+ <section className="admin-panel"><h2>Checkout & support settings</h2><p>These receiving numbers will be visible to customers. Publish only your verified business payment accounts.</p>
+ <label className="checkline"><input type="checkbox" checked={shop.bkashEnabled} onChange={e=>setShop(v=>({...v,bkashEnabled:e.target.checked}))}/> Enable bKash</label>
+ <label>bKash receiving number<input value={shop.bkashNumber} onChange={e=>setShop(v=>({...v,bkashNumber:e.target.value}))} placeholder="01XXXXXXXXX"/></label>
+ <label className="checkline"><input type="checkbox" checked={shop.nagadEnabled} onChange={e=>setShop(v=>({...v,nagadEnabled:e.target.checked}))}/> Enable Nagad</label>
+ <label>Nagad receiving number<input value={shop.nagadNumber} onChange={e=>setShop(v=>({...v,nagadNumber:e.target.value}))} placeholder="01XXXXXXXXX"/></label>
+ <label className="checkline"><input type="checkbox" checked={shop.codEnabled} onChange={e=>setShop(v=>({...v,codEnabled:e.target.checked}))}/> Enable COD</label>
+ <label>Customer support email<input type="email" value={shop.supportEmail} onChange={e=>setShop(v=>({...v,supportEmail:e.target.value}))}/></label>
+ <label>Delivery charge notice<textarea value={shop.deliveryNotice} onChange={e=>setShop(v=>({...v,deliveryNotice:e.target.value}))}/></label>
+ <label>Delivery estimate notice<textarea value={shop.deliveryEstimate} onChange={e=>setShop(v=>({...v,deliveryEstimate:e.target.value}))}/></label>
+ <button className="primary-button" disabled={busy} onClick={()=>void saveStoreSettings()}>Save checkout configuration</button>
+ </section>
+ <section className="admin-panel"><h2>Discount coupon</h2><label>Code<input value={coupon.code} onChange={e=>setCoupon(c=>({...c,code:e.target.value.toUpperCase()}))}/></label><label>Type<select value={coupon.type} onChange={e=>setCoupon(c=>({...c,type:e.target.value}))}><option value="percent">Percent</option><option value="flat">Flat BDT</option></select></label><label>Value<input type="number" min="1" value={coupon.amount} onChange={e=>setCoupon(c=>({...c,amount:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("coupon.create",{code:coupon.code,type:coupon.type,amount:coupon.type==="flat"?Math.round(Number(coupon.amount)*100):Number(coupon.amount)})}>Create coupon</button>{data.coupons.map(c=><p key={c.code}>{c.code} · {c.type==="percent"?c.amount+"%":money(c.amount)}</p>)}</section>
  <section className="admin-panel"><h2>Chatbot FAQ</h2><label>Question<input value={faq.question} onChange={e=>setFaq(f=>({...f,question:e.target.value}))}/></label><label>Verified answer<textarea value={faq.answer} onChange={e=>setFaq(f=>({...f,answer:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("faq.create",{...faq,active:true})}>Add FAQ</button>{data.faqs.map(f=><p key={f.id}><strong>{f.question}</strong><br/>{f.answer}</p>)}</section>
  <section className="admin-panel"><h2><Mail size={17}/> Email outbox</h2><p className="muted">Email confirmations are queued; Brevo credentials must be configured separately.</p>{data.emails.slice(0,12).map(e=><p key={e.id}>{e.kind} — {e.status}</p>)}<button className="outline-btn" disabled={busy} onClick={async()=>{setBusy(true);const r=await fetch("/api/admin/emails",{method:"POST",headers:await authHeaders()});const x=await r.json();setMessage(r.ok?"Attempted email delivery: "+x.sent:x.error);setBusy(false);void reload();}}>Retry failed emails</button></section></div>}
  </main>;
