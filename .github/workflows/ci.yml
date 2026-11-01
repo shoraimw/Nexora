@@ -1,4 +1,4 @@
-name: Nexora preview checks
+name: Nexora quality gates
 on:
   push:
     branches: [main]
@@ -10,15 +10,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Use Node 22
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install dependencies
+      - name: Install
         run: npm install --no-audit --no-fund
-      - name: Check TypeScript
+      - name: Contract tests
+        run: npm test
+      - name: TypeScript
         run: npm run typecheck
-      - name: Build Next.js preview
+      - name: Production build
         run: npm run build
+      - name: Preview-mode HTTP smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run start -- --port 3077 > /tmp/nexora-preview.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in {1..25}; do
+            if curl -fsS http://127.0.0.1:3077/api/health >/tmp/health.json 2>/dev/null; then break; fi
+            sleep 1
+          done
+          node -e 'const h=require("/tmp/health.json");if(h.mode!=="preview"||h.checkoutEnabled)process.exit(1)'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/)" = "200"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/checkout)" = "200"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/orders)" = "503"
+          echo "Preview is readable and payment submission is disabled."
