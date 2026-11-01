@@ -1,0 +1,2 @@
+import {configured} from "@/lib/server";
+export function GET(){return Response.json({service:"nexora",mode:configured?"configured":"preview",checkoutEnabled:configured&&process.env.NEXORA_LIVE_ORDERS==="true",emailConfigured:!!process.env.BREVO_API_KEY,aiConfigured:process.env.GEMINI_FREE_ENABLED==="true"},{headers:{"Cache-Control":"no-store"}});}
