@@ -5,6 +5,7 @@ import {CartProvider} from "@/components/CartProvider";
 import {HeaderCart} from "@/components/HeaderCart";
 import "./globals.css";
 import "./commerce.css";
+import "./mobile.css";
 export const metadata:Metadata={
  title:{default:"Nexora | Connect with Modern World",template:"%s | Nexora"},
  description:"Discover gadgets, tech accessories and unique everyday finds with Nexora.",
