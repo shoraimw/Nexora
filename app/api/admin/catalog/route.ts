@@ -1,8 +1,9 @@
 import {z} from "zod";
 import {configured,db,requireOwner,bad,ok,readBody,sameOrigin} from "@/lib/server";
 import {uuid,productInput,variantInput} from "@/lib/validation";
-const offerFields=z.object({title:z.string().trim().min(3).max(120),description:z.string().trim().max(500).default(""),badge:z.string().trim().min(2).max(32).default("SPECIAL OFFER"),coupon_code:z.string().trim().min(3).max(25).transform(v=>v.toUpperCase()).nullable().default(null),target_url:z.string().trim().max(300).regex(/^\\/(?!\\/)[A-Za-z0-9/_?&=%.#-]*$/).default("/shop"),cta_label:z.string().trim().min(2).max(32).default("Shop now"),starts_at:z.string().datetime({offset:true}).nullable().default(null),ends_at:z.string().datetime({offset:true}).nullable().default(null),active:z.boolean().default(false),sort_order:z.number().int().min(0).max(10000).default(0)}).refine(x=>!x.starts_at||!x.ends_at||new Date(x.ends_at)>new Date(x.starts_at),{message:"Offer end must be after start",path:["ends_at"]});
-const offerPatch=offerFields.partial().extend({id:uuid});
+const offerShape=z.object({title:z.string().trim().min(3).max(120),description:z.string().trim().max(500).default(""),badge:z.string().trim().min(2).max(32).default("SPECIAL OFFER"),coupon_code:z.string().trim().min(3).max(25).transform(v=>v.toUpperCase()).nullable().default(null),target_url:z.string().trim().max(300).regex(/^[/](?![/])[A-Za-z0-9/_?&=%.#-]*$/).default("/shop"),cta_label:z.string().trim().min(2).max(32).default("Shop now"),starts_at:z.string().datetime({offset:true}).nullable().default(null),ends_at:z.string().datetime({offset:true}).nullable().default(null),active:z.boolean().default(false),sort_order:z.number().int().min(0).max(10000).default(0)});
+const offerFields=offerShape.refine(x=>!x.starts_at||!x.ends_at||new Date(x.ends_at)>new Date(x.starts_at),{message:"Offer end must be after start",path:["ends_at"]});
+const offerPatch=offerShape.partial().extend({id:uuid});
 export async function POST(req:Request){
  if(!configured)return bad("Backend not configured",503);
  if(!sameOrigin(req))return bad("Origin rejected",403);
