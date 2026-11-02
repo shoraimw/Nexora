@@ -54,9 +54,9 @@ export function CommerceShop({homepage=false}:{homepage?:boolean}){
  const homeGroups=useMemo(()=>["Audio","Wearables","Accessories","Desk Setup","Student Picks"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5)})).filter(g=>g.items.length),[items]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
   {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
+   <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured picks" items={featured}/>
    <ProductSection eyebrow="JUST LANDED" title="New arrivals" items={newest}/>
    {homeGroups.map(g=><ProductSection key={g.name} eyebrow="EXPLORE THE COLLECTION" title={g.name} items={g.items} href={"/shop?category="+encodeURIComponent(g.name)}/>)}
-   <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured picks" items={featured}/>
   </>}
  </div></div>;
  return <main className="retail-container retail-shop-page">
