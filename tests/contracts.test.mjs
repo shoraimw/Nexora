@@ -54,7 +54,8 @@ test("shop renders the shared brand and connectivity filter toolbar",()=>{
 test("owner product editor saves connection type in product specs",()=>{
  const admin=read("app/admin/page.tsx");
  assert.match(admin,/connection_type/);
- assert.match(admin,/specs:connection_type/);
+ assert.match(admin,/parseSpecsJson/);
+ assert.match(admin,/connection_type\?\{connection_type\}:\{\}/);
 });
 
 test("Nexora displays owner-supplied assets across header and footer",()=>{
