@@ -174,3 +174,10 @@ test("home catalog includes curated featured picks and live brand discovery",()=
  assert.match(shop,/Shop by brand/);
  assert.match(shop,/review_average/);
 });
+
+test("review rating control uses an accessible fieldset and keyboard-operable buttons",()=>{
+ const detail=read("components/CommerceDetail.tsx");
+ assert.match(detail,/detail-rating-field/);
+ assert.match(detail,/aria-pressed/);
+ assert.match(detail,/role="img"/);
+});

@@ -9,7 +9,7 @@ const money=(v:number)=>"৳"+(v/100).toLocaleString("en-BD",{maximumFractionDig
 type Review={id:string;rating:number;title:string;body:string;verified_purchase:boolean;created_at:string};
 type ReviewPayload={count:number;average:number;reviews:Review[];canReview:boolean;hasReviewed:boolean;signedIn:boolean;emailVerified:boolean};
 function StarDisplay({value}:{value:number}){
- return <span className="detail-stars" aria-label={value.toFixed(1)+" out of 5 stars"}>{[1,2,3,4,5].map(n=><Star key={n} size={15} fill={n<=Math.round(value)?"currentColor":"none"}/>)}</span>;
+ return <span className="detail-stars" role="img" aria-label={value.toFixed(1)+" out of 5 stars"}>{[1,2,3,4,5].map(n=><Star key={n} size={15} fill={n<=Math.round(value)?"currentColor":"none"}/>)}</span>;
 }
 export function CommerceDetail({product:p}:{product:LiveProduct}){
  const [index,setIndex]=useState(0);
@@ -85,7 +85,7 @@ export function CommerceDetail({product:p}:{product:LiveProduct}){
     {reviewMessage&&<p className="detail-review-notice" role="status">{reviewMessage}</p>}
     {reviewData.hasReviewed?<p className="detail-muted">You have already submitted a review for this product.</p>
     :reviewData.canReview?<form className="detail-review-form" onSubmit={submitReview}>
-      <label>Your rating <span className="detail-rating-picker">{[1,2,3,4,5].map(n=><button type="button" key={n} onClick={()=>setReviewRating(n)} aria-label={"Rate "+n+" out of 5"} aria-pressed={reviewRating===n}><Star size={22} fill={n<=reviewRating?"currentColor":"none"}/></button>)}</span></label>
+      <fieldset className="detail-rating-field"><legend>Your rating</legend><span className="detail-rating-picker">{[1,2,3,4,5].map(n=><button type="button" key={n} onClick={()=>setReviewRating(n)} aria-label={"Rate "+n+" out of 5"} aria-pressed={reviewRating===n}><Star size={22} fill={n<=reviewRating?"currentColor":"none"}/></button>)}</span></fieldset>
       <label>Review title<input required minLength={3} maxLength={100} value={reviewTitle} onChange={e=>setReviewTitle(e.target.value)} placeholder="Summarise your experience"/></label>
       <label>Your review<textarea required minLength={10} maxLength={1600} rows={4} value={reviewBody} onChange={e=>setReviewBody(e.target.value)} placeholder="What did you like or dislike about this product?"/></label>
       <button className="primary-button" disabled={reviewSubmitting}><Send size={15}/>{reviewSubmitting?"Submitting…":"Submit review"}</button>
