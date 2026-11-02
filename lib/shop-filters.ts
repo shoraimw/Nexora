@@ -8,7 +8,7 @@ export type ShopFilterState = {
   minPriceBdt: string; maxPriceBdt: string; sort: ProductSort;
 };
 export type ShopFilterProduct = {
-  id: string; name: string; category: string; brand?: string | null;
+  id: string; name: string; category: string; brand?: string | null; searchText?: string;
   connectionType?: string | null; pricePaisa: number;
   compareAtPaisa?: number | null; available: boolean;
   featured?: boolean; createdAt?: string | null; collections?: string[];
@@ -46,7 +46,7 @@ export function selectMatchingProducts<T extends ShopFilterProduct>(products:rea
  const min=priceBoundBdt(f.minPriceBdt),max=priceBoundBdt(f.maxPriceBdt);
  const matched=products.filter(p=>{
   if(category&&category!=="all"&&p.category.toLocaleLowerCase("en")!==category&&!(p.collections||[]).some(c=>c.toLocaleLowerCase("en")===category))return false;
-  if(query&&![p.name,p.brand||"",p.category].join(" ").toLocaleLowerCase("en").includes(query))return false;
+  if(query&&![p.name,p.brand||"",p.category,p.searchText||""].join(" ").toLocaleLowerCase("en").includes(query))return false;
   if(brand&&!(p.brand||"").toLocaleLowerCase("en").includes(brand))return false;
   if(f.connection!=="all"&&!connectionFlags(p.connectionType)[f.connection])return false;
   if(f.inStockOnly&&!p.available)return false;

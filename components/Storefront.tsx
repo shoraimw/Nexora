@@ -45,7 +45,7 @@ export function DemoShop(){
  const [filters,setFilters]=useState<ShopFilterState>(initialFilters);
  useEffect(()=>{const p=new URLSearchParams(window.location.search);const cn=p.get("connection");setFilters(f=>({...f,query:p.get("q")||"",category:p.get("category")||"All",brand:p.get("brand")||"",connection:cn==="wireless"?"wireless":cn==="wired"?"wired":"all"}));},[]);
  const indexed=useMemo<IndexedProduct[]>(()=>products.map((p,index)=>({
-  id:p.id,name:p.name,category:p.category,brand:p.brand||"",connectionType:p.connectionType||"",
+  id:p.id,name:p.name,category:p.category,brand:p.brand||"",searchText:[p.description,...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
   pricePaisa:Math.round(p.price*100),compareAtPaisa:p.previous?Math.round(p.previous*100):undefined,
   available:p.id!=="NX-D07"&&p.id!=="NX-D08",featured:index<3,
   createdAt:String(products.length-index).padStart(3,"0"),collections:p.student?["Student Picks"]:[],product:p

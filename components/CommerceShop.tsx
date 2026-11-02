@@ -42,7 +42,7 @@ export function CommerceShop({homepage=false}:{homepage?:boolean}){
   return()=>{active=false;};
  },[]);
  const indexed=useMemo<IndexedProduct[]>(()=>items.map(p=>{const v=displayVariant(p);return{
-  id:p.id,name:p.title,category:p.category,brand:p.brand,connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
+  id:p.id,name:p.title,category:p.category,brand:p.brand,searchText:[p.description,p.warranty,...Object.values(p.specs||{}).map(String),...p.variants.flatMap(v=>[v.name,v.color||""])].join(" "),connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
   pricePaisa:v?.price_paisa||0,compareAtPaisa:v?.compare_at_paisa,available:p.variants.some(v=>v.available>0),
   featured:p.featured,createdAt:p.created_at,product:p
  };}),[items]);

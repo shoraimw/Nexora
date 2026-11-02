@@ -28,6 +28,11 @@ test("stock, discount and sorting filters",()=>{
  assert.equal(discountPercent(sample[0]),20);
  assert.equal(discountPercent(sample[1]),0);
 });
+test("search matches product features and colors without inventing availability",()=>{
+ const data=[{...sample[0],searchText:"white, black, premium drivers"},{...sample[1],searchText:"soft tips, graphite"}];
+ assert.deepEqual(selectMatchingProducts(data,{...initialFilters,query:"graphite"}).map(x=>x.id),["b"]);
+ assert.deepEqual(selectMatchingProducts(data,{...initialFilters,query:"drivers"}).map(x=>x.id),["a"]);
+});
 test("safe prices, distinct brands and filter counts",()=>{
  assert.equal(priceBoundBdt("1500.50"),150050);
  assert.equal(priceBoundBdt("-1"),null);
