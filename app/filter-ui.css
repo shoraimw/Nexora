@@ -1,0 +1,46 @@
+
+/* Retail product filters — compact on desktop and usable on phones */
+.retail-shop-toolbar{margin:18px 0 22px;gap:11px}
+.retail-filter-controls{grid-template-columns:minmax(220px,1.5fr) minmax(170px,1fr) minmax(185px,1fr)}
+.retail-filter-secondary{display:flex;align-items:flex-end;gap:15px;flex-wrap:wrap;padding:11px 13px;background:#fff;border:1px solid #e2e8ec;border-radius:5px}
+.retail-price-range{display:flex;align-items:center;gap:9px;flex:1;min-width:290px}
+.retail-price-range>span:first-child{font-size:10px;font-weight:800;color:#4b5b65;white-space:nowrap;margin-right:3px}
+.retail-price-range label{min-width:80px;max-width:155px;flex:1;display:flex;flex-direction:column;gap:4px;color:#8c969e;font-size:9px}
+.retail-price-range label>span{font-size:9px;font-weight:650}
+.retail-price-range input{width:100%;height:33px;padding:0 10px;border:1px solid #dfe5e8;border-radius:4px;outline:0;color:#263844;background:#fcfcfd;font-size:11px}
+.retail-price-range input:focus{border-color:#e26f49;box-shadow:0 0 0 2px #e26f4914}
+.retail-price-dash{align-self:flex-end;padding-bottom:8px;color:#9da8b0}
+.retail-filter-check{display:flex;align-items:center;gap:7px;padding-bottom:9px;white-space:nowrap;color:#52616a;font-size:10px;font-weight:800;cursor:pointer}
+.retail-filter-check input{accent-color:#e76c44;width:15px;height:15px}
+.retail-filter-results{display:flex;align-items:center;gap:6px;padding-bottom:9px;margin-left:auto;color:#8a969e;font-size:10px;white-space:nowrap}
+.retail-reset-filters{display:flex;align-items:center;justify-content:center;gap:6px;min-height:33px;padding:0 11px;white-space:nowrap;border:1px solid #f0d9ce;border-radius:4px;background:#fff6f0;color:#b95d3b;font-size:10px;font-weight:850}
+.retail-reset-filters:hover{background:#fbe9df}
+.retail-filter-footnote{display:block;color:#88939b;font-size:9px;line-height:1.5}
+.retail-filter-field input{font-size:11px}
+.retail-shop-sidebar button{transition:background .15s,color .15s}
+.retail-empty button{display:inline-flex;align-items:center;gap:6px}
+@media(max-width:1080px){
+ .retail-filter-secondary{gap:10px}
+ .retail-price-range{min-width:240px}
+}
+@media(max-width:790px){
+ .retail-filter-controls{grid-template-columns:1fr 1fr;gap:8px}
+ .retail-sort-field{grid-column:1/-1}
+ .retail-filter-secondary{align-items:center;gap:12px}
+ .retail-price-range{flex-basis:100%;min-width:0}
+ .retail-filter-check{padding:0}
+ .retail-filter-results{margin-left:0;padding:0}
+}
+@media(max-width:540px){
+ .retail-shop-toolbar{margin:13px 0 18px}
+ .retail-filter-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .retail-filter-field>span{font-size:8px}
+ .retail-filter-field input,.retail-filter-field select{font-size:10px;padding:0 8px}
+ .retail-price-range{gap:7px}
+ .retail-price-range>span:first-child{flex:0 0 100%;margin:0}
+ .retail-price-range{flex-wrap:wrap}
+ .retail-price-range label{min-width:90px}
+ .retail-filter-secondary{padding:11px;gap:10px}
+ .retail-filter-results{margin-left:auto}
+ .retail-reset-filters{width:100%}
+}
