@@ -11,8 +11,7 @@ export function ProductTile({product}:{product:Product}){
  const {add}=useCart();
  return <article className="nexora-product-card">
   <Link href={"/product/"+product.slug} className="nexora-product-art" aria-label={"View "+product.name}>
-   {product.image&&<img src={product.image} alt={product.name} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>}
-   {!product.image&&<span className="nexora-image-fallback">{product.art}</span>}
+   <span className="nexora-image-fallback">{product.art}</span>{product.image&&<img src={product.image} alt={product.name} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>}
    {product.tag&&<span className="nexora-product-tag">{product.tag}</span>}
    <span className="nexora-demo-label">DEMO ITEM</span>
   </Link>
