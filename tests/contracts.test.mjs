@@ -19,6 +19,8 @@ test("server validates owner membership before administrative actions",()=>{
  const src=read("lib/server.ts");
  assert.match(src,/getUser\(auth.slice\(7\)\)/);
  assert.match(src,/admin_memberships/);
+ assert.match(src,/timingSafeEqual/);
+ assert.match(src,/new URL\\(origin\\)\\.origin===new URL\\(req\\.url\\)\\.origin/);
  assert.match(src,/\.eq\("role","owner"\)/);
 });
 test("secret-bearing local environment files are ignored",()=>{
@@ -146,4 +148,12 @@ test("storefront private routes are excluded from search crawlers",()=>{
  assert.match(robots,/\/admin/);
  assert.match(robots,/\/checkout/);
  assert.match(robots,/\/api/);
+});
+
+test("sensitive file and invoice endpoints enforce bounded request rates",()=>{
+ assert.match(read("app/api/orders/invoice/route.ts"),/rateAllow/);
+ assert.match(read("app/api/account/avatar/route.ts"),/rateAllow/);
+ assert.match(read("app/api/admin/upload/route.ts"),/rateAllow/);
+ assert.match(read("app/api/orders/track/route.ts"),/tokenMatches/);
+ assert.match(read("app/api/orders/invoice/route.ts"),/tokenMatches/);
 });

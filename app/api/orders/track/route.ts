@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {configured,db,bad,ok,readBody,tokenHash,userFromRequest,sameOrigin} from "@/lib/server";
+import {configured,db,bad,ok,readBody,tokenMatches,userFromRequest,sameOrigin} from "@/lib/server";
 import {rateAllow} from "@/lib/rate";
 export const dynamic="force-dynamic";
 export async function POST(request:Request){
@@ -13,7 +13,7 @@ export async function POST(request:Request){
  const user=await userFromRequest(request);
  const {data:order,error}=await db().from("orders").select("*").eq("order_no",orderNo).maybeSingle();
  if(error||!order)return bad("Order not found or access denied",404);
- if(!((user&&order.customer_id===user.id)||(token&&tokenHash(token)===order.tracking_token_hash)))return bad("Order not found or access denied",404);
+ if(!((user&&order.customer_id===user.id)||(token&&tokenMatches(token,order.tracking_token_hash))))return bad("Order not found or access denied",404);
  const [{data:items},{data:shipment},{data:events}]=await Promise.all([
   db().from("order_items").select("title,sku,variant_name,quantity,unit_price_paisa").eq("order_id",order.id),
   db().from("shipments").select("provider,consignment_id,tracking_url,dispatched_at,delivered_at").eq("order_id",order.id).maybeSingle(),

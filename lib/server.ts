@@ -1,6 +1,6 @@
 import "server-only";
 import {createClient,type SupabaseClient,type User} from "@supabase/supabase-js";
-import {createHash,createHmac} from "node:crypto";
+import {createHash,createHmac,timingSafeEqual} from "node:crypto";
 export const configured=!!(process.env.NEXT_PUBLIC_SUPABASE_URL&&process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY&&process.env.SUPABASE_SERVICE_ROLE_KEY);
 let store:SupabaseClient|null=null;
 export function db(){if(!configured)throw new Error("Supabase not configured");if(!store)store=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});return store;}
@@ -11,6 +11,11 @@ export async function userFromRequest(request:Request):Promise<User|null>{if(!co
 export async function requireOwner(request:Request):Promise<User|null>{const u=await userFromRequest(request);if(!u)return null;const {data}=await db().from("admin_memberships").select("user_id").eq("user_id",u.id).eq("role","owner").eq("enabled",true).maybeSingle();return data?u:null;}
 export function tokenFor(id:string){const secret=process.env.TRACKING_SECRET||"";if(secret.length<32)throw Error("TRACKING_SECRET not configured");return createHmac("sha256",secret).update(id).digest("hex");}
 export const tokenHash=(token:string)=>createHash("sha256").update(token).digest("hex");
+export function tokenMatches(token:string,storedHash:string){
+ if(!/^[a-f0-9]{64}$/i.test(storedHash))return false;
+ const candidate=Buffer.from(tokenHash(token),"hex"),expected=Buffer.from(storedHash,"hex");
+ return candidate.length===expected.length&&timingSafeEqual(candidate,expected);
+}
 export const price=(paisa:number)=>"৳"+(paisa/100).toLocaleString("en-BD",{maximumFractionDigits:2});
-export function sameOrigin(req:Request){const origin=req.headers.get("origin");if(!origin)return true;try{return new URL(origin).host===new URL(req.url).host;}catch{return false;}}
+export function sameOrigin(req:Request){const origin=req.headers.get("origin");if(!origin)return true;try{return new URL(origin).origin===new URL(req.url).origin;}catch{return false;}}
 export function safeError(error:unknown){const message=error instanceof Error?error.message:String(error);return /stock|cart|coupon|payment method|transaction id|already used|duplicate|invalid customer/i.test(message)?message:"Could not process your request";}

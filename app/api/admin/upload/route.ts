@@ -1,5 +1,6 @@
 import {configured,db,bad,ok,requireOwner,sameOrigin} from "@/lib/server";
 import {z} from "zod";
+import {rateAllow} from "@/lib/rate";
 function validBytes(bytes:Uint8Array,mime:string){
  return (mime==="image/png"&&bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71)||
  (mime==="image/jpeg"&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255)||
@@ -9,6 +10,7 @@ export async function POST(req:Request){
  if(!configured)return bad("Backend not configured",503);
  if(!sameOrigin(req))return bad("Origin rejected",403);
  const owner=await requireOwner(req);if(!owner)return bad("Owner access required",403);
+ if(!await rateAllow(req,"admin-product-upload",30,60))return bad("Upload limit reached. Try again later.",429);
  const form=await req.formData().catch(()=>null);if(!form)return bad("Invalid upload");
  const file=form.get("file"),productId=form.get("productId"),alt=form.get("alt");
  if(!(file instanceof File)||typeof productId!=="string"||!z.string().uuid().safeParse(productId).success)return bad("Invalid image or product");

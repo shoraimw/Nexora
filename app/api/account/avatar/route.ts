@@ -1,8 +1,10 @@
-import {configured,db,requireOwner,userFromRequest,bad,ok,sameOrigin} from "@/lib/server";
+import {configured,db,userFromRequest,bad,ok,sameOrigin} from "@/lib/server";
+import {rateAllow} from "@/lib/rate";
 function magic(data:Uint8Array,mime:string){return(mime==="image/png"&&data[0]===137&&data[1]===80&&data[2]===78&&data[3]===71)||(mime==="image/jpeg"&&data[0]===255&&data[1]===216&&data[2]===255)||(mime==="image/webp"&&String.fromCharCode(...data.slice(0,4))==="RIFF"&&String.fromCharCode(...data.slice(8,12))==="WEBP");}
 export async function POST(req:Request){
  if(!configured)return bad("Profiles unavailable",503);
  if(!sameOrigin(req))return bad("Origin rejected",403);
+ if(!await rateAllow(req,"avatar-upload",8,60))return bad("Avatar upload limit reached. Try again later.",429);
  const u=await userFromRequest(req);if(!u)return bad("Login required",401);
  const data=await req.formData().catch(()=>null),file=data?.get("file");
  if(!(file instanceof File)||file.size>2_097_152||file.size<100||!["image/png","image/jpeg","image/webp"].includes(file.type))return bad("Choose PNG, JPEG or WebP under 2 MB");

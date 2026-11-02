@@ -1,16 +1,18 @@
 import {PDFDocument,StandardFonts,rgb} from "pdf-lib";
-import {configured,db,bad,readBody,tokenHash,userFromRequest,sameOrigin} from "@/lib/server";
+import {configured,db,bad,readBody,tokenMatches,userFromRequest,sameOrigin} from "@/lib/server";
 import {z} from "zod";
+import {rateAllow} from "@/lib/rate";
 export async function POST(request:Request){
  if(!configured)return bad("Invoices unavailable",503);
  if(!sameOrigin(request))return bad("Origin rejected",403);
+ if(!await rateAllow(request,"invoice",15,60))return bad("Too many invoice requests",429);
  let input:unknown;try{input=await readBody(request,1800);}catch{return bad("Invalid request");}
- const parsed=z.object({orderNo:z.string().min(8).max(35),token:z.string().length(64).optional()}).safeParse(input);
+ const parsed=z.object({orderNo:z.string().regex(/^NX-[0-9]{8}-[A-F0-9]{8}$/),token:z.string().length(64).optional()}).safeParse(input);
  if(!parsed.success)return bad("Invalid request");
  const {data:order}=await db().from("orders").select("*").eq("order_no",parsed.data.orderNo).maybeSingle();
  if(!order)return bad("Invoice not found",404);
  const u=await userFromRequest(request);
- if(!((u&&order.customer_id===u.id)||(parsed.data.token&&tokenHash(parsed.data.token)===order.tracking_token_hash)))return bad("Invoice not found",404);
+ if(!((u&&order.customer_id===u.id)||(parsed.data.token&&tokenMatches(parsed.data.token,order.tracking_token_hash))))return bad("Invoice not found",404);
  const {data:items}=await db().from("order_items").select("title,quantity,unit_price_paisa,variant_name").eq("order_id",order.id);
  const doc=await PDFDocument.create(),page=doc.addPage([595,842]),font=await doc.embedFont(StandardFonts.Helvetica),bold=await doc.embedFont(StandardFonts.HelveticaBold);
  const draw=(t:string,x:number,y:number,size=11,b=false)=>page.drawText(t.replace(/[^\x20-\x7e]/g,"?").slice(0,92),{x,y,size,font:b?bold:font,color:rgb(.16,.16,.17)});
