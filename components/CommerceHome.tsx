@@ -1,13 +1,13 @@
 "use client";
 import {ChatWidget} from "@/components/ChatWidget";
 import {CommerceShop} from "@/components/CommerceShop";
-import {HomeHero,HomeCategoryStrip,HomePerks,HomePromos} from "@/components/HomeChrome";
+import {RetailHero,RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
 export function CommerceHome(){
- return <main className="nexora-home">
-  <div className="announcement">Thoughtful gadgets and everyday essentials <span>·</span> Discover what's new at Nexora</div>
-  <div className="container"><HomeHero/><HomeCategoryStrip/><HomePerks/></div>
+ return <main className="retail-home">
+  <div className="retail-announcement"><span>Welcome to Nexora</span><b>Thoughtful gadgets for everyday life</b><span>Discover something new <span aria-hidden>→</span></span></div>
+  <div className="retail-container"><RetailHero/><RetailTrustBar/><RetailCategoryGrid/></div>
   <CommerceShop homepage/>
-  <div className="container"><HomePromos/></div>
+  <div className="retail-container"><RetailPromoBanners/></div>
   <ChatWidget/>
  </main>;
 }
