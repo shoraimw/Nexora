@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useEffect,useMemo,useState} from "react";
-import {ArrowRight,ShoppingBag,SlidersHorizontal,ChevronRight,ArrowUpRight} from "lucide-react";
+import {ArrowRight,ShoppingBag,ChevronRight,ArrowUpRight} from "lucide-react";
 import {categories,currency,products, type Product} from "@/lib/catalog";
 import {useCart} from "@/components/CartProvider";
 import {ChatWidget} from "@/components/ChatWidget";
@@ -55,11 +55,9 @@ export function DemoShop(){
  return <main className="retail-container retail-shop-page">
   <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/><span>Shop</span></div>
   <div className="retail-shop-heading"><div><span className="retail-eyebrow">THE NEXORA COLLECTION</span><h1>Shop all gadgets</h1><p>Search by brand, connection, availability and price.</p></div><span>{visible.length} preview products</span></div>
-  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={visible.length}/>
-  <div className="retail-shop-layout"><aside className="retail-shop-sidebar"><strong>Shop by category</strong>{categoryOptions.map(c=><button key={c} className={filters.category===c?"active":""} onClick={()=>setFilters(f=>({...f,category:c}))}>{c}<span>{c==="All"?products.length:indexed.filter(p=>p.category===c||p.collections?.includes(c)).length}</span></button>)}</aside>
-   <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.category==="All"?"All products":filters.category}</strong><span>Preview catalog · brands are examples, not live inventory</span></div>
-    {visible.length?<div className="retail-product-grid">{visible.map(p=><DemoProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><SlidersHorizontal/><h3>No products found</h3><p>Try another brand, price or connection type.</p><button onClick={()=>setFilters({...initialFilters})}>Clear all filters</button></div>}
-   </section>
-  </div><ChatWidget/>
+  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={visible.length} categories={categoryOptions}/>
+  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.category==="All"?"All products":filters.category}</strong><span>Preview catalog · brands are examples, not live inventory</span></div>
+   {visible.length?<div className="retail-product-grid">{visible.map(p=><DemoProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>No products found</h3><p>Try another search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,query:filters.query})}>Clear all filters</button></div>}
+  </section><ChatWidget/>
  </main>;
 }

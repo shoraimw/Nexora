@@ -35,8 +35,13 @@ test("shop renders the shared brand and connectivity filter toolbar",()=>{
  const demo=read("components/Storefront.tsx");
  const toolbar=read("components/ShopFilterToolbar.tsx");
  assert.match(live,/ShopFilterToolbar/);
+ assert.doesNotMatch(live,/retail-shop-sidebar/);
  assert.match(demo,/ShopFilterToolbar/);
+ assert.doesNotMatch(demo,/retail-shop-sidebar/);
  assert.match(toolbar,/Filter by brand/);
+ assert.match(toolbar,/retail-filter-drawer/);
+ assert.match(toolbar,/aria-modal="true"/);
+ assert.doesNotMatch(toolbar,/retail-filter-controls/);
  assert.match(toolbar,/Filter by connection type/);
  assert.match(toolbar,/Minimum price in BDT/);
  assert.match(toolbar,/In stock only/);
@@ -63,12 +68,11 @@ test("development indicator and redundant storefront banners are disabled",()=>{
  assert.ok(!read("components/CommerceHome.tsx").includes('className="retail-announcement"'));
  assert.ok(!read("components/Storefront.tsx").includes('className="retail-announcement"'));
 });
-test("hero supports slide autoplay, manual controls and accessible motion",()=>{
+test("hero is automatic, has no manual carousel controls and respects reduced motion",()=>{
  const hero=read("components/RetailChrome.tsx");
  assert.match(hero,/window\.setInterval/);
- assert.match(hero,/Previous banner/);
- assert.match(hero,/Next banner/);
- assert.match(hero,/Pause automatic slideshow/);
+ assert.match(hero,/retail-slider-progress/);
+ assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow|Pause size|Play size/);
  assert.match(hero,/prefers-reduced-motion/);
 });
 test("shop category menu closes on navigation, escape and outside clicks",()=>{

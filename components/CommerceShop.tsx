@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {ShoppingBag,ArrowUpRight,SlidersHorizontal,ArrowRight,ChevronRight} from "lucide-react";
+import {ShoppingBag,ArrowUpRight,ArrowRight,ChevronRight} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
@@ -60,11 +60,9 @@ export function CommerceShop({homepage=false}:{homepage?:boolean}){
  return <main className="retail-container retail-shop-page">
   <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/><span>Shop</span></div>
   <div className="retail-shop-heading"><div><span className="retail-eyebrow">THE NEXORA COLLECTION</span><h1>Shop all gadgets</h1><p>Search by brand, connection, availability and price.</p></div><span>{shown.length} products</span></div>
-  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={shown.length}/>
-  <div className="retail-shop-layout"><aside className="retail-shop-sidebar"><strong>Shop by category</strong>{categories.map(c=><button key={c} className={filters.category===c?"active":""} onClick={()=>setFilters(f=>({...f,category:c}))}>{c}<span>{c==="All"?items.length:items.filter(p=>p.category===c).length}</span></button>)}</aside>
-   <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.category==="All"?"All products":filters.category}</strong><span>{ready?"Verified catalog listings":"Loading catalog"}</span></div>
-    {!ready?<div className="retail-loading">Loading products…</div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><SlidersHorizontal/><h3>{items.length?"No matching products":"No products published yet"}</h3><p>Adjust your brand, price or connection filters to find more gadgets.</p><button onClick={()=>setFilters({...initialFilters})}>Clear all filters</button></div>}
-   </section>
-  </div>
+  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={shown.length} categories={categories}/>
+  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.category==="All"?"All products":filters.category}</strong><span>{ready?"Verified catalog listings":"Loading catalog"}</span></div>
+   {!ready?<div className="retail-loading">Loading products…</div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>{items.length?"No matching products":"No products published yet"}</h3><p>Adjust your search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,query:filters.query})}>Clear all filters</button></div>}
+  </section>
  </main>;
 }
