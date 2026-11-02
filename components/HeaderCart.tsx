@@ -4,7 +4,7 @@ import {ShoppingBag} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 export function HeaderCart(){
   const {count}=useCart();
-  return <Link className="cart-link" href="/cart" aria-label={"Shopping bag with "+count+" demo items"}>
-    <ShoppingBag size={21}/><span>{count}</span>
+  return <Link className="retail-cart" href="/cart" aria-label={"Shopping bag with "+count+" items"}>
+    <ShoppingBag size={19}/><span>My bag</span><b>{count}</b>
   </Link>;
 }
