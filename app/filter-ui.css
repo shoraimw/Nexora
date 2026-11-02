@@ -198,3 +198,8 @@
 .retail-card-rating{display:flex;align-items:center;gap:4px;margin:5px 0 2px;color:#d89a42}
 .retail-card-rating strong{color:#53616a;font-size:9px}
 .retail-card-rating span{color:#89949b;font-size:9px}
+
+.retail-brand-section{padding:24px 0 8px;border-bottom:1px solid #e8edef}
+.retail-brand-list{display:flex;flex-wrap:wrap;gap:9px;padding:3px 0 18px}
+.retail-brand-list a{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #e4e9ec;border-radius:4px;background:#fff;color:#4c5b65;font-size:10px;font-weight:800}
+.retail-brand-list a:hover{border-color:#e7a58a;background:#fff8f4;color:#bd5a37}

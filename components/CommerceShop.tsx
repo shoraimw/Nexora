@@ -53,6 +53,7 @@ export function CommerceShop({homepage=false}:{homepage?:boolean}){
  const newest=useMemo(()=>[...items].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||"")).slice(0,8),[items]);
  const homeGroups=useMemo(()=>["Audio","Wearables","Accessories","Desk Setup","Student Picks"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5)})).filter(g=>g.items.length),[items]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
+  {brands.length>0&&<section className="retail-brand-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">THE BRANDS WE CARRY</span><h2>Shop by brand</h2></div><Link href="/shop" className="retail-section-link">All products <ArrowRight size={16}/></Link></div><div className="retail-brand-list">{brands.slice(0,10).map(brand=><Link key={brand} href={"/shop?brand="+encodeURIComponent(brand)}>{brand}<ArrowRight size={13}/></Link>)}</div></section>}
   {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
    <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured picks" items={featured}/>
    <ProductSection eyebrow="JUST LANDED" title="New arrivals" items={newest}/>

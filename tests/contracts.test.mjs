@@ -159,3 +159,18 @@ test("sensitive file and invoice endpoints enforce bounded request rates",()=>{
  assert.match(read("app/api/orders/track/route.ts"),/tokenMatches/);
  assert.match(read("app/api/orders/invoice/route.ts"),/tokenMatches/);
 });
+
+test("product owner tools support real technical specification data and product SEO",()=>{
+ const admin=read("app/admin/page.tsx");
+ const page=read("app/product/[slug]/page.tsx");
+ assert.match(admin,/parseSpecsJson/);
+ assert.match(admin,/Technical specifications \(JSON\)/);
+ assert.match(page,/generateMetadata/);
+ assert.match(page,/openGraph/);
+});
+test("home catalog includes curated featured picks and live brand discovery",()=>{
+ const shop=read("components/CommerceShop.tsx");
+ assert.match(shop,/Featured picks/);
+ assert.match(shop,/Shop by brand/);
+ assert.match(shop,/review_average/);
+});

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type {Metadata} from "next";
 import {notFound} from "next/navigation";
 import {ArrowLeft,ShieldCheck,Truck} from "lucide-react";
 import {products,bySlug,currency} from "@/lib/catalog";
@@ -7,6 +8,16 @@ import {configured} from "@/lib/server";
 import {liveCatalog} from "@/lib/catalog-live";
 import {CommerceDetail} from "@/components/CommerceDetail";
 export const dynamic="force-dynamic";
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
+ const {slug}=await params;
+ const product=configured?(await liveCatalog().catch(()=>[])).find(x=>x.slug===slug):bySlug(slug);
+ if(!product)return {title:"Product not found",robots:{index:false,follow:false}};
+ const title="title" in product?product.title:product.name;
+ const description=(product.description||"Discover this gadget at Nexora.").replace(/\s+/g," ").slice(0,160);
+ const image="images" in product?product.images[0]?.url:product.image;
+ return {title:title+" | Nexora",description,openGraph:{title:title+" | Nexora",description,type:"website",images:image?[{url:image}]:[]},twitter:{card:"summary_large_image",title:title+" | Nexora",description,images:image?[image]:[]}};
+}
+
 export async function generateStaticParams(){return products.map(p=>({slug:p.slug}));}
 export default async function ProductPage({params}:{params:Promise<{slug:string}>}){
  const {slug}=await params;
