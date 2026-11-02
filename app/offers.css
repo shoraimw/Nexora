@@ -1,4 +1,7 @@
 /* Live offers: restrained rotating neon ring inspired by the reference header. */
+.retail-header-actions .retail-offers-nav{font-size:10px!important;padding:7px 11px}
+@media(max-width:1100px){.retail-header-actions{gap:12px}.retail-header-actions .retail-offers-nav{padding:6px 9px}}
+@media(max-width:790px){.retail-header-actions .retail-offers-nav{display:none!important}}
 .retail-offers-nav{position:relative;isolation:isolate;display:inline-flex!important;align-items:center;justify-content:center;gap:7px;min-height:32px;padding:6px 13px;border:1px solid #e3e8ec;border-radius:999px;background:#f7f8f9;color:#78838c!important;font-size:11px!important;font-weight:800!important;white-space:nowrap;transition:color .2s,background .2s}
 .retail-offers-nav.is-empty{background:#f6f7f8;border-color:#e7ebee;color:#7d8790!important}
 .retail-offers-nav.is-live{border-color:transparent;background:#fff;color:#d84f2e!important;box-shadow:0 0 10px #ff74422a}

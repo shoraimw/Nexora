@@ -105,7 +105,8 @@ test("offers navigation glows only with active offers and offers page has empty 
  const css=read("app/offers.css");
  assert.match(nav,/is-live/);
  assert.match(nav,/No offers/);
- assert.match(layout,/OffersNavLink/);
+ assert.match(layout,/retail-header-actions"><OffersNavLink/);
+ assert.match(layout,/OffersNavLink compact/);
  assert.match(page,/No offers now/);
  assert.match(page,/offer\.coupon_code/);
  assert.match(css,/nexora-offer-spin/);

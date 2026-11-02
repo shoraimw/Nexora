@@ -26,11 +26,11 @@ export default function RootLayout({children}:{children:React.ReactNode}){
    <div className="retail-container retail-header-main">
     <Link className="retail-brand retail-brand-header" href="/" aria-label="Nexora home"><img className="retail-brand-image" src="/brand/nexora-logo-dark.png" alt="Nexora" width={280} height={160} fetchPriority="high"/></Link>
     <form className="retail-search" action="/shop" method="get"><Search size={19}/><input name="q" type="search" placeholder="Search for products, brands and more..." aria-label="Search Nexora"/><button type="submit">Search</button></form>
-    <div className="retail-header-actions"><Link href="/account"><UserRound size={19}/><span>Account</span></Link><HeaderCart/></div>
+    <div className="retail-header-actions"><OffersNavLink/><Link href="/account"><UserRound size={19}/><span>Account</span></Link><HeaderCart/></div>
    </div>
    <nav className="retail-nav" aria-label="Main navigation"><div className="retail-container retail-nav-inner">
     <ShopCategoryMenu/>
-    <Link href="/">Home</Link><Link href="/shop">All products</Link><Link href="/shop?category=Audio">Audio</Link><Link href="/shop?category=Wearables">Wearables</Link><Link href="/shop?category=Accessories">Accessories</Link><Link href="/shop?category=Student%20Picks">Student picks</Link><Link href="/shop?category=Mystery%20Box">Mystery box</Link><OffersNavLink/><Link href="/contact">Help & support</Link>
+    <Link href="/">Home</Link><Link href="/shop">All products</Link><Link href="/shop?category=Audio">Audio</Link><Link href="/shop?category=Wearables">Wearables</Link><Link href="/shop?category=Accessories">Accessories</Link><Link href="/shop?category=Student%20Picks">Student picks</Link><Link href="/shop?category=Mystery%20Box">Mystery box</Link><Link href="/contact">Help & support</Link>
    </div></nav>
   </header>
   <nav className="retail-mobile-nav" aria-label="Mobile navigation"><Link href="/shop"><Store size={19}/>Shop</Link><Link href="/track"><PackageSearch size={19}/>Orders</Link><OffersNavLink compact/><Link href="/account"><UserRound size={19}/>Account</Link><Link href="/contact"><LifeBuoy size={19}/>Help</Link></nav>
