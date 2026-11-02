@@ -128,3 +128,69 @@
  .retail-filter-drawer{animation:none}
  .retail-slider-progress span{animation:none;width:100%}
 }
+
+/* Product detail content, review summaries and verified customer feedback. */
+.detail-page{max-width:1240px}
+.detail-page .retail-breadcrumb{margin-bottom:13px;flex-wrap:wrap}
+.detail-page .detail-grid{margin-top:14px}
+.detail-rating-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 14px;color:#78858e;font-size:10px}
+.detail-rating-line strong{color:#263640;font-size:11px}
+.detail-rating-line a{color:#8a969d;text-decoration:underline;text-underline-offset:3px}
+.detail-stars{display:inline-flex;align-items:center;gap:2px;color:#e6a24b}
+.detail-availability{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800}
+.detail-availability.in-stock{color:#39835d}
+.detail-availability.out-stock{color:#b64e42}
+.detail-add-button{width:100%;justify-content:center;min-height:48px;margin:18px 0}
+.detail-info-tabs{position:sticky;top:0;z-index:10;display:flex;gap:25px;overflow-x:auto;margin:38px 0 0;padding:0 0 0;border-bottom:1px solid #e3e8eb;background:#fff}
+.detail-info-tabs a{display:block;flex-shrink:0;padding:17px 2px 14px;color:#65737d;font-size:11px;font-weight:800;text-decoration:none;border-bottom:2px solid transparent}
+.detail-info-tabs a:hover,.detail-info-tabs a:focus-visible{color:#bd5a37;border-color:#e96f45}
+.detail-info-section{scroll-margin-top:72px;padding:34px 0 38px;border-bottom:1px solid #e8edef}
+.detail-info-section h2{margin:5px 0 17px;color:#192833;font-size:clamp(23px,2.6vw,31px);letter-spacing:-.8px}
+.detail-long-description{max-width:900px;margin:0;color:#64727c;font-size:13px;line-height:1.9;white-space:pre-line}
+.detail-muted{color:#7c8991;font-size:12px;line-height:1.8}
+.detail-muted a{color:#bd5a37;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.detail-info-section .spec-table{max-width:900px;font-size:12px}
+.detail-info-section .spec-table th{width:34%;text-transform:capitalize;color:#71808a;font-weight:750}
+.detail-info-section .spec-table td{color:#33434e}
+.detail-review-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:25px}
+.detail-review-heading p{margin:0;color:#7d8991;font-size:11px}
+.detail-review-score{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:130px}
+.detail-review-score>strong{font-size:31px;line-height:1;color:#192833;letter-spacing:-1px}
+.detail-review-score small{color:#87939a;font-size:9px}
+.detail-review-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
+.detail-review-card{padding:17px 18px;border:1px solid #e5eaed;border-radius:6px;background:#fff}
+.detail-review-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.detail-review-card-top time{color:#8b969d;font-size:9px}
+.detail-review-card h3{margin:12px 0 6px;color:#2c3b45;font-size:13px}
+.detail-review-card>p{margin:0;color:#697781;font-size:11px;line-height:1.75;white-space:pre-line;overflow-wrap:anywhere}
+.detail-verified-buyer{display:inline-flex;align-items:center;gap:5px;margin-top:13px;color:#39835d;font-size:9px;font-weight:850}
+.detail-no-reviews{display:flex;flex-direction:column;align-items:center;gap:8px;margin:20px 0;padding:30px;border:1px dashed #dce3e7;border-radius:6px;color:#9aa5ab;text-align:center}
+.detail-no-reviews strong{color:#40515b;font-size:13px}
+.detail-no-reviews p{margin:0;color:#8b969d;font-size:10px}
+.detail-review-form-wrap{max-width:680px;margin-top:25px;padding:22px;border:1px solid #e5eaed;border-radius:6px;background:#fafbfc}
+.detail-review-form-wrap>h3{margin:0 0 16px;color:#293943;font-size:17px}
+.detail-review-form{display:flex;flex-direction:column;gap:13px}
+.detail-review-form>label{display:flex;flex-direction:column;gap:7px;color:#4d5e68;font-size:10px;font-weight:800}
+.detail-review-form input,.detail-review-form textarea{width:100%;padding:11px 12px;border:1px solid #dfe5e8;border-radius:4px;background:#fff;color:#344550;font:inherit;font-size:11px;outline:none}
+.detail-review-form input:focus,.detail-review-form textarea:focus{border-color:#e96f45;box-shadow:0 0 0 3px #e96f4515}
+.detail-review-form textarea{resize:vertical;line-height:1.7}
+.detail-rating-picker{display:flex;gap:5px}
+.detail-rating-picker button{display:grid;place-items:center;width:30px;height:30px;border:0;background:transparent;color:#e6a24b;cursor:pointer}
+.detail-review-form .primary-button{align-self:flex-start;display:inline-flex;align-items:center;gap:8px}
+.detail-review-form>small{color:#87939a;font-size:9px;line-height:1.6}
+.detail-review-notice{padding:11px 13px;border:1px solid #f0d8c9;border-radius:4px;background:#fff7f2;color:#9d5638;font-size:11px;line-height:1.6}
+.admin-reviews-panel{gap:14px}
+.admin-review-card{padding:16px;border:1px solid #e4e9ec;border-radius:7px;background:#fbfcfd}
+.admin-review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.admin-review-head>div{display:flex;flex-direction:column;gap:5px}
+.admin-review-head strong{color:#2b3b45;font-size:12px}
+.admin-review-head small{color:#87939a;font-size:9px}
+.admin-review-status{padding:4px 8px;border-radius:20px;background:#f1f3f4;color:#6d7981;font-size:9px;font-weight:850;text-transform:uppercase}
+.admin-review-status.pending{background:#fff3e8;color:#a85b32}
+.admin-review-status.approved{background:#eaf5ee;color:#367a55}
+.admin-review-status.rejected{background:#f9eded;color:#a24e4e}
+.admin-review-stars{margin-top:12px;color:#e6a24b;letter-spacing:2px}
+.admin-review-card h3{margin:7px 0;color:#2c3b45;font-size:13px}
+.admin-review-body{margin:0 0 12px;color:#687780;font-size:11px;line-height:1.7;white-space:pre-line}
+@media(max-width:790px){.detail-review-list{grid-template-columns:1fr}.detail-info-tabs{gap:18px}}
+@media(max-width:540px){.detail-review-heading{flex-direction:column}.detail-review-score{align-items:flex-start}.detail-info-tabs a{font-size:10px}.detail-review-form-wrap{padding:16px}}

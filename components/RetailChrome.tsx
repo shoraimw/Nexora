@@ -41,7 +41,7 @@ export function RetailHero(){
    {slides.map((slide,index)=><div key={slide.kicker} className={"retail-hero-slide"+(index===active?" is-active":"")} aria-hidden={index!==active}>
     <img src={slide.image} alt={slide.alt} fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"}/>
     <div className="retail-hero-shade"/>
-    <div className="retail-hero-copy"><span className="retail-hero-kicker">{slide.kicker}</span><h1>{slide.title.split("\\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{slide.description}</p><Link tabIndex={active===index?0:-1} href={slide.href} className="retail-primary-link">{slide.cta}<ArrowRight size={17}/></Link></div>
+    <div className="retail-hero-copy"><span className="retail-hero-kicker">{slide.kicker}</span><h1>{slide.title.split("\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{slide.description}</p><Link tabIndex={active===index?0:-1} href={slide.href} className="retail-primary-link">{slide.cta}<ArrowRight size={17}/></Link></div>
    </div>)}
    <div className="retail-slider-footer" aria-hidden="true"><div className="retail-slider-progress"><span key={active}/></div><span>DISCOVER THE COLLECTION</span></div>
   </div>
