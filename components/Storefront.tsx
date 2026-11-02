@@ -11,7 +11,7 @@ function DemoProductCard({product}:{product:Product}){
  const {add}=useCart();
  return <article className="retail-product-card">
   <Link href={"/product/"+product.slug} className="retail-product-image" aria-label={"View "+product.name}>
-   {product.image?<img src={product.image} alt={product.name} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>:<span className="retail-image-placeholder">{product.art}</span>}
+   <span className="retail-image-placeholder">{product.art}</span>{product.image&&<img src={product.image} alt={product.name} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>}
    {product.tag&&<span className="retail-product-badge">{product.tag}</span>}
    <span className="retail-preview-badge">Preview</span>
    <span className="retail-quick-view"><ArrowUpRight size={17}/></span>
