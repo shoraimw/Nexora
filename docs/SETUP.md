@@ -17,9 +17,10 @@
 4. Then `database/004_payment_reconciliation.sql`.
 5. Then `database/005_delivery_zones.sql` (delivery fee trigger and shipping zones).
 6. Then `database/006_store_offers.sql` (owner-managed offers with scheduled visibility).
-7. Confirm RLS is enabled on every public table, and non-admin users cannot query orders, claims, admin memberships or audit logs directly.
-8. Confirm storage buckets exist: `nexora-products` (public product imagery) and `nexora-avatars` (private signed URLs).
-9. These migrations have NOT been tested against a live Supabase instance in this conversation. Test using a fresh staging database and a representative order lifecycle before launch.
+7. Then `database/007_product_reviews.sql` (verified-purchase reviews, private moderation queue and aggregate ratings).
+8. Confirm RLS is enabled on every public table, and non-admin users cannot query orders, claims, admin memberships or audit logs directly.
+9. Confirm storage buckets exist: `nexora-products` (public product imagery) and `nexora-avatars` (private signed URLs).
+10. These migrations have NOT been tested against a live Supabase instance in this conversation. Test using a fresh staging database and a representative order lifecycle before launch.
 
 ## 3. Environment variables (place in hosting Secrets UI, NOT GitHub)
 
@@ -69,6 +70,7 @@ Replace the placeholders with the verified addresses. Check that exactly two int
 - Under Promotions & FAQ, configure bKash, Nagad, COD and verified receiving numbers. Add delivery notices and support email.
 - Add at least one district-specific delivery zone or a `*` nationwide fallback rate in the admin Promotions tab. Validate the fee against courier terms. Add official warranty, return and privacy policies before sales.
 - In **Storefront offers**, create a promotion and optionally attach an existing active coupon. Activate it and set its start/end times; the header glow and Offers page appear only while the offer is within that window. Paused, future and expired offers stay hidden.
+- Customer reviews require a verified email and a delivered order containing the product. New reviews are private until one of the two owner accounts approves them in **Reviews**. Test this flow with a delivered staging order before launch.
 - Check the recipient account's genuine transaction history before verifying *each* claim.
 - Record overpayments and process refunds **outside the website** through the actual provider first. Only then record refund reference in admin.
 - Steadfast booking is initially manual. Enter the real consignment ID and approved tracking URL before marking shipped.

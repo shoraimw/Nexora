@@ -19,6 +19,7 @@ test("server validates owner membership before administrative actions",()=>{
  const src=read("lib/server.ts");
  assert.match(src,/getUser\(auth.slice\(7\)\)/);
  assert.match(src,/admin_memberships/);
+ assert.match(src,/\.eq\("role","owner"\)/);
 });
 test("secret-bearing local environment files are ignored",()=>{
  const ignore=read(".gitignore");
@@ -114,4 +115,32 @@ test("offers navigation glows only with active offers and offers page has empty 
  assert.match(page,/No offers now/);
  assert.match(page,/offer\.coupon_code/);
  assert.match(css,/nexora-offer-spin/);
+});
+
+test("customer reviews are verified-purchase, private by default and owner moderated",()=>{
+ const migration=read("database/007_product_reviews.sql");
+ const publicApi=read("app/api/reviews/route.ts");
+ const adminApi=read("app/api/admin/reviews/route.ts");
+ const dashboard=read("app/api/admin/dashboard/route.ts");
+ const admin=read("app/admin/page.tsx");
+ assert.match(migration,/unique\(product_id,user_id\)/i);
+ assert.match(migration,/enable row level security/i);
+ assert.match(migration,/revoke all on public\.product_reviews from anon,authenticated/i);
+ assert.match(migration,/o\.order_status='delivered'/);
+ assert.match(migration,/new\.verified_purchase:=true/);
+ assert.match(migration,/status text not null default 'pending'/);
+ assert.match(publicApi,/email_confirmed_at/);
+ assert.match(publicApi,/rateAllow/);
+ assert.match(publicApi,/status:"pending"/);
+ assert.match(publicApi,/eq\("status","approved"\)/);
+ assert.match(adminApi,/requireOwner\(req\)/);
+ assert.match(adminApi,/status:z\.enum\(\["approved","rejected"\]\)/);
+ assert.match(dashboard,/product_reviews/);
+ assert.match(admin,/moderateReview/);
+});
+test("storefront private routes are excluded from search crawlers",()=>{
+ const robots=read("app/robots.ts");
+ assert.match(robots,/\/admin/);
+ assert.match(robots,/\/checkout/);
+ assert.match(robots,/\/api/);
 });

@@ -16,6 +16,9 @@
 - [ ] Demo products removed; real images, variant prices, warranties and stock reviewed
 - [ ] Mobile UI tested on common phones and slow mobile connections
 - [ ] Search, filters, cart and variant switching tested
+- [ ] Hero autoplay, reduced-motion behaviour and mobile filter drawer tested
+- [ ] Product descriptions/specifications checked for accuracy
+- [ ] Review submission requires a verified delivered purchase; pending reviews are not public; owner moderation and aggregate ratings tested
 - [ ] Active offer schedule, coupon validity and automatic expiry display verified
 - [ ] Privacy notices, returns terms and delivery ETA/charges finalized
 - [ ] Product image and avatar upload safety checks verified
@@ -44,6 +47,8 @@
 
 ## Security verification
 - [ ] Dynamic API role checks, CSRF/Origin, rate limits, input validation tested
+- [ ] Both owner accounts are provisioned with role `owner`; manager memberships cannot perform owner-only actions
+- [ ] Product-review RLS, verified-purchase trigger and moderation authorization tested
 - [ ] No service-role keys leaked in browser JavaScript, logs or repository
 - [ ] Backups, incident escalation and account recovery documented
 - [ ] Supabase service role scoped to server runtime; secrets rotated after suspected exposure

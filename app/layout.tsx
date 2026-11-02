@@ -18,7 +18,7 @@ export const metadata:Metadata={
  title:{default:"Nexora | Connect with Modern World",template:"%s | Nexora"},
  description:"Discover gadgets, tech accessories and unique everyday finds with Nexora.",
  icons:{icon:[{url:"/favicon.png",type:"image/png",sizes:"96x96"}],shortcut:"/favicon.png",apple:"/favicon.png"},
- robots:{index:false,follow:false}
+ robots:{index:true,follow:true}
 };
 export default function RootLayout({children}:{children:React.ReactNode}){
  return <html lang="en"><body><CartProvider>
