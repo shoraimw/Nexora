@@ -32,7 +32,7 @@ async function deliveredOrderForProduct(productId:string,user:User):Promise<stri
 }
 
 export async function GET(req:Request){
- if(!configured)return ok({live:false,count:0,average:0,reviews:[],canReview:false,hasReviewed:false});
+ if(!configured)return ok({live:false,count:0,average:0,reviews:[],canReview:false,hasReviewed:false,signedIn:false,emailVerified:false});
  const productId=uuid.safeParse(new URL(req.url).searchParams.get("productId"));
  if(!productId.success)return bad("A valid product is required");
  const s=db();
@@ -49,7 +49,7 @@ export async function GET(req:Request){
   if(!hasReviewed)canReview=!!(await deliveredOrderForProduct(productId.data,user));
  }
  const stats=Array.isArray(summary)?summary[0]:null;
- return ok({live:true,count:Number(stats?.review_count||0),average:Number(stats?.average_rating||0),reviews:reviews||[],canReview,hasReviewed,signedIn:!!user});
+ return ok({live:true,count:Number(stats?.review_count||0),average:Number(stats?.average_rating||0),reviews:reviews||[],canReview,hasReviewed,signedIn:!!user,emailVerified:!!user?.email_confirmed_at});
 }
 
 export async function POST(req:Request){

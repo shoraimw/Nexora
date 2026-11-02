@@ -20,7 +20,7 @@ test("server validates owner membership before administrative actions",()=>{
  assert.match(src,/getUser\(auth.slice\(7\)\)/);
  assert.match(src,/admin_memberships/);
  assert.match(src,/timingSafeEqual/);
- assert.match(src,/new URL\\(origin\\)\\.origin===new URL\\(req\\.url\\)\\.origin/);
+ assert.ok(src.includes("new URL(origin).origin===new URL(req.url).origin"));
  assert.match(src,/\.eq\("role","owner"\)/);
 });
 test("secret-bearing local environment files are ignored",()=>{

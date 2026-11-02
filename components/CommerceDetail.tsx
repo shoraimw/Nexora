@@ -7,14 +7,14 @@ import {authHeaders,browserDb} from "@/lib/browser";
 import type {LiveProduct} from "@/lib/catalog-live";
 const money=(v:number)=>"৳"+(v/100).toLocaleString("en-BD",{maximumFractionDigits:2});
 type Review={id:string;rating:number;title:string;body:string;verified_purchase:boolean;created_at:string};
-type ReviewPayload={count:number;average:number;reviews:Review[];canReview:boolean;hasReviewed:boolean;signedIn:boolean};
+type ReviewPayload={count:number;average:number;reviews:Review[];canReview:boolean;hasReviewed:boolean;signedIn:boolean;emailVerified:boolean};
 function StarDisplay({value}:{value:number}){
  return <span className="detail-stars" aria-label={value.toFixed(1)+" out of 5 stars"}>{[1,2,3,4,5].map(n=><Star key={n} size={15} fill={n<=Math.round(value)?"currentColor":"none"}/>)}</span>;
 }
 export function CommerceDetail({product:p}:{product:LiveProduct}){
  const [index,setIndex]=useState(0);
  const [selected,setSelected]=useState(p.variants.find(x=>x.available>0)?.id||p.variants[0]?.id||"");
- const [reviewData,setReviewData]=useState<ReviewPayload>({count:0,average:0,reviews:[],canReview:false,hasReviewed:false,signedIn:false});
+ const [reviewData,setReviewData]=useState<ReviewPayload>({count:0,average:0,reviews:[],canReview:false,hasReviewed:false,signedIn:false,emailVerified:false});
  const [reviewLoading,setReviewLoading]=useState(true);
  const [reviewError,setReviewError]=useState("");
  const [reviewMessage,setReviewMessage]=useState("");
@@ -29,7 +29,7 @@ export function CommerceDetail({product:p}:{product:LiveProduct}){
    const response=await fetch("/api/reviews?productId="+encodeURIComponent(p.id),{headers:await authHeaders(),cache:"no-store"});
    const data=await response.json();
    if(!response.ok)throw Error(data.error||"Customer reviews are temporarily unavailable.");
-   setReviewData({count:Number(data.count||0),average:Number(data.average||0),reviews:Array.isArray(data.reviews)?data.reviews:[],canReview:!!data.canReview,hasReviewed:!!data.hasReviewed,signedIn:!!data.signedIn});
+   setReviewData({count:Number(data.count||0),average:Number(data.average||0),reviews:Array.isArray(data.reviews)?data.reviews:[],canReview:!!data.canReview,hasReviewed:!!data.hasReviewed,signedIn:!!data.signedIn,emailVerified:!!data.emailVerified});
   }catch(error){setReviewError(error instanceof Error?error.message:"Customer reviews are temporarily unavailable.");}
   finally{setReviewLoading(false);}
  }
@@ -91,6 +91,7 @@ export function CommerceDetail({product:p}:{product:LiveProduct}){
       <button className="primary-button" disabled={reviewSubmitting}><Send size={15}/>{reviewSubmitting?"Submitting…":"Submit review"}</button>
       <small>Your review will appear publicly after an owner checks it. Only one review per product per account.</small>
      </form>
+    :reviewData.signedIn&&!reviewData.emailVerified?<p className="detail-muted">Please verify your account email before submitting a customer review.</p>
     :reviewData.signedIn?<p className="detail-muted">A delivered order containing this product is required before you can submit a review. If you just received your order, please allow the order status to update.</p>
     :<p className="detail-muted"><Link href="/account">Sign in to your Nexora account</Link> to submit a review after your order has been delivered.</p>}
    </div>

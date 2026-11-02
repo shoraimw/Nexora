@@ -30,7 +30,7 @@
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes for backend | Publishable/anon key, public |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes for backend | **SERVER ONLY**, never expose |
 | `TRACKING_SECRET` | Yes for checkout | Random ≥32-character secret; preserve across deployments |
-| `RATE_LIMIT_SECRET` | Recommended | Another random ≥32-character secret; per-IP hashes |
+| `RATE_LIMIT_SECRET` | Required for rate-limited public actions | Random ≥32-character secret; per-IP hashes for checkout, tracking, reviews and uploads. `TRACKING_SECRET` is the fallback if this is omitted |
 | `NEXORA_LIVE_ORDERS` | No; default disabled | Set to `true` ONLY after go-live checks |
 | `BREVO_API_KEY` | For emails | Server-only Free tier transactional API |
 | `BREVO_SENDER_EMAIL` | For emails | Verified sender address, server-only |
