@@ -59,3 +59,15 @@ language sql stable security definer set search_path='' as $$
 $$;
 revoke all on function public.nexora_product_review_summary(uuid) from public,anon,authenticated;
 grant execute on function public.nexora_product_review_summary(uuid) to service_role;
+
+-- One aggregate query powers product-card ratings without exposing private rows.
+create or replace function public.nexora_product_review_summaries(p_product_ids uuid[])
+returns table(product_id uuid,review_count bigint,average_rating numeric)
+language sql stable security definer set search_path='' as $$
+ select requested.product_id,count(r.id)::bigint,coalesce(round(avg(r.rating)::numeric,1),0)
+ from unnest(coalesce(p_product_ids,'{}'::uuid[])) as requested(product_id)
+ left join public.product_reviews r on r.product_id=requested.product_id and r.status='approved'
+ group by requested.product_id;
+$$;
+revoke all on function public.nexora_product_review_summaries(uuid[]) from public,anon,authenticated;
+grant execute on function public.nexora_product_review_summaries(uuid[]) to service_role;

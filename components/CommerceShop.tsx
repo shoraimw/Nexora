@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {ShoppingBag,ArrowUpRight,ArrowRight,ChevronRight} from "lucide-react";
+import {ShoppingBag,ArrowUpRight,ArrowRight,ChevronRight,Star} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
@@ -22,7 +22,7 @@ function ProductCard({product}:{product:LiveProduct}){
    {discount>0&&<span className="retail-discount-badge">{discount}% OFF</span>}
    <span className="retail-quick-view"><ArrowUpRight size={17}/></span>
   </Link>
-  <div className="retail-product-info"><span className="retail-product-category">{product.category}</span><Link className="retail-product-name" href={"/product/"+product.slug}>{product.title}</Link><span className="retail-product-brand">{product.brand||"Brand not specified"}</span>
+  <div className="retail-product-info"><span className="retail-product-category">{product.category}</span><Link className="retail-product-name" href={"/product/"+product.slug}>{product.title}</Link><span className="retail-product-brand">{product.brand||"Brand not specified"}</span>{product.review_count>0&&<div className="retail-card-rating"><Star size={12} fill="currentColor"/><strong>{product.review_average.toFixed(1)}</strong><span>({product.review_count})</span></div>}
    <div className="retail-price-row"><strong>{variant?money(variant.price_paisa):"Price on request"}</strong>{variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa&&<s>{money(variant.compare_at_paisa)}</s>}</div>
    <span className={inStock?"retail-stock in-stock":"retail-stock out-stock"}>{inStock?"In stock":"Currently unavailable"}</span>
    <button className="retail-add-button" disabled={!variant||!inStock} onClick={()=>variant&&add(variant.id)}><ShoppingBag size={15}/> Add to cart</button>
@@ -49,6 +49,7 @@ export function CommerceShop({homepage=false}:{homepage?:boolean}){
  const shown=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
  const categories=useMemo(()=>["All",...Array.from(new Set(items.map(p=>p.category))).sort()],[items]);
+ const featured=useMemo(()=>items.filter(p=>p.featured).slice(0,8),[items]);
  const newest=useMemo(()=>[...items].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||"")).slice(0,8),[items]);
  const homeGroups=useMemo(()=>["Audio","Wearables","Accessories","Desk Setup","Student Picks"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5)})).filter(g=>g.items.length),[items]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">

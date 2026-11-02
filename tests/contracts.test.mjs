@@ -136,6 +136,9 @@ test("customer reviews are verified-purchase, private by default and owner moder
  assert.match(adminApi,/requireOwner\(req\)/);
  assert.match(adminApi,/status:z\.enum\(\["approved","rejected"\]\)/);
  assert.match(dashboard,/product_reviews/);
+ assert.match(read("lib/catalog-live.ts"),/nexora_product_review_summaries/);
+ assert.match(read("components/CommerceShop.tsx"),/retail-card-rating/);
+ assert.match(read("components/CommerceShop.tsx"),/Featured picks/);
  assert.match(admin,/moderateReview/);
 });
 test("storefront private routes are excluded from search crawlers",()=>{

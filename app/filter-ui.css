@@ -194,3 +194,7 @@
 .admin-review-body{margin:0 0 12px;color:#687780;font-size:11px;line-height:1.7;white-space:pre-line}
 @media(max-width:790px){.detail-review-list{grid-template-columns:1fr}.detail-info-tabs{gap:18px}}
 @media(max-width:540px){.detail-review-heading{flex-direction:column}.detail-review-score{align-items:flex-start}.detail-info-tabs a{font-size:10px}.detail-review-form-wrap{padding:16px}}
+
+.retail-card-rating{display:flex;align-items:center;gap:4px;margin:5px 0 2px;color:#d89a42}
+.retail-card-rating strong{color:#53616a;font-size:9px}
+.retail-card-rating span{color:#89949b;font-size:9px}
