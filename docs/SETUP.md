@@ -62,6 +62,9 @@ Replace the placeholders with the verified addresses. Check that exactly two int
 - Sign in at `/admin`.
 - Create categories and products, then real variants/SKUs, prices and stock.
 - Upload actual product pictures and publish only verified listings.
+- Enter the authentic **Brand** and **Connection type** (Wireless, Wired, or Wireless & Wired) for each product under **Edit details**. The storefront filter intentionally uses this explicit metadata. USB-C charging alone does not mean wired audio connectivity.
+- Add a **Compare-at price (BDT)** only when it represents a legitimate previous/reference price and is not below the selling price. This powers the sale filter and discount sorting; validate promotional price disclosures before launching.
+- Brand search suggestions are generated only from the active catalog. Illustrative "Sample ..." brand names in the no-database preview are NOT real stock.
 - Under Promotions & FAQ, configure bKash, Nagad, COD and verified receiving numbers. Add delivery notices and support email.
 - Add at least one district-specific delivery zone or a `*` nationwide fallback rate in the admin Promotions tab. Validate the fee against courier terms. Add official warranty, return and privacy policies before sales.
 - Check the recipient account's genuine transaction history before verifying *each* claim.

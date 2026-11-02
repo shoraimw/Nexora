@@ -35,6 +35,8 @@ jobs:
           done
           node -e 'const h=require("/tmp/health.json");if(h.mode!=="preview"||h.checkoutEnabled)process.exit(1)'
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/)" = "200"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/shop)" = "200"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/product/aero-buds)" = "200"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/checkout)" = "200"
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/orders)" = "503"
           echo "Preview is readable and payment submission is disabled."

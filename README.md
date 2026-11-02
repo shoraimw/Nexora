@@ -10,6 +10,8 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 ### Customer storefront
 - Responsive home and product discovery with categories, search, price sorting, featured items
 - Real Supabase catalog API (owner-approved products only); demo listings shown when backend is not configured
+- Shop filters: category, dynamic brand suggestions, explicit wired/wireless connectivity, BDT min/max price, in-stock only, sale only and sorting
+- Filter engine has functional regression tests (`tests/shop-filters.test.mjs`); demo brands are fictional sample values, not real inventory
 - Product page with images, details, specifications, color/variant selection, live available stock and product links
 - Browser shopping cart, guest checkout, coupons, bKash / Nagad manual claims, Cash on Delivery
 - Customer sign-in/sign-up, optional profile photo, delivery details and order list
