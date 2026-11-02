@@ -68,6 +68,6 @@ Never commit `.env.local`, API keys, password reset tokens, email recipient list
 - Do not set `NEXORA_LIVE_ORDERS=true` until migration tests, security verification, official receiving details, delivery fee policy and email sender have passed.
 - Delivery charge uses a district-specific or nationwide fallback rate configured by owners. If no zone matches, checkout fails closed; owners must test actual delivery fees before real sales.
 - **Vercel Hobby cannot be used for commercial selling under its terms**. Development preview is acceptable; select commercial-compatible hosting for customer orders.
-- Original Nexora logo supplied by the owners is included as optimized transparent PNGs. Header uses the dark wordmark, footer the white wordmark, and browser favicon uses the orange symbol from the supplied image.
+- Original Nexora logo supplied by the owners is included as original-artwork transparent PNGs (only unused transparent margins cropped). Header uses the dark wordmark, footer the white wordmark, and browser favicon uses the orange symbol from the supplied image.
 
 Owners maintain complete control of hosting, billing permissions, Supabase, merchant accounts and production switch.
