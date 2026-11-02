@@ -54,3 +54,9 @@
 .retail-product-image .retail-discount-badge{z-index:2}
 .retail-product-image .retail-quick-view{z-index:3}
 @media(max-width:540px){.retail-product-image>img{padding:7px}}
+
+.retail-brand-shortcuts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:5px 0}
+.retail-brand-shortcuts>span{font-size:10px;font-weight:800;color:#7e8b94;margin-right:5px}
+.retail-brand-shortcuts button{border:1px solid #e3e9ed;background:#fff;padding:7px 10px;border-radius:4px;font-size:10px;font-weight:750;color:#65727c;transition:background .16s,border-color .16s}
+.retail-brand-shortcuts button:hover{border-color:#e9ab91;color:#ad5735}
+.retail-brand-shortcuts button.selected{background:#fff1e9;border-color:#e9ab91;color:#bc603b}

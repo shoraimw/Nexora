@@ -26,6 +26,7 @@ export function ShopFilterToolbar({filters,onChange,brands,results}:Props){
    <span className="retail-filter-results"><SlidersHorizontal size={14}/>{results} results</span>
    {count>0&&<button type="button" className="retail-reset-filters" onClick={()=>onChange({...filters,category:"All",query:"",brand:"",connection:"all",inStockOnly:false,onSaleOnly:false,minPriceBdt:"",maxPriceBdt:"",sort:"featured"})}><RotateCcw size={14}/> Clear filters ({count})</button>}
   </div>
+  {brands.length>0&&<div className="retail-brand-shortcuts" aria-label="Browse brands"><span>Quick brands:</span>{brands.slice(0,10).map(brand=><button type="button" key={brand} className={filters.brand.toLowerCase()===brand.toLowerCase()?"selected":""} aria-pressed={filters.brand.toLowerCase()===brand.toLowerCase()} onClick={()=>change("brand",filters.brand.toLowerCase()===brand.toLowerCase()?"":brand)}>{brand}</button>)}</div>}
   {brands.length===0&&<small className="retail-filter-footnote">Brands appear when Nexora owners add product brand names to the catalog.</small>}
  </div>;
 }
