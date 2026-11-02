@@ -12,7 +12,7 @@
 - [ ] No credit card, paid provider account or automatic upgrades enabled
 
 ## Catalog and customer experience
-- [ ] Original transparent Nexora logo provided and applied
+- [x] Original transparent Nexora logo provided and applied to header, footer, and browser tab
 - [ ] Demo products removed; real images, variant prices, warranties and stock reviewed
 - [ ] Mobile UI tested on common phones and slow mobile connections
 - [ ] Search, filters, cart and variant switching tested

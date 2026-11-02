@@ -1,5 +1,10 @@
 # Nexora — Connect with Modern World
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/brand/nexora-logo-light.png">
+  <img alt="Nexora official orange and black logo" src="public/brand/nexora-logo-dark.png" width="180">
+</picture>
+
 Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, React, TypeScript and Supabase/PostgreSQL.
 
 > **CURRENT STATE: FULL-STACK IMPLEMENTATION / CONFIGURATION PENDING.**
@@ -63,6 +68,6 @@ Never commit `.env.local`, API keys, password reset tokens, email recipient list
 - Do not set `NEXORA_LIVE_ORDERS=true` until migration tests, security verification, official receiving details, delivery fee policy and email sender have passed.
 - Delivery charge uses a district-specific or nationwide fallback rate configured by owners. If no zone matches, checkout fails closed; owners must test actual delivery fees before real sales.
 - **Vercel Hobby cannot be used for commercial selling under its terms**. Development preview is acceptable; select commercial-compatible hosting for customer orders.
-- Real Nexora logo has not been supplied as a transparent original asset. The letter N currently shown is a temporary, independently drawn placeholder.
+- Original Nexora logo supplied by the owners is included as optimized transparent PNGs. Header uses the dark wordmark, footer the white wordmark, and browser favicon uses the orange symbol from the supplied image.
 
 Owners maintain complete control of hosting, billing permissions, Supabase, merchant accounts and production switch.

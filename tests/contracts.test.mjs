@@ -46,3 +46,13 @@ test("owner product editor saves connection type in product specs",()=>{
  assert.match(admin,/connection_type/);
  assert.match(admin,/specs:connection_type/);
 });
+
+test("Nexora displays owner-supplied assets across header and footer",()=>{
+ const layout=read("app/layout.tsx");
+ assert.match(layout,/brand\\/nexora-logo-dark\\.png/);
+ assert.match(layout,/brand\\/nexora-logo-light\\.png/);
+ assert.match(layout,/favicon\\.png/);
+ for(const path of ["public/brand/nexora-logo-dark.png","public/brand/nexora-logo-light.png","public/favicon.png"]){
+  assert.ok(existsSync(new URL("../"+path,import.meta.url)),path+" must exist");
+ }
+});
