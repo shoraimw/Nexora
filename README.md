@@ -32,6 +32,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 - Orders, individual payment-claim review and overpayment alerts
 - Manual refund records (does not send/refund money automatically)
 - Consignment ID / tracking URL for Steadfast dispatch managed by owners
+- Owner-managed storefront offers with scheduled start/end times, animated active-offer navigation, coupon-code linking and automatic expiry visibility
 - Coupon creation, verified chatbot FAQs, receiving payment numbers and public notices
 - Email outbox status and retry; optional Brevo Free transactional delivery
 

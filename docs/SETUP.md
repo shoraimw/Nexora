@@ -16,9 +16,10 @@
 3. Then `database/003_stock_and_avatar.sql`.
 4. Then `database/004_payment_reconciliation.sql`.
 5. Then `database/005_delivery_zones.sql` (delivery fee trigger and shipping zones).
-6. Confirm RLS is enabled on every public table, and non-admin users cannot query orders, claims, admin memberships or audit logs directly.
-7. Confirm storage buckets exist: `nexora-products` (public product imagery) and `nexora-avatars` (private signed URLs).
-8. These migrations have NOT been tested against a live Supabase instance in this conversation. Test using a fresh staging database and a representative order lifecycle before launch.
+6. Then `database/006_store_offers.sql` (owner-managed offers with scheduled visibility).
+7. Confirm RLS is enabled on every public table, and non-admin users cannot query orders, claims, admin memberships or audit logs directly.
+8. Confirm storage buckets exist: `nexora-products` (public product imagery) and `nexora-avatars` (private signed URLs).
+9. These migrations have NOT been tested against a live Supabase instance in this conversation. Test using a fresh staging database and a representative order lifecycle before launch.
 
 ## 3. Environment variables (place in hosting Secrets UI, NOT GitHub)
 
@@ -67,6 +68,7 @@ Replace the placeholders with the verified addresses. Check that exactly two int
 - Brand search suggestions are generated only from the active catalog. Illustrative "Sample ..." brand names in the no-database preview are NOT real stock.
 - Under Promotions & FAQ, configure bKash, Nagad, COD and verified receiving numbers. Add delivery notices and support email.
 - Add at least one district-specific delivery zone or a `*` nationwide fallback rate in the admin Promotions tab. Validate the fee against courier terms. Add official warranty, return and privacy policies before sales.
+- In **Storefront offers**, create a promotion and optionally attach an existing active coupon. Activate it and set its start/end times; the header glow and Offers page appear only while the offer is within that window. Paused, future and expired offers stay hidden.
 - Check the recipient account's genuine transaction history before verifying *each* claim.
 - Record overpayments and process refunds **outside the website** through the actual provider first. Only then record refund reference in admin.
 - Steadfast booking is initially manual. Enter the real consignment ID and approved tracking URL before marking shipped.

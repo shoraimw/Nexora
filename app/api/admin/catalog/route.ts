@@ -1,6 +1,8 @@
 import {z} from "zod";
 import {configured,db,requireOwner,bad,ok,readBody,sameOrigin} from "@/lib/server";
 import {uuid,productInput,variantInput} from "@/lib/validation";
+const offerFields=z.object({title:z.string().trim().min(3).max(120),description:z.string().trim().max(500).default(""),badge:z.string().trim().min(2).max(32).default("SPECIAL OFFER"),coupon_code:z.string().trim().min(3).max(25).transform(v=>v.toUpperCase()).nullable().default(null),target_url:z.string().trim().max(300).regex(/^\\/(?!\\/)[A-Za-z0-9/_?&=%.#-]*$/).default("/shop"),cta_label:z.string().trim().min(2).max(32).default("Shop now"),starts_at:z.string().datetime({offset:true}).nullable().default(null),ends_at:z.string().datetime({offset:true}).nullable().default(null),active:z.boolean().default(false),sort_order:z.number().int().min(0).max(10000).default(0)}).refine(x=>!x.starts_at||!x.ends_at||new Date(x.ends_at)>new Date(x.starts_at),{message:"Offer end must be after start",path:["ends_at"]});
+const offerPatch=offerFields.partial().extend({id:uuid});
 export async function POST(req:Request){
  if(!configured)return bad("Backend not configured",503);
  if(!sameOrigin(req))return bad("Origin rejected",403);
@@ -39,6 +41,18 @@ export async function POST(req:Request){
    const x=z.object({code:z.string().trim().min(3).max(25),type:z.enum(["flat","percent"]),amount:z.number().int().positive(),min_subtotal_paisa:z.number().int().nonnegative().default(0),max_uses:z.number().int().positive().nullable().optional(),active:z.boolean().default(true)}).parse(payload);
    if(x.type==="percent"&&x.amount>100)throw Error("Percentage exceeds 100");
    const {data,error}=await s.from("coupons").insert({...x,code:x.code.toUpperCase()}).select().single();if(error)throw error;response=data;
+  }else if(action==="offer.create"){
+   const x=offerFields.parse(payload);
+   if(x.coupon_code){const {data:coupon,error}=await s.from("coupons").select("code,active").eq("code",x.coupon_code).maybeSingle();if(error)throw error;if(!coupon?.active)throw Error("Create and activate this coupon before attaching it to an offer.");}
+   const {data,error}=await s.from("store_offers").insert(x).select().single();if(error)throw error;response=data;
+  }else if(action==="offer.update"){
+   const {id,...patch}=offerPatch.parse(payload);
+   const {data:current,error:readError}=await s.from("store_offers").select("starts_at,ends_at").eq("id",id).maybeSingle();
+   if(readError)throw readError;if(!current)throw Error("Offer not found.");
+   const starts=patch.starts_at===undefined?current.starts_at:patch.starts_at,ends=patch.ends_at===undefined?current.ends_at:patch.ends_at;
+   if(starts&&ends&&new Date(ends)<=new Date(starts))throw Error("Offer end must be after start.");
+   if(patch.coupon_code){const {data:coupon,error}=await s.from("coupons").select("code,active").eq("code",patch.coupon_code).maybeSingle();if(error)throw error;if(!coupon?.active)throw Error("Create and activate this coupon before attaching it to an offer.");}
+   const {data,error}=await s.from("store_offers").update({...patch,updated_at:new Date().toISOString()}).eq("id",id).select().single();if(error)throw error;response=data;
   }else if(action==="delivery.set"){
    const x=z.object({district:z.string().trim().min(1).max(100),fee_paisa:z.number().int().min(0).max(10000000),eta_text:z.string().trim().min(4).max(250),active:z.boolean().default(true)}).parse(payload);
    const zone={...x,district:x.district==="*"?"*":x.district.toLowerCase(),updated_at:new Date().toISOString()};

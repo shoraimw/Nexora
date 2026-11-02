@@ -16,6 +16,7 @@
 - [ ] Demo products removed; real images, variant prices, warranties and stock reviewed
 - [ ] Mobile UI tested on common phones and slow mobile connections
 - [ ] Search, filters, cart and variant switching tested
+- [ ] Active offer schedule, coupon validity and automatic expiry display verified
 - [ ] Privacy notices, returns terms and delivery ETA/charges finalized
 - [ ] Product image and avatar upload safety checks verified
 

@@ -8,8 +8,9 @@ type Variant={id:string;product_id:string;name:string;sku:string;color:string|nu
 type Inventory={variant_id:string;on_hand:number;reserved:number};
 type Order={overpaid_paisa:number;id:string;order_no:string;full_name:string;email:string;phone:string;total_paisa:number;payment_method:string;payment_status:string;order_status:string;created_at:string;address:string;district:string};
 type Claim={id:string;order_id:string;provider:string;transaction_id:string;claimed_paisa:number;status:string};
-type Dashboard={products:Product[];variants:Variant[];inventory:Inventory[];categories:Category[];orders:Order[];claims:Claim[];emails:{id:string;kind:string;status:string}[];coupons:{code:string;type:string;amount:number}[];faqs:{id:string;question:string;answer:string;active:boolean}[];zones:{district:string;fee_paisa:number;eta_text:string;active:boolean}[];images:{product_id:string;url:string}[]};
-const empty:Dashboard={products:[],variants:[],inventory:[],categories:[],orders:[],claims:[],emails:[],coupons:[],faqs:[],zones:[],images:[]};
+type StoreOffer={id:string;title:string;description:string;badge:string;coupon_code:string|null;target_url:string;cta_label:string;starts_at:string|null;ends_at:string|null;active:boolean;sort_order:number};
+type Dashboard={products:Product[];variants:Variant[];inventory:Inventory[];categories:Category[];orders:Order[];claims:Claim[];emails:{id:string;kind:string;status:string}[];offers:StoreOffer[];coupons:{code:string;type:string;amount:number}[];faqs:{id:string;question:string;answer:string;active:boolean}[];zones:{district:string;fee_paisa:number;eta_text:string;active:boolean}[];images:{product_id:string;url:string}[]};
+const empty:Dashboard={products:[],variants:[],inventory:[],categories:[],orders:[],claims:[],emails:[],offers:[],coupons:[],faqs:[],zones:[],images:[]};
 type Tab="overview"|"products"|"orders"|"categories"|"marketing";
 const money=(n:number)=>"৳"+(n/100).toLocaleString("en-BD");
 export default function Admin(){
@@ -20,6 +21,8 @@ export default function Admin(){
  const [editId,setEditId]=useState("");
  const [editDetails,setEditDetails]=useState({title:"",description:"",warranty:"",brand:"",connection_type:""});
  const [coupon,setCoupon]=useState({code:"",type:"percent",amount:"10"});
+ const [offerForm,setOfferForm]=useState({title:"",description:"",badge:"SPECIAL OFFER",coupon_code:"",target_url:"/shop",cta_label:"Shop now",starts_at:"",ends_at:"",active:false,sort_order:0});
+ const [editingOfferId,setEditingOfferId]=useState("");
  const [faq,setFaq]=useState({question:"",answer:""});
  const [zone,setZone]=useState({district:"*",fee:"",eta:"Within 2–5 business days (estimated)"});
  const [shipping,setShipping]=useState<Record<string,{consignment:string;trackingUrl:string}>>({});
@@ -35,13 +38,22 @@ export default function Admin(){
  }
  useEffect(()=>{void reload();void fetch("/api/settings").then(r=>r.json()).then(x=>x.store&&setShop(v=>({...v,...x.store}))).catch(()=>{});const db=browserDb();const {data:listener}=db?.auth.onAuthStateChange(()=>{setTimeout(()=>{void reload();},0);})||{data:null};return()=>listener?.subscription.unsubscribe();},[]);
  async function signIn(e:React.FormEvent){e.preventDefault();const auth=browserDb();if(!auth)return;setBusy(true);const r=await auth.auth.signInWithPassword({email,password});setMessage(r.error?.message||"Signed in");setBusy(false);if(!r.error)await reload();}
+ function localDateTime(value:string|null){if(!value)return "";const date=new Date(value);return new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+ async function saveOffer(){
+  const starts=offerForm.starts_at?new Date(offerForm.starts_at):null,ends=offerForm.ends_at?new Date(offerForm.ends_at):null;
+  if((starts&&Number.isNaN(starts.getTime()))||(ends&&Number.isNaN(ends.getTime()))){setMessage("Please enter valid offer dates.");return;}
+  if(starts&&ends&&ends<=starts){setMessage("Offer end must be after its start.");return;}
+  const payload={...offerForm,coupon_code:offerForm.coupon_code.trim()?offerForm.coupon_code.trim().toUpperCase():null,starts_at:starts?.toISOString()||null,ends_at:ends?.toISOString()||null};
+  const saved=await mutation(editingOfferId?"offer.update":"offer.create",editingOfferId?{id:editingOfferId,...payload}:payload);
+  if(saved){setOfferForm({title:"",description:"",badge:"SPECIAL OFFER",coupon_code:"",target_url:"/shop",cta_label:"Shop now",starts_at:"",ends_at:"",active:false,sort_order:0});setEditingOfferId("");}
+ }
  async function saveStoreSettings(){
   setBusy(true);
   try{const r=await fetch("/api/admin/settings",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify(shop)});const x=await r.json();setMessage(r.ok?"Checkout settings saved.":x.error);}catch{setMessage("Settings could not be saved");}finally{setBusy(false);}
  }
  async function mutation(action:string,payload:unknown){
   setBusy(true);setMessage("");
-  try{const r=await fetch("/api/admin/catalog",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({action,payload})});const body=await r.json();if(!r.ok)throw Error(body.error||"Update failed");setMessage("Saved successfully.");await reload();}catch(e){setMessage(e instanceof Error?e.message:"Update failed");}finally{setBusy(false);}
+  try{const r=await fetch("/api/admin/catalog",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({action,payload})});const body=await r.json();if(!r.ok)throw Error(body.error||"Update failed");setMessage("Saved successfully.");await reload();return true;}catch(e){setMessage(e instanceof Error?e.message:"Update failed");return false;}finally{setBusy(false);}
  }
  async function transition(order:Order,status?:string,payment?:string){
   const note=payment==="verified"?"Approve ONLY after checking the real bKash/Nagad receiving account transaction, amount and sender. Continue?":status==="cancelled"?"Cancel this order and release reserved inventory?":"Apply this status change?";
@@ -110,6 +122,22 @@ export default function Admin(){
  {data.zones.map(z=><p key={z.district}>{z.district==="*"?"All other areas":z.district}: ৳{(z.fee_paisa/100).toLocaleString()} · {z.eta_text}</p>)}
  </section>
  <section className="admin-panel"><h2>Discount coupon</h2><label>Code<input value={coupon.code} onChange={e=>setCoupon(c=>({...c,code:e.target.value.toUpperCase()}))}/></label><label>Type<select value={coupon.type} onChange={e=>setCoupon(c=>({...c,type:e.target.value}))}><option value="percent">Percent</option><option value="flat">Flat BDT</option></select></label><label>Value<input type="number" min="1" value={coupon.amount} onChange={e=>setCoupon(c=>({...c,amount:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("coupon.create",{code:coupon.code,type:coupon.type,amount:coupon.type==="flat"?Math.round(Number(coupon.amount)*100):Number(coupon.amount)})}>Create coupon</button>{data.coupons.map(c=><p key={c.code}>{c.code} · {c.type==="percent"?c.amount+"%":money(c.amount)}</p>)}</section>
+ <section className="admin-panel admin-offers-panel"><h2><Tags size={18}/> Storefront offers</h2>
+ <p>Create a promotion for the customer-facing Offers page. Only active offers inside their start/end window appear publicly. If you attach a coupon, create and activate it in Discount coupon first.</p>
+ <div className="form-grid">
+  <label>Offer title<input maxLength={120} value={offerForm.title} onChange={e=>setOfferForm(v=>({...v,title:e.target.value}))} placeholder="e.g. Student tech week"/></label>
+  <label>Badge / highlight<input maxLength={32} value={offerForm.badge} onChange={e=>setOfferForm(v=>({...v,badge:e.target.value}))} placeholder="e.g. 15% OFF"/></label>
+  <label className="wide">Description<textarea maxLength={500} value={offerForm.description} onChange={e=>setOfferForm(v=>({...v,description:e.target.value}))} placeholder="Tell customers what this offer includes."/></label>
+  <label>Coupon code (optional)<input maxLength={25} value={offerForm.coupon_code} onChange={e=>setOfferForm(v=>({...v,coupon_code:e.target.value.toUpperCase()}))} placeholder="Create it in Discount coupon first"/></label>
+  <label>Destination URL<input maxLength={300} value={offerForm.target_url} onChange={e=>setOfferForm(v=>({...v,target_url:e.target.value}))} placeholder="/shop or /shop?category=Audio"/></label>
+  <label>Button text<input maxLength={32} value={offerForm.cta_label} onChange={e=>setOfferForm(v=>({...v,cta_label:e.target.value}))}/></label>
+  <label>Starts at (optional)<input type="datetime-local" value={offerForm.starts_at} onChange={e=>setOfferForm(v=>({...v,starts_at:e.target.value}))}/></label>
+  <label>Ends at (optional)<input type="datetime-local" value={offerForm.ends_at} onChange={e=>setOfferForm(v=>({...v,ends_at:e.target.value}))}/></label>
+ </div>
+ <label className="checkline"><input type="checkbox" checked={offerForm.active} onChange={e=>setOfferForm(v=>({...v,active:e.target.checked}))}/> Publish this offer (schedule still applies)</label>
+ <div className="row-actions"><button className="primary-button" disabled={busy||offerForm.title.trim().length<3} onClick={()=>void saveOffer()}>{editingOfferId?"Save offer changes":"Create offer"}</button>{editingOfferId&&<button className="outline-btn" onClick={()=>{setEditingOfferId("");setOfferForm({title:"",description:"",badge:"SPECIAL OFFER",coupon_code:"",target_url:"/shop",cta_label:"Shop now",starts_at:"",ends_at:"",active:false,sort_order:0});}}>Cancel edit</button>}</div>
+ <div className="admin-offer-list"><h3>Saved offers ({data.offers.length})</h3>{data.offers.length?data.offers.map(o=><article className="admin-offer-row" key={o.id}><div><strong>{o.title}</strong><p>{o.badge}{o.coupon_code?" · Code "+o.coupon_code:""} · {o.target_url}</p><small>{o.active?"Enabled":"Paused"}{o.starts_at?" · Starts "+new Date(o.starts_at).toLocaleString():""}{o.ends_at?" · Ends "+new Date(o.ends_at).toLocaleString():""}</small></div><div className="row-actions"><button className="outline-btn" disabled={busy} onClick={()=>{setEditingOfferId(o.id);setOfferForm({title:o.title,description:o.description,badge:o.badge,coupon_code:o.coupon_code||"",target_url:o.target_url,cta_label:o.cta_label,starts_at:localDateTime(o.starts_at),ends_at:localDateTime(o.ends_at),active:o.active,sort_order:o.sort_order});}}>Edit</button><button className="outline-btn" disabled={busy} onClick={()=>void mutation("offer.update",{id:o.id,active:!o.active})}>{o.active?"Pause":"Activate"}</button></div></article>):<p>No offers created yet.</p>}</div>
+ </section>
  <section className="admin-panel"><h2>Chatbot FAQ</h2><label>Question<input value={faq.question} onChange={e=>setFaq(f=>({...f,question:e.target.value}))}/></label><label>Verified answer<textarea value={faq.answer} onChange={e=>setFaq(f=>({...f,answer:e.target.value}))}/></label><button disabled={busy} className="primary-button" onClick={()=>void mutation("faq.create",{...faq,active:true})}>Add FAQ</button>{data.faqs.map(f=><p key={f.id}><strong>{f.question}</strong><br/>{f.answer}</p>)}</section>
  <section className="admin-panel"><h2><Mail size={17}/> Email outbox</h2><p className="muted">Email confirmations are queued; Brevo credentials must be configured separately.</p>{data.emails.slice(0,12).map(e=><p key={e.id}>{e.kind} — {e.status}</p>)}<button className="outline-btn" disabled={busy} onClick={async()=>{setBusy(true);const r=await fetch("/api/admin/emails",{method:"POST",headers:await authHeaders()});const x=await r.json();setMessage(r.ok?"Attempted email delivery: "+x.sent:x.error);setBusy(false);void reload();}}>Retry failed emails</button></section></div>}
  </main>;

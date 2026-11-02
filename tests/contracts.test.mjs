@@ -81,3 +81,32 @@ test("shop category menu closes on navigation, escape and outside clicks",()=>{
  assert.match(layout,/ShopCategoryMenu/);
  assert.ok(!layout.includes('<details className="retail-category-dropdown"'));
 });
+
+test("offers are scheduled, owner-managed and publicly time-filtered",()=>{
+ const migration=read("database/006_store_offers.sql");
+ const publicApi=read("app/api/offers/route.ts");
+ const adminApi=read("app/api/admin/catalog/route.ts");
+ const dashboard=read("app/api/admin/dashboard/route.ts");
+ assert.match(migration,/create table if not exists public\.store_offers/i);
+ assert.match(migration,/enable row level security/i);
+ assert.match(migration,/revoke all on public\.store_offers from anon,authenticated/i);
+ assert.match(publicApi,/\.eq\("active",true\)/);
+ assert.match(publicApi,/Date\.parse\(offer\.starts_at\)/);
+ assert.match(publicApi,/Date\.parse\(offer\.ends_at\)/);
+ assert.match(adminApi,/action==="offer\.create"/);
+ assert.match(adminApi,/action==="offer\.update"/);
+ assert.match(adminApi,/requireOwner\(req\)/);
+ assert.match(dashboard,/store_offers/);
+});
+test("offers navigation glows only with active offers and offers page has empty state",()=>{
+ const nav=read("components/OffersNavLink.tsx");
+ const page=read("components/OffersPage.tsx");
+ const layout=read("app/layout.tsx");
+ const css=read("app/offers.css");
+ assert.match(nav,/is-live/);
+ assert.match(nav,/No offers/);
+ assert.match(layout,/OffersNavLink/);
+ assert.match(page,/No offers now/);
+ assert.match(page,/offer\.coupon_code/);
+ assert.match(css,/nexora-offer-spin/);
+});
