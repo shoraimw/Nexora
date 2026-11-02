@@ -48,7 +48,7 @@ export function ShopFilterToolbar({filters,onChange,brands,results,categories=["
      <div className="retail-filter-price-block"><span>Price range (৳)</span><div className="retail-filter-price-fields"><label><small>Minimum</small><input type="number" value={draft.minPriceBdt} min="0" max="1000000" step="0.01" placeholder="৳ 0" onChange={e=>change("minPriceBdt",e.target.value)} aria-label="Minimum price in BDT"/></label><label><small>Maximum</small><input type="number" value={draft.maxPriceBdt} min="0" max="1000000" step="0.01" placeholder="Any" onChange={e=>change("maxPriceBdt",e.target.value)} aria-label="Maximum price in BDT"/></label></div></div>
      <div className="retail-filter-options"><label><input type="checkbox" checked={draft.inStockOnly} onChange={e=>change("inStockOnly",e.target.checked)}/> <span><strong>In stock only</strong><small>Hide products that are unavailable</small></span></label><label><input type="checkbox" checked={draft.onSaleOnly} onChange={e=>change("onSaleOnly",e.target.checked)}/> <span><strong>On sale</strong><small>Show discounted products only</small></span></label></div>
     </div>
-    <footer><button type="button" className="retail-filter-clear" onClick={clear}><RotateCcw size={15}/> Clear all</button><button type="button" className="retail-filter-apply" onClick={apply}><Check size={16}/> Show {results} results</button></footer>
+    <footer><button type="button" className="retail-filter-clear" onClick={clear}><RotateCcw size={15}/> Clear all</button><button type="button" className="retail-filter-apply" onClick={apply}><Check size={16}/> Show results</button></footer>
    </aside>
   </div>}
  </>;
