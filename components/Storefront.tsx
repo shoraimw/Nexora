@@ -29,7 +29,6 @@ function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eye
 }
 export function Storefront(){
  return <main className="retail-home">
-  <div className="retail-announcement"><span>Welcome to Nexora</span><b>Thoughtful gadgets for everyday life</b><span>Discover something new <span aria-hidden>→</span></span></div>
   <div className="retail-container"><RetailHero/><RetailTrustBar/><RetailCategoryGrid/>
    <div className="retail-home-catalog"><DemoProductSection eyebrow="JUST LANDED" title="New arrivals" items={products.slice(0,5)}/>
     <DemoProductSection eyebrow="LISTEN YOUR WAY" title="Audio & sound" items={products.filter(p=>p.category==="Audio")} href="/shop?category=Audio"/>

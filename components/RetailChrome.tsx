@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import {useState} from "react";
-import {ArrowLeft,ArrowRight,Headphones,Watch,Lightbulb,Cable,GraduationCap,Gift,Heart,Grid2X2,Truck,PackageCheck,MessageCircle,ShieldCheck} from "lucide-react";
+import {useEffect,useState} from "react";
+import {ArrowLeft,ArrowRight,Pause,Play,Headphones,Watch,Lightbulb,Cable,GraduationCap,Gift,Heart,Grid2X2,Truck,PackageCheck,MessageCircle,ShieldCheck} from "lucide-react";
 
 const slides=[
  {kicker:"THE NEXORA COLLECTION",title:"Small upgrades.\nBetter everyday.",description:"Discover useful gadgets, clever accessories and everyday essentials selected for modern life.",cta:"Shop all gadgets",href:"/shop",image:"https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1800&q=90",alt:"Wireless earbuds on a clean studio background"},
@@ -19,15 +19,50 @@ const categories=[
  {name:"All Products",hint:"Browse everything",Icon:Grid2X2,href:"/shop"}
 ];
 export function RetailHero(){
- const [active,setActive]=useState(0),slide=slides[active];
- const previous=()=>setActive(v=>(v+slides.length-1)%slides.length);
- const next=()=>setActive(v=>(v+1)%slides.length);
- return <section className="retail-hero-layout" aria-label="Featured offers">
-  <div className="retail-hero-main">
-   <img key={slide.image} src={slide.image} alt={slide.alt} fetchPriority="high"/>
-   <div className="retail-hero-shade"/>
-   <div className="retail-hero-copy"><span className="retail-hero-kicker">{slide.kicker}</span><h1>{slide.title.split("\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{slide.description}</p><Link href={slide.href} className="retail-primary-link">{slide.cta}<ArrowRight size={17}/></Link></div>
-   <div className="retail-slider-footer"><div className="retail-slider-dots">{slides.map((s,i)=><button key={s.kicker} aria-label={"Show slide "+(i+1)} aria-pressed={active===i} className={active===i?"active":""} onClick={()=>setActive(i)}/>)}</div><div className="retail-slider-arrows"><button aria-label="Previous banner" onClick={previous}><ArrowLeft size={17}/></button><button aria-label="Next banner" onClick={next}><ArrowRight size={17}/></button></div><span>{String(active+1).padStart(2,"0")} / {String(slides.length).padStart(2,"0")}</span></div>
+ const [active,setActive]=useState(0);
+ const [pausedByUser,setPausedByUser]=useState(false);
+ const [pausedByInteraction,setPausedByInteraction]=useState(false);
+ const [tabVisible,setTabVisible]=useState(true);
+ const [reducedMotion,setReducedMotion]=useState(false);
+ const [cycle,setCycle]=useState(0);
+ useEffect(()=>{
+  const media=window.matchMedia("(prefers-reduced-motion: reduce)");
+  const syncMotion=()=>setReducedMotion(media.matches);
+  const syncVisibility=()=>setTabVisible(document.visibilityState==="visible");
+  syncMotion();syncVisibility();
+  media.addEventListener("change",syncMotion);
+  document.addEventListener("visibilitychange",syncVisibility);
+  return()=>{media.removeEventListener("change",syncMotion);document.removeEventListener("visibilitychange",syncVisibility);};
+ },[]);
+ useEffect(()=>{
+  if(pausedByUser||pausedByInteraction||reducedMotion||!tabVisible)return;
+  const timer=window.setInterval(()=>setActive(i=>(i+1)%slides.length),6500);
+  return()=>window.clearInterval(timer);
+ },[pausedByUser,pausedByInteraction,reducedMotion,tabVisible,cycle]);
+ const selectSlide=(index:number)=>{
+  setActive((index+slides.length)%slides.length);
+  setCycle(value=>value+1);
+ };
+ return <section className="retail-hero-layout" aria-label="Featured products and collections">
+  <div className="retail-hero-main"
+   onMouseEnter={()=>setPausedByInteraction(true)}
+   onMouseLeave={()=>setPausedByInteraction(false)}
+   onFocusCapture={()=>setPausedByInteraction(true)}
+   onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPausedByInteraction(false);}}>
+   {slides.map((slide,index)=><div key={slide.kicker} className={"retail-hero-slide"+(index===active?" is-active":"")} aria-hidden={index!==active}>
+    <img src={slide.image} alt={slide.alt} fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"}/>
+    <div className="retail-hero-shade"/>
+    <div className="retail-hero-copy"><span className="retail-hero-kicker">{slide.kicker}</span><h1>{slide.title.split("\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{slide.description}</p><Link tabIndex={active===index?0:-1} href={slide.href} className="retail-primary-link">{slide.cta}<ArrowRight size={17}/></Link></div>
+   </div>)}
+   <div className="retail-slider-footer">
+    <div className="retail-slider-dots">{slides.map((slide,index)=><button key={slide.kicker} type="button" aria-label={"Go to banner "+(index+1)} aria-current={active===index?"true":undefined} className={index===active?"active":""} onClick={()=>selectSlide(index)}/>)}</div>
+    <div className="retail-slider-arrows">
+     <button type="button" aria-label={pausedByUser?"Resume automatic slideshow":"Pause automatic slideshow"} onClick={()=>setPausedByUser(value=>!value)}>{pausedByUser?<Play size={16}/>:<Pause size={16}/>}</button>
+     <button type="button" aria-label="Previous banner" onClick={()=>selectSlide(active-1)}><ArrowLeft size={17}/></button>
+     <button type="button" aria-label="Next banner" onClick={()=>selectSlide(active+1)}><ArrowRight size={17}/></button>
+    </div>
+    <span>{String(active+1).padStart(2,"0")} / {String(slides.length).padStart(2,"0")}</span>
+   </div>
   </div>
   <div className="retail-hero-side">
    <Link href="/shop?category=Student%20Picks" className="retail-side-card retail-side-student"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=85" alt="Laptop and study workspace"/><span className="retail-side-shade"/><span className="retail-side-copy"><small>MADE FOR STUDY DAYS</small><strong>Student<br/>essentials</strong><b>Shop now <ArrowRight size={14}/></b></span></Link>

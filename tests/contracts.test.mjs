@@ -56,3 +56,28 @@ test("Nexora displays owner-supplied assets across header and footer",()=>{
   assert.ok(existsSync(new URL("../"+path,import.meta.url)),path+" must exist");
  }
 });
+
+test("development indicator and redundant storefront banners are disabled",()=>{
+ assert.match(read("next.config.ts"),/devIndicators:\s*false/);
+ assert.ok(!read("app/layout.tsx").includes('className="retail-topbar"'));
+ assert.ok(!read("components/CommerceHome.tsx").includes('className="retail-announcement"'));
+ assert.ok(!read("components/Storefront.tsx").includes('className="retail-announcement"'));
+});
+test("hero supports slide autoplay, manual controls and accessible motion",()=>{
+ const hero=read("components/RetailChrome.tsx");
+ assert.match(hero,/window\.setInterval/);
+ assert.match(hero,/Previous banner/);
+ assert.match(hero,/Next banner/);
+ assert.match(hero,/Pause automatic slideshow/);
+ assert.match(hero,/prefers-reduced-motion/);
+});
+test("shop category menu closes on navigation, escape and outside clicks",()=>{
+ const menu=read("components/ShopCategoryMenu.tsx");
+ const layout=read("app/layout.tsx");
+ assert.match(menu,/usePathname/);
+ assert.match(menu,/pointerdown/);
+ assert.match(menu,/Escape/);
+ assert.match(menu,/onClick=\{\(\)=>setOpen\(false\)\}/);
+ assert.match(layout,/ShopCategoryMenu/);
+ assert.ok(!layout.includes('<details className="retail-category-dropdown"'));
+});
