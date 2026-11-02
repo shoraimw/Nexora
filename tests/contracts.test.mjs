@@ -49,9 +49,9 @@ test("owner product editor saves connection type in product specs",()=>{
 
 test("Nexora displays owner-supplied assets across header and footer",()=>{
  const layout=read("app/layout.tsx");
- assert.match(layout,/brand\\/nexora-logo-dark\\.png/);
- assert.match(layout,/brand\\/nexora-logo-light\\.png/);
- assert.match(layout,/favicon\\.png/);
+ assert.ok(layout.includes("/brand/nexora-logo-dark.png"));
+ assert.ok(layout.includes("/brand/nexora-logo-light.png"));
+ assert.ok(layout.includes("/favicon.png"));
  for(const path of ["public/brand/nexora-logo-dark.png","public/brand/nexora-logo-light.png","public/favicon.png"]){
   assert.ok(existsSync(new URL("../"+path,import.meta.url)),path+" must exist");
  }
