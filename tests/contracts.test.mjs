@@ -145,7 +145,7 @@ test("customer reviews are verified-purchase, private by default and owner moder
  assert.match(dashboard,/product_reviews/);
  assert.match(read("lib/catalog-live.ts"),/nexora_product_review_summaries/);
  assert.match(read("components/CommerceShop.tsx"),/retail-card-rating/);
- assert.match(read("components/CommerceShop.tsx"),/Featured picks/);
+ assert.match(read("components/CommerceShop.tsx"),/Featured Products/);
  assert.match(admin,/moderateReview/);
 });
 test("storefront private routes are excluded from search crawlers",()=>{
@@ -173,8 +173,8 @@ test("product owner tools support real technical specification data and product 
 });
 test("home catalog includes curated featured picks and live brand discovery",()=>{
  const shop=read("components/CommerceShop.tsx");
- assert.match(shop,/Featured picks/);
- assert.match(shop,/Shop by brand/);
+ assert.match(shop,/Featured Products/);
+ assert.match(shop,/RetailBrandDirectory/);
  assert.match(shop,/review_average/);
 });
 
