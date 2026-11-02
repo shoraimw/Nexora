@@ -28,7 +28,7 @@ function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eye
  return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
 }
 function visibleProducts(category:string,search:string,brandQuery:string,connection:string){
- return products.filter(p=>(category==="All"||(category==="Student Picks"?!!p.student:p.category===category))&&(!search||[p.name,p.brand,p.description,p.category,...p.features].join(" ").toLowerCase().includes(search.toLowerCase()))&&(!brandQuery||(p.brand||"").toLowerCase().includes(brandQuery.toLowerCase()))&&(connection==="all"||p.connectionType===connection));
+ return products.filter(p=>(category==="All"||(category==="Student Picks"?!!p.student:p.category===category))&&(!search||[p.name,p.brand,p.description,p.category,...p.features].join(" ").toLowerCase().includes(search.toLowerCase()))&&(!brandQuery||(p.brand||"").toLowerCase().includes(brandQuery.toLowerCase()))&&(connection==="all"||(p.connectionType||"").toLowerCase()===connection.toLowerCase()));
 }
 export function Storefront(){
  return <main className="retail-home">
@@ -57,7 +57,7 @@ export function DemoShop(){
   <div className="retail-shop-toolbar">
    <label className="retail-shop-search"><Search size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products, brands and categories..." aria-label="Search products"/></label>
    <div className="retail-filter-controls">
-    <label className="retail-filter-field"><span>Brand</span><input list="nexora-demo-brand-options" value={brandQuery} onChange={e=>setBrandQuery(e.target.value)} placeholder="Search brand name" aria-label="Filter by brand"/><datalist id="nexora-demo-brand-options">{Array.from(new Set(products.map(p=>p.brand).filter(Boolean))).map(b=><option key={b} value={b}/>)}</datalist></label>
+    <label className="retail-filter-field"><span>Brand</span><input list="nexora-demo-brand-options" value={brandQuery} onChange={e=>setBrandQuery(e.target.value)} placeholder="Apple, Anker, Baseus..." aria-label="Filter by brand"/><datalist id="nexora-demo-brand-options">{Array.from(new Set(products.map(p=>p.brand).filter(Boolean))).map(b=><option key={b} value={b}/>)}</datalist></label>
     <label className="retail-filter-field"><span>Connection</span><select value={connection} onChange={e=>setConnection(e.target.value)} aria-label="Filter by connection type"><option value="all">All types</option><option value="Wireless">Wireless</option><option value="Wired">Wired</option></select></label>
     <label className="retail-filter-field retail-sort-field"><span>Sort by</span><select value={sort} onChange={e=>setSort(e.target.value)} aria-label="Sort products"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="name">Name: A to Z</option></select></label>
    </div>
