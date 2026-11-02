@@ -44,3 +44,13 @@
  .retail-filter-results{margin-left:auto}
  .retail-reset-filters{width:100%}
 }
+
+/* The text fallback and photo share ONE media frame; never create two grid rows. */
+.retail-product-image{display:grid;place-items:center;isolation:isolate;overflow:hidden}
+.retail-product-image>.retail-image-placeholder{position:absolute;inset:0;display:grid;place-items:center;z-index:0;line-height:1}
+.retail-product-image>img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;object-position:center;mix-blend-mode:normal;background:#f8f9fa;padding:12px}
+.retail-product-image .retail-product-badge,
+.retail-product-image .retail-preview-badge,
+.retail-product-image .retail-discount-badge{z-index:2}
+.retail-product-image .retail-quick-view{z-index:3}
+@media(max-width:540px){.retail-product-image>img{padding:7px}}
