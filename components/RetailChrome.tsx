@@ -20,6 +20,7 @@ const categories=[
 ];
 export function RetailHero(){
  const [active,setActive]=useState(0);
+ const [pausedByInteraction,setPausedByInteraction]=useState(false);
  const [tabVisible,setTabVisible]=useState(true);
  const [reducedMotion,setReducedMotion]=useState(false);
  useEffect(()=>{
@@ -32,12 +33,12 @@ export function RetailHero(){
   return()=>{media.removeEventListener("change",syncMotion);document.removeEventListener("visibilitychange",syncVisibility);};
  },[]);
  useEffect(()=>{
-  if(reducedMotion||!tabVisible)return;
+  if(reducedMotion||!tabVisible||pausedByInteraction)return;
   const timer=window.setInterval(()=>setActive(i=>(i+1)%slides.length),6500);
   return()=>window.clearInterval(timer);
- },[reducedMotion,tabVisible]);
+ },[reducedMotion,tabVisible,pausedByInteraction]);
  return <section className="retail-hero-layout" aria-label="Featured products and collections">
-  <div className="retail-hero-main" aria-roledescription="carousel">
+  <div className={"retail-hero-main"+(pausedByInteraction?" is-paused":"")} aria-roledescription="carousel" onMouseEnter={()=>setPausedByInteraction(true)} onMouseLeave={()=>setPausedByInteraction(false)} onFocusCapture={()=>setPausedByInteraction(true)} onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPausedByInteraction(false);}}>
    {slides.map((slide,index)=><div key={slide.kicker} className={"retail-hero-slide"+(index===active?" is-active":"")} aria-hidden={index!==active}>
     <img src={slide.image} alt={slide.alt} fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"}/>
     <div className="retail-hero-shade"/>

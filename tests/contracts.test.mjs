@@ -80,6 +80,8 @@ test("hero is automatic, has no manual carousel controls and respects reduced mo
  assert.match(hero,/retail-slider-progress/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow|Pause size|Play size/);
  assert.match(hero,/prefers-reduced-motion/);
+ assert.match(hero,/pausedByInteraction/);
+ assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow/);
 });
 test("shop category menu closes on navigation, escape and outside clicks",()=>{
  const menu=read("components/ShopCategoryMenu.tsx");
