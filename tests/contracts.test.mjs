@@ -30,14 +30,16 @@ test("shipping fees and payment reviews are database-controlled",()=>{
  assert.match(read("database/004_payment_reconciliation.sql"),/nexora_review_payment_claim/);
 });
 
-test("shop supports brand and connection-type filters in demo and live catalogs",()=>{
+test("shop renders the shared brand and connectivity filter toolbar",()=>{
  const live=read("components/CommerceShop.tsx");
  const demo=read("components/Storefront.tsx");
- assert.match(live,/Filter by brand/);
- assert.match(live,/Filter by connection type/);
- assert.match(live,/connectionModes/);
- assert.match(demo,/Filter by brand/);
- assert.match(demo,/connectionType/);
+ const toolbar=read("components/ShopFilterToolbar.tsx");
+ assert.match(live,/ShopFilterToolbar/);
+ assert.match(demo,/ShopFilterToolbar/);
+ assert.match(toolbar,/Filter by brand/);
+ assert.match(toolbar,/Filter by connection type/);
+ assert.match(toolbar,/Minimum price in BDT/);
+ assert.match(toolbar,/In stock only/);
 });
 test("owner product editor saves connection type in product specs",()=>{
  const admin=read("app/admin/page.tsx");
