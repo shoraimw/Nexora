@@ -58,7 +58,7 @@ export function DemoShop(){
    <label className="retail-shop-search"><Search size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products, brands and categories..." aria-label="Search products"/></label>
    <div className="retail-filter-controls">
     <label className="retail-filter-field"><span>Brand</span><input list="nexora-demo-brand-options" value={brandQuery} onChange={e=>setBrandQuery(e.target.value)} placeholder="Apple, Anker, Baseus..." aria-label="Filter by brand"/><datalist id="nexora-demo-brand-options">{Array.from(new Set(products.map(p=>p.brand).filter(Boolean))).map(b=><option key={b} value={b}/>)}</datalist></label>
-    <label className="retail-filter-field"><span>Connection</span><select value={connection} onChange={e=>setConnection(e.target.value)} aria-label="Filter by connection type"><option value="all">All types</option><option value="Wireless">Wireless</option><option value="Wired">Wired</option></select></label>
+    <label className="retail-filter-field"><span>Connection</span><select value={connection} onChange={e=>setConnection(e.target.value)} aria-label="Filter by connection type"><option value="all">All types</option><option value="wireless">Wireless</option><option value="wired">Wired</option></select></label>
     <label className="retail-filter-field retail-sort-field"><span>Sort by</span><select value={sort} onChange={e=>setSort(e.target.value)} aria-label="Sort products"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="name">Name: A to Z</option></select></label>
    </div>
   </div>
