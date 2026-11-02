@@ -14,6 +14,7 @@ import "./filter-ui.css";
 import "./logo-brand.css";
 import "./retail-interactions.css";
 import "./offers.css";
+import "./gadget-layout.css";
 export const metadata:Metadata={
  title:{default:"Nexora | Connect with Modern World",template:"%s | Nexora"},
  description:"Discover gadgets, tech accessories and unique everyday finds with Nexora.",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import {ShoppingBag,ArrowUpRight,ArrowRight,ChevronRight,Star} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
+import {RetailBrandDirectory} from "@/components/RetailBrandDirectory";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
 import type {LiveProduct,LiveVariant} from "@/lib/catalog-live";
 const money=(value:number)=>"৳"+(value/100).toLocaleString("en-BD",{maximumFractionDigits:2});
@@ -25,13 +26,13 @@ function ProductCard({product}:{product:LiveProduct}){
   <div className="retail-product-info"><span className="retail-product-category">{product.category}</span><Link className="retail-product-name" href={"/product/"+product.slug}>{product.title}</Link><span className="retail-product-brand">{product.brand||"Brand not specified"}</span>{product.review_count>0&&<div className="retail-card-rating"><Star size={12} fill="currentColor"/><strong>{product.review_average.toFixed(1)}</strong><span>({product.review_count})</span></div>}
    <div className="retail-price-row"><strong>{variant?money(variant.price_paisa):"Price on request"}</strong>{variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa&&<s>{money(variant.compare_at_paisa)}</s>}</div>
    <span className={inStock?"retail-stock in-stock":"retail-stock out-stock"}>{inStock?"In stock":"Currently unavailable"}</span>
-   <button className="retail-add-button" disabled={!variant||!inStock} onClick={()=>variant&&add(variant.id)}><ShoppingBag size={15}/> Add to cart</button>
+   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{inStock?"Shop now":"View details"} <ArrowRight size={14}/></Link><button className="nexora-card-bag" type="button" aria-label={"Add "+product.title+" to bag"} disabled={!variant||!inStock} onClick={()=>variant&&add(variant.id)}><ShoppingBag size={16}/></button></div>
   </div>
  </article>;
 }
 function ProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:LiveProduct[];href?:string}){
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,10).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
 }
 type IndexedProduct=ShopFilterProduct&{product:LiveProduct};
 export function CommerceShop({homepage=false}:{homepage?:boolean}){
@@ -49,15 +50,19 @@ export function CommerceShop({homepage=false}:{homepage?:boolean}){
  const shown=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
  const categories=useMemo(()=>["All",...Array.from(new Set(items.map(p=>p.category))).sort()],[items]);
- const featured=useMemo(()=>items.filter(p=>p.featured).slice(0,8),[items]);
- const newest=useMemo(()=>[...items].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||"")).slice(0,8),[items]);
- const homeGroups=useMemo(()=>["Audio","Wearables","Accessories","Desk Setup","Student Picks"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5)})).filter(g=>g.items.length),[items]);
+ const featured=useMemo(()=>items.filter(p=>p.featured).slice(0,10),[items]);
+ const trending=useMemo(()=>items.filter(p=>p.review_count>0).sort((a,b)=>b.review_count-a.review_count||b.review_average-a.review_average).slice(0,10),[items]);
+ const newest=useMemo(()=>[...items].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||"")).slice(0,10),[items]);
+ const gadgets=useMemo(()=>items.filter(p=>["audio","wearables","accessories","desk setup"].includes(p.category.toLowerCase())).slice(0,10),[items]);
+ const homeGroups=useMemo(()=>["Audio","Wearables","Accessories","Desk Setup","Student Picks"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,10)})).filter(g=>g.items.length),[items]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
-  {brands.length>0&&<section className="retail-brand-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">THE BRANDS WE CARRY</span><h2>Shop by brand</h2></div><Link href="/shop" className="retail-section-link">All products <ArrowRight size={16}/></Link></div><div className="retail-brand-list">{brands.slice(0,10).map(brand=><Link key={brand} href={"/shop?brand="+encodeURIComponent(brand)}>{brand}<ArrowRight size={13}/></Link>)}</div></section>}
+  <RetailBrandDirectory brands={brands}/>
   {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
-   <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured picks" items={featured}/>
-   <ProductSection eyebrow="JUST LANDED" title="New arrivals" items={newest}/>
-   {homeGroups.map(g=><ProductSection key={g.name} eyebrow="EXPLORE THE COLLECTION" title={g.name} items={g.items} href={"/shop?category="+encodeURIComponent(g.name)}/>)}
+   <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured Products" items={featured}/>
+   <ProductSection eyebrow="CUSTOMER FAVOURITES" title="Trending Products" items={trending}/>
+   <ProductSection eyebrow="LATEST ADDITIONS" title="New Arrival" items={newest}/>
+   <ProductSection eyebrow="EVERYDAY TECH" title="Gadgets & Accessories" items={gadgets}/>
+   {homeGroups.map(g=><ProductSection key={g.name} eyebrow="SHOP BY CATEGORY" title={g.name} items={g.items} href={"/shop?category="+encodeURIComponent(g.name)}/>)}
   </>}
  </div></div>;
  return <main className="retail-container retail-shop-page">

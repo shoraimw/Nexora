@@ -206,4 +206,5 @@
 
 .detail-review-form .detail-rating-field{display:flex;flex-direction:column;gap:7px;margin:0;padding:0;border:0}
 .detail-review-form .detail-rating-field legend{padding:0;color:#4d5e68;font-size:10px;font-weight:800}
-\n.retail-hero-main.is-paused .retail-slider-progress span{animation-play-state:paused}\n
+
+.retail-hero-main.is-paused .retail-slider-progress span{animation-play-state:paused}

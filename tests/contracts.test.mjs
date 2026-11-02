@@ -184,3 +184,25 @@ test("review rating control uses an accessible fieldset and keyboard-operable bu
  assert.match(detail,/aria-pressed/);
  assert.match(detail,/role="img"/);
 });
+
+test("reference-style catalog has brand directory, curated groups and a responsive layout",()=>{
+ const live=read("components/CommerceShop.tsx");
+ const demo=read("components/Storefront.tsx");
+ const css=read("app/gadget-layout.css");
+ assert.match(live,/RetailBrandDirectory/);
+ assert.match(demo,/RetailBrandDirectory/);
+ for(const label of ["Featured Products","Trending Products","New Arrival","Gadgets & Accessories"]){
+  assert.ok(live.includes(label),label);
+  assert.ok(demo.includes(label),label+" demo");
+ }
+ assert.match(css,/nexora-brand-grid/);
+ assert.match(css,/nexora-card-actions/);
+ assert.match(css,/@media\(max-width:540px\)/);
+ assert.match(read("app/layout.tsx"),/gadget-layout.css/);
+});
+test("price/product card links remain bound to Nexora products, without fake claims",()=>{
+ const live=read("components/CommerceShop.tsx");
+ assert.match(live,/product.review_count>0/);
+ assert.match(live,/href=\{"\/product\/"\+product.slug\}/);
+ assert.match(live,/product.variants.some/);
+});

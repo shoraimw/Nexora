@@ -1,0 +1,95 @@
+/* Nexora's original brand expression, using the practical product-dense retail layout. */
+.retail-home{background:#f6f7f9}
+.retail-container{width:min(1380px,calc(100% - 40px))}
+.retail-site-header{background:#fff}
+.retail-nav{background:#fff;border-top:1px solid #edf0f2}
+.retail-nav-inner{gap:21px;justify-content:space-between}
+.retail-nav-inner>a{font-size:11px;font-weight:750;color:#273849}
+.retail-nav-inner>a:hover{color:#e5683b}
+.retail-trustbar{margin:12px 0 15px;box-shadow:0 4px 16px #1c344009}
+.retail-trustbar>div{min-height:63px}
+.retail-hero-layout{grid-template-columns:minmax(0,1fr);margin:0 auto 12px;gap:0}
+.retail-hero-main{height:clamp(300px,33vw,455px);border-radius:8px;background:#0c2030}
+.retail-hero-side{display:none}
+.retail-hero-copy{left:clamp(25px,6vw,88px);max-width:600px}
+.retail-hero-copy h1{font-size:clamp(39px,5vw,68px);max-width:560px}
+.retail-hero-copy p{font-size:clamp(12px,1.15vw,15px);max-width:500px}
+.retail-slider-footer{left:clamp(25px,6vw,88px)}
+.retail-category-section{padding:11px 0 18px}
+.retail-category-section .retail-section-heading{margin-bottom:12px}
+.retail-category-card{min-height:105px;border-radius:6px}
+.retail-category-icon{background:#fff1eb;color:#d8613e}
+.retail-category-card strong{font-size:11px}
+.nexora-brand-directory{margin:13px 0 4px;padding:20px 21px;background:#fff;border:1px solid #e8ebee;border-radius:8px}
+.nexora-brand-directory .retail-section-heading{margin-bottom:15px}
+.nexora-brand-directory .retail-section-heading h2,.retail-product-section .retail-section-heading h2{font-size:clamp(19px,2.2vw,25px);font-weight:850;letter-spacing:-.65px;color:#1b2e3a}
+.nexora-brand-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:9px}
+.nexora-brand-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:100px;gap:7px;padding:9px;background:#fafbfc;border:1px solid #e9edef;border-radius:6px;text-decoration:none;transition:border-color .2s,transform .2s}
+.nexora-brand-tile:hover{border-color:#e7a68f;transform:translateY(-2px)}
+.nexora-brand-monogram{display:grid;place-items:center;width:37px;height:37px;background:#f0f3f6;border-radius:10px;color:#d2603d;font-size:20px;font-weight:900}
+.nexora-brand-tile strong{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:#263b48;font-size:11px}
+.nexora-brand-tile small{display:flex;align-items:center;gap:3px;color:#8b969e;font-size:9px}
+.retail-home-catalog{padding:0 0 10px}
+.retail-product-section{padding:22px 0 14px}
+.retail-product-section .retail-section-heading{margin-bottom:12px}
+.retail-product-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+.retail-product-card{border-radius:6px;box-shadow:0 2px 8px #15273607}
+.retail-product-image{padding:14px;aspect-ratio:1.1/1;background:#fff}
+.retail-product-info{padding:12px 12px 13px}
+.retail-product-name{font-size:12px;line-height:1.45;min-height:35px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.retail-product-brand{font-size:10px;color:#86929a}
+.retail-price-row{margin-top:10px;gap:6px;flex-wrap:wrap}
+.retail-price-row strong{font-size:17px;color:#e3653b}
+.retail-price-row s{font-size:11px;color:#9da8ae}
+.retail-stock{font-size:9px}
+.nexora-card-actions{display:grid;grid-template-columns:minmax(0,1fr) 38px;gap:7px;margin-top:auto;padding-top:9px}
+.nexora-card-shop-link,.nexora-card-bag{display:flex;align-items:center;justify-content:center;gap:7px;height:37px;min-width:0;border-radius:4px;font-size:10px;font-weight:850;transition:background .2s}
+.nexora-card-shop-link{background:#182d3e;color:#fff}
+.nexora-card-shop-link:hover{background:#e86e46;color:#fff}
+.nexora-card-bag{background:#fff;border:1px solid #dbe2e7;color:#203747;cursor:pointer}
+.nexora-card-bag:hover{background:#fff2eb;border-color:#e6a083}
+.nexora-card-bag:disabled{opacity:.35;cursor:not-allowed}
+.retail-home .retail-promo-grid{margin:18px 0 40px}
+.retail-product-badge{color:#fff;background:#ef744c}
+.retail-preview-badge{background:#f4f5f7;color:#687884}
+.retail-shop-page{padding-top:18px}
+@media(max-width:1100px){
+ .nexora-brand-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+ .retail-product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .retail-nav-inner{gap:13px}
+}
+@media(max-width:790px){
+ .retail-container{width:min(100% - 26px,1380px)}
+ .retail-nav-inner{justify-content:flex-start}
+ .retail-trustbar{margin:8px 0 10px}
+ .retail-hero-main{height:360px}
+ .retail-hero-copy{left:23px;right:22px}
+ .retail-hero-copy h1{font-size:clamp(37px,7.4vw,52px)}
+ .retail-hero-copy p{font-size:12px;max-width:400px}
+ .nexora-brand-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .retail-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:540px){
+ .retail-trustbar{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .retail-trustbar>div{min-height:60px;padding:9px;gap:7px}
+ .retail-hero-main{height:360px}
+ .retail-hero-copy h1{font-size:38px}
+ .retail-hero-copy p{font-size:11px}
+ .retail-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .retail-category-card{min-height:95px}
+ .retail-category-card strong{font-size:9px}
+ .retail-category-card small{display:none}
+ .nexora-brand-directory{padding:15px 12px}
+ .nexora-brand-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .nexora-brand-tile{min-height:88px}
+ .retail-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .retail-product-info{padding:10px 9px}
+ .retail-product-name{font-size:11px}
+ .retail-price-row strong{font-size:15px}
+ .nexora-card-actions{grid-template-columns:minmax(0,1fr) 35px;gap:5px}
+ .nexora-card-shop-link,.nexora-card-bag{height:34px}
+ .retail-product-section{padding:18px 0 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .nexora-brand-tile,.retail-product-card,.nexora-card-shop-link{transition:none}
+}

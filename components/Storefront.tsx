@@ -8,6 +8,7 @@ import {ChatWidget} from "@/components/ChatWidget";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
 import {RetailHero,RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
+import {RetailBrandDirectory} from "@/components/RetailBrandDirectory";
 function DemoProductCard({product}:{product:Product}){
  const {add}=useCart();
  return <article className="retail-product-card">
@@ -19,21 +20,26 @@ function DemoProductCard({product}:{product:Product}){
   <div className="retail-product-info"><span className="retail-product-category">{product.category}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
    <div className="retail-price-row"><strong>{currency(product.price)}</strong>{product.previous&&<s>{currency(product.previous)}</s>}</div>
    <span className="retail-stock preview-stock">Illustrative listing</span>
-   <button className="retail-add-button" disabled={product.id==="NX-D07"||product.id==="NX-D08"} onClick={()=>add(product.id)}><ShoppingBag size={15}/>{product.id==="NX-D07"||product.id==="NX-D08"?"Coming soon":"Add to bag"}</button>
+   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>View details <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={"Add "+product.name+" to preview bag"} disabled={product.id==="NX-D07"||product.id==="NX-D08"} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
   </div>
  </article>;
 }
 function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:Product[];href?:string}){
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,10).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
 }
 export function Storefront(){
+ const demoBrands=Array.from(new Set(products.map(p=>p.brand).filter((b):b is string=>!!b)));
  return <main className="retail-home">
-  <div className="retail-container"><RetailHero/><RetailTrustBar/><RetailCategoryGrid/>
-   <div className="retail-home-catalog"><DemoProductSection eyebrow="JUST LANDED" title="New arrivals" items={products.slice(0,5)}/>
+  <div className="retail-container"><RetailTrustBar/><RetailHero/><RetailCategoryGrid/>
+   <div className="retail-home-catalog">
+    <RetailBrandDirectory brands={demoBrands} preview/>
+    <DemoProductSection eyebrow="CURATED DEMO PREVIEW" title="Featured Products" items={products.slice(0,5)}/>
+    <DemoProductSection eyebrow="DISCOVER THE COLLECTION" title="Trending Products" items={products.filter(p=>p.tag==="Trending"||p.student)}/>
+    <DemoProductSection eyebrow="LATEST CONCEPTS" title="New Arrival" items={products.slice().reverse()}/>
+    <DemoProductSection eyebrow="EVERYDAY TECH" title="Gadgets & Accessories" items={products.filter(p=>["Audio","Accessories","Wearables","Desk Setup"].includes(p.category))}/>
     <DemoProductSection eyebrow="LISTEN YOUR WAY" title="Audio & sound" items={products.filter(p=>p.category==="Audio")} href="/shop?category=Audio"/>
     <DemoProductSection eyebrow="SMARTER EVERYDAY" title="Wearables" items={products.filter(p=>p.category==="Wearables")} href="/shop?category=Wearables"/>
-    <DemoProductSection eyebrow="THE LITTLE THINGS" title="Accessories" items={products.filter(p=>p.category==="Accessories")} href="/shop?category=Accessories"/>
     <DemoProductSection eyebrow="MADE FOR STUDY DAYS" title="Student picks" items={products.filter(p=>p.student)} href="/shop?category=Student%20Picks"/>
    </div><RetailPromoBanners/>
   </div><ChatWidget/>
