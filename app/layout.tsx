@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import Link from "next/link";
-import {ArrowUpRight,Search,UserRound,Headphones,Gift,GraduationCap,Store,PackageSearch,LifeBuoy,ChevronDown,ShoppingBag,Menu,Watch,Lightbulb,Cable,Heart,Grid2X2} from "lucide-react";
+import {ArrowUpRight,Search,UserRound,Headphones,Gift,GraduationCap,Store,PackageSearch,LifeBuoy,ChevronDown,Menu,Watch,Lightbulb,Cable,Heart} from "lucide-react";
 import {CartProvider} from "@/components/CartProvider";
 import {HeaderCart} from "@/components/HeaderCart";
 import "./globals.css";
@@ -29,7 +29,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
    <div className="retail-container retail-header-main">
     <Link className="retail-brand" href="/" aria-label="Nexora home"><span className="retail-brand-mark">N<span>.</span></span><span className="retail-brand-name">nexora<small>CONNECT WITH MODERN WORLD</small></span></Link>
     <form className="retail-search" action="/shop" method="get"><Search size={19}/><input name="q" type="search" placeholder="Search for products, brands and more..." aria-label="Search Nexora"/><button type="submit">Search</button></form>
-    <div className="retail-header-actions"><Link href="/account"><UserRound size={19}/><span>Account</span></Link><Link href="/cart" className="retail-cart"><ShoppingBag size={19}/><span>My bag</span><HeaderCartCount/></Link></div>
+    <div className="retail-header-actions"><Link href="/account"><UserRound size={19}/><span>Account</span></Link><HeaderCart/></div>
    </div>
    <nav className="retail-nav" aria-label="Main navigation"><div className="retail-container retail-nav-inner">
     <details className="retail-category-dropdown"><summary><Menu size={17}/> Shop by category <ChevronDown size={14}/></summary><div className="retail-mega-menu"><div><strong>Browse categories</strong><p>Explore the Nexora collection</p></div><div className="retail-mega-links">{navCategories.map(({name,href,Icon})=><Link key={name} href={href}><Icon size={17}/>{name}<ArrowUpRight size={13}/></Link>)}</div><Link href="/shop" className="retail-mega-all">View all products <ArrowUpRight size={14}/></Link></div></details>
