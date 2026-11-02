@@ -71,3 +71,23 @@ language sql stable security definer set search_path='' as $$
 $$;
 revoke all on function public.nexora_product_review_summaries(uuid[]) from public,anon,authenticated;
 grant execute on function public.nexora_product_review_summaries(uuid[]) to service_role;
+
+-- Resolve a delivered purchase by account ID or case-insensitive guest email.
+-- This keeps the eligibility check in PostgreSQL and avoids exposing order details.
+create or replace function public.nexora_delivered_product_order(p_product_id uuid,p_user_id uuid)
+returns uuid
+language sql stable security definer set search_path='' as $$
+ select o.id
+ from public.orders o
+ join public.order_items oi on oi.order_id=o.id
+ join public.variants v on v.id=oi.variant_id
+ join auth.users u on u.id=p_user_id
+ where o.order_status='delivered'
+   and v.product_id=p_product_id
+   and u.email_confirmed_at is not null
+   and (o.customer_id=p_user_id or lower(o.email)=lower(coalesce(u.email,'')))
+ order by o.created_at desc
+ limit 1;
+$$;
+revoke all on function public.nexora_delivered_product_order(uuid,uuid) from public,anon,authenticated;
+grant execute on function public.nexora_delivered_product_order(uuid,uuid) to service_role;

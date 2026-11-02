@@ -13,22 +13,8 @@ const reviewInput=z.object({
 
 async function deliveredOrderForProduct(productId:string,user:User):Promise<string|null>{
  if(!user.email||!user.email_confirmed_at)return null;
- const s=db();
- const [owned,guest]=await Promise.all([
-  s.from("orders").select("id").eq("customer_id",user.id).eq("order_status","delivered").limit(50),
-  s.from("orders").select("id").eq("email",user.email.toLowerCase()).eq("order_status","delivered").limit(50)
- ]);
- if(owned.error||guest.error)return null;
- const orderIds=[...new Set([...(owned.data||[]),...(guest.data||[])].map(x=>x.id))];
- if(!orderIds.length)return null;
- const {data:lines,error:lineError}=await s.from("order_items").select("order_id,variant_id").in("order_id",orderIds).limit(1000);
- if(lineError||!lines?.length)return null;
- const variantIds=[...new Set(lines.map(x=>x.variant_id))];
- if(!variantIds.length)return null;
- const {data:matches,error:variantError}=await s.from("variants").select("id").eq("product_id",productId).in("id",variantIds).limit(1000);
- if(variantError||!matches?.length)return null;
- const matchingIds=new Set(matches.map(x=>x.id));
- return lines.find(x=>matchingIds.has(x.variant_id))?.order_id||null;
+ const {data,error}=await db().rpc("nexora_delivered_product_order",{p_product_id:productId,p_user_id:user.id});
+ return error||typeof data!=="string"?null:data;
 }
 
 export async function GET(req:Request){
