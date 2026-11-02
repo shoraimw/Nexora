@@ -44,6 +44,8 @@ test("shop renders the shared brand and connectivity filter toolbar",()=>{
  assert.match(toolbar,/Filter by brand/);
  assert.match(toolbar,/retail-filter-drawer/);
  assert.match(toolbar,/aria-modal="true"/);
+ assert.match(toolbar,/drawerRef/);
+ assert.match(toolbar,/event.key==="Tab"/);
  assert.doesNotMatch(toolbar,/retail-filter-controls/);
  assert.match(toolbar,/Filter by connection type/);
  assert.match(toolbar,/Minimum price in BDT/);

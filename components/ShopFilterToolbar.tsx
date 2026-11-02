@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {Search,SlidersHorizontal,RotateCcw,X,Check} from "lucide-react";
 import type {ShopFilterState,ConnectionFilter,ProductSort} from "@/lib/shop-filters";
 import {initialFilters} from "@/lib/shop-filters";
@@ -18,15 +18,27 @@ function activeFilterCount(f:ShopFilterState){
 export function ShopFilterToolbar({filters,onChange,brands,results,categories=["All"]}:Props){
  const [open,setOpen]=useState(false);
  const [draft,setDraft]=useState<ShopFilterState>(filters);
+ const triggerRef=useRef<HTMLButtonElement>(null);
+ const drawerRef=useRef<HTMLElement>(null);
  const count=activeFilterCount(filters);
  const openDrawer=()=>{setDraft(filters);setOpen(true);};
  useEffect(()=>{
   if(!open)return;
-  const closeOnEscape=(event:KeyboardEvent)=>{if(event.key==="Escape")setOpen(false);};
-  document.addEventListener("keydown",closeOnEscape);
+  const drawer=drawerRef.current;
+  const closeOnKey=(event:KeyboardEvent)=>{
+   if(event.key==="Escape"){setOpen(false);return;}
+   if(event.key!=="Tab"||!drawer)return;
+   const focusable=Array.from(drawer.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])'));
+   if(!focusable.length){event.preventDefault();return;}
+   const first=focusable[0],last=focusable[focusable.length-1];
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  };
+  document.addEventListener("keydown",closeOnKey);
   const previous=document.body.style.overflow;
   document.body.style.overflow="hidden";
-  return()=>{document.removeEventListener("keydown",closeOnEscape);document.body.style.overflow=previous;};
+  drawer?.querySelector<HTMLElement>(".retail-filter-close")?.focus();
+  return()=>{document.removeEventListener("keydown",closeOnKey);document.body.style.overflow=previous;triggerRef.current?.focus();};
  },[open]);
  const change=<K extends keyof ShopFilterState>(key:K,value:ShopFilterState[K])=>setDraft(current=>({...current,[key]:value}));
  const apply=()=>{onChange({...draft,query:filters.query,sort:filters.sort});setOpen(false);};
@@ -34,12 +46,12 @@ export function ShopFilterToolbar({filters,onChange,brands,results,categories=["
  return <>
   <div className="retail-shop-toolbar">
    <label className="retail-shop-search"><Search size={17}/><input type="search" value={filters.query} onChange={e=>onChange({...filters,query:e.target.value})} placeholder="Search products, brands and categories..." aria-label="Search products"/></label>
-   <button type="button" className={"retail-filter-trigger"+(count?" has-filters":"")} onClick={openDrawer} aria-expanded={open} aria-controls="nexora-filter-drawer"><SlidersHorizontal size={16}/> Filters {count>0&&<span>{count}</span>}</button>
+   <button ref={triggerRef} type="button" className={"retail-filter-trigger"+(count?" has-filters":"")} onClick={openDrawer} aria-expanded={open} aria-controls="nexora-filter-drawer"><SlidersHorizontal size={16}/> Filters {count>0&&<span>{count}</span>}</button>
    <label className="retail-sort-control"><span>Sort</span><select value={filters.sort} onChange={e=>onChange({...filters,sort:e.target.value as ProductSort})} aria-label="Sort products"><option value="featured">Featured</option><option value="newest">Newest</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="discount">Biggest discount</option><option value="name">Name: A to Z</option></select></label>
   </div>
   <div className="retail-shop-result-meta"><span>{results} {results===1?"product":"products"} found</span>{count>0&&<button type="button" onClick={clear}>Clear filters <X size={13}/></button>}</div>
   {open&&<div className="retail-filter-backdrop" onMouseDown={event=>{if(event.target===event.currentTarget)setOpen(false);}}>
-   <aside id="nexora-filter-drawer" className="retail-filter-drawer" role="dialog" aria-modal="true" aria-labelledby="nexora-filter-title">
+   <aside ref={drawerRef} tabIndex={-1} id="nexora-filter-drawer" className="retail-filter-drawer" role="dialog" aria-modal="true" aria-labelledby="nexora-filter-title">
     <header><div><span className="retail-eyebrow">REFINE YOUR SEARCH</span><h2 id="nexora-filter-title">Filters</h2><p>Find the right gadget for you.</p></div><button type="button" className="retail-filter-close" onClick={()=>setOpen(false)} aria-label="Close filters"><X size={19}/></button></header>
     <div className="retail-filter-drawer-body">
      <label className="retail-filter-field"><span>Category</span><select value={draft.category} onChange={e=>change("category",e.target.value)}>{Array.from(new Set(["All",...categories])).map(category=><option key={category} value={category}>{category==="All"?"All categories":category}</option>)}</select></label>
