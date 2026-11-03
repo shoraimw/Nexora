@@ -206,3 +206,15 @@ test("price/product card links remain bound to Nexora products, without fake cla
  assert.match(live,/href=\{"\/product\/"\+product.slug\}/);
  assert.match(live,/product.variants.some/);
 });
+
+test("hero carousel rotates automatically without a visible countdown bar or hover pause",()=>{
+ const hero=read("components/RetailChrome.tsx");
+ const css=read("app/filter-ui.css");
+ assert.match(hero,/window\.setInterval\(\(\)=>setActive/);
+ assert.match(hero,/6500/);
+ assert.match(hero,/onFocusCapture/);
+ assert.doesNotMatch(hero,/onMouseEnter/);
+ assert.doesNotMatch(hero,/retail-slider-footer/);
+ assert.doesNotMatch(hero,/retail-slider-progress/);
+ assert.doesNotMatch(css,/nexora-hero-progress/);
+});

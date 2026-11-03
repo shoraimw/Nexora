@@ -20,7 +20,7 @@ const categories=[
 ];
 export function RetailHero(){
  const [active,setActive]=useState(0);
- const [pausedByInteraction,setPausedByInteraction]=useState(false);
+ const [pausedByFocus,setPausedByFocus]=useState(false);
  const [tabVisible,setTabVisible]=useState(true);
  const [reducedMotion,setReducedMotion]=useState(false);
  useEffect(()=>{
@@ -33,18 +33,17 @@ export function RetailHero(){
   return()=>{media.removeEventListener("change",syncMotion);document.removeEventListener("visibilitychange",syncVisibility);};
  },[]);
  useEffect(()=>{
-  if(reducedMotion||!tabVisible||pausedByInteraction)return;
+  if(reducedMotion||!tabVisible||pausedByFocus)return;
   const timer=window.setInterval(()=>setActive(i=>(i+1)%slides.length),6500);
   return()=>window.clearInterval(timer);
- },[reducedMotion,tabVisible,pausedByInteraction]);
+ },[reducedMotion,tabVisible,pausedByFocus]);
  return <section className="retail-hero-layout" aria-label="Featured products and collections">
-  <div className={"retail-hero-main"+(pausedByInteraction?" is-paused":"")} aria-roledescription="carousel" onMouseEnter={()=>setPausedByInteraction(true)} onMouseLeave={()=>setPausedByInteraction(false)} onFocusCapture={()=>setPausedByInteraction(true)} onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPausedByInteraction(false);}}>
+  <div className="retail-hero-main" aria-roledescription="carousel" onFocusCapture={()=>setPausedByFocus(true)} onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPausedByFocus(false);}}>
    {slides.map((slide,index)=><div key={slide.kicker} className={"retail-hero-slide"+(index===active?" is-active":"")} aria-hidden={index!==active}>
     <img src={slide.image} alt={slide.alt} fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"}/>
     <div className="retail-hero-shade"/>
     <div className="retail-hero-copy"><span className="retail-hero-kicker">{slide.kicker}</span><h1>{slide.title.split("\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{slide.description}</p><Link tabIndex={active===index?0:-1} href={slide.href} className="retail-primary-link">{slide.cta}<ArrowRight size={17}/></Link></div>
    </div>)}
-   <div className="retail-slider-footer" aria-hidden="true"><div className="retail-slider-progress"><span key={active}/></div><span>DISCOVER THE COLLECTION</span></div>
   </div>
   <div className="retail-hero-side">
    <Link href="/shop?category=Student%20Picks" className="retail-side-card retail-side-student"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=85" alt="Laptop and study workspace"/><span className="retail-side-shade"/><span className="retail-side-copy"><small>MADE FOR STUDY DAYS</small><strong>Student<br/>essentials</strong><b>Shop now <ArrowRight size={14}/></b></span></Link>
