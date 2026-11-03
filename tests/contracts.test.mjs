@@ -218,3 +218,12 @@ test("hero carousel rotates automatically without a visible countdown bar or hov
  assert.doesNotMatch(hero,/retail-slider-progress/);
  assert.doesNotMatch(css,/nexora-hero-progress/);
 });
+
+test("Nexora header logo is compact and responsive while footer branding stays unchanged",()=>{
+ const css=read("app/logo-brand.css");
+ assert.match(css,/retail-brand-header\{width:125px/);
+ assert.match(css,/retail-brand-header\{width:118px/);
+ assert.match(css,/retail-brand-header\{width:98px/);
+ assert.match(css,/retail-brand-header\{width:88px/);
+ assert.match(css,/retail-brand-footer\{width:175px/);
+});

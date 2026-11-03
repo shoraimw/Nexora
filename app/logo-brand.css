@@ -1,24 +1,24 @@
 /* Original supplied Nexora artwork: no CSS recreation of the brand mark. */
-.retail-header-main{grid-template-columns:188px minmax(250px,1fr) auto;gap:clamp(18px,3vw,38px)}
+.retail-header-main{grid-template-columns:160px minmax(250px,1fr) auto;gap:clamp(18px,3vw,38px)}
 .retail-brand.retail-brand-header,.retail-brand.retail-brand-footer{display:inline-flex;align-items:center;justify-content:flex-start;flex-shrink:0;line-height:0;text-decoration:none}
 .retail-brand-image{display:block;object-fit:contain;width:100%;height:auto;max-width:100%;user-select:none}
-.retail-brand-header{width:143px;height:82px}
-.retail-brand-header .retail-brand-image{width:143px;height:auto}
+.retail-brand-header{width:125px;height:72px}
+.retail-brand-header .retail-brand-image{width:125px;height:auto}
 .retail-brand-footer{width:175px}
 .retail-brand-footer .retail-brand-image{width:175px;height:auto}
 .retail-footer .retail-brand-footer{margin-bottom:0}
 @media(max-width:1100px){
- .retail-header-main{grid-template-columns:155px minmax(180px,1fr) auto;gap:18px}
- .retail-brand-header{width:138px;height:79px}
- .retail-brand-header .retail-brand-image{width:138px;max-height:79px}
+ .retail-header-main{grid-template-columns:138px minmax(180px,1fr) auto;gap:18px}
+ .retail-brand-header{width:118px;height:68px}
+ .retail-brand-header .retail-brand-image{width:118px;max-height:68px}
 }
 @media(max-width:790px){
  .retail-header-main{grid-template-columns:1fr auto;gap:10px}
- .retail-brand-header{width:113px;height:65px}
- .retail-brand-header .retail-brand-image{width:113px;max-height:65px}
+ .retail-brand-header{width:98px;height:57px}
+ .retail-brand-header .retail-brand-image{width:98px;max-height:57px}
  .retail-brand-footer,.retail-brand-footer .retail-brand-image{width:158px}
 }
 @media(max-width:420px){
- .retail-brand-header{width:101px;height:58px}
- .retail-brand-header .retail-brand-image{width:101px;max-height:58px}
+ .retail-brand-header{width:88px;height:51px}
+ .retail-brand-header .retail-brand-image{width:88px;max-height:51px}
 }
