@@ -211,7 +211,7 @@ test("hero carousel rotates automatically without a visible countdown bar or hov
  const hero=read("components/RetailChrome.tsx");
  const css=read("app/filter-ui.css");
  assert.match(hero,/window\.setInterval\(\(\)=>setActive/);
- assert.match(hero,/6500/);
+ assert.match(hero,/5000/);
  assert.match(hero,/onFocusCapture/);
  assert.doesNotMatch(hero,/onMouseEnter/);
  assert.doesNotMatch(hero,/retail-slider-footer/);

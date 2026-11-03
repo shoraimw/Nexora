@@ -34,7 +34,7 @@ export function RetailHero(){
  },[]);
  useEffect(()=>{
   if(reducedMotion||!tabVisible||pausedByFocus)return;
-  const timer=window.setInterval(()=>setActive(i=>(i+1)%slides.length),6500);
+  const timer=window.setInterval(()=>setActive(i=>(i+1)%slides.length),5000);
   return()=>window.clearInterval(timer);
  },[reducedMotion,tabVisible,pausedByFocus]);
  return <section className="retail-hero-layout" aria-label="Featured products and collections">
