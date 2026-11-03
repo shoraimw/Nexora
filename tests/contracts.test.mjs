@@ -77,10 +77,10 @@ test("development indicator and redundant storefront banners are disabled",()=>{
 test("hero is automatic, has no manual carousel controls and respects reduced motion",()=>{
  const hero=read("components/RetailChrome.tsx");
  assert.match(hero,/window\.setInterval/);
- assert.match(hero,/retail-slider-progress/);
+ assert.doesNotMatch(hero,/retail-slider-progress|retail-slider-footer/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow|Pause size|Play size/);
  assert.match(hero,/prefers-reduced-motion/);
- assert.match(hero,/pausedByInteraction/);
+ assert.match(hero,/pausedByFocus/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow/);
 });
 test("shop category menu closes on navigation, escape and outside clicks",()=>{
