@@ -83,15 +83,16 @@ test("hero is automatic, has no manual carousel controls and respects reduced mo
  assert.match(hero,/pausedByFocus/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow/);
 });
-test("shop category menu closes on navigation, escape and outside clicks",()=>{
- const menu=read("components/ShopCategoryMenu.tsx");
+test("desktop category tabs and mobile category drawer expose the complete hierarchy",()=>{
  const layout=read("app/layout.tsx");
- assert.match(menu,/usePathname/);
- assert.match(menu,/pointerdown/);
- assert.match(menu,/Escape/);
- assert.match(menu,/onClick=\{\(\)=>setOpen\(false\)\}/);
- assert.match(layout,/ShopCategoryMenu/);
- assert.ok(!layout.includes('<details className="retail-category-dropdown"'));
+ const menu=read("components/MobileMenu.tsx");
+ const taxonomy=read("lib/store-taxonomy.ts");
+ assert.match(layout,/storeCategories\.map/);
+ assert.match(layout,/retail-category-nav-link/);
+ assert.match(menu,/storeCategories\.map/);
+ assert.match(menu,/nexora-mobile-categories/);
+ assert.match(taxonomy,/name:"Networking"/);
+ assert.match(taxonomy,/name:"Camera"/);
 });
 
 test("offers are scheduled, owner-managed and publicly time-filtered",()=>{
@@ -203,10 +204,13 @@ test("Nexora homepage uses a custom animated CSS 3D hero and category-first merc
  assert.match(read("app/layout.tsx"),/hero-3d\.css/);
  assert.match(read("app/layout.tsx"),/retail-category-nav-link/);
 });
-test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories",()=>{
+test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
  const migration=read("database/009_hierarchical_categories.sql");
  const route=read("app/category/[slug]/[[...subcategory]]/page.tsx");
+ const admin=read("app/admin/page.tsx");
+ const api=read("app/api/admin/catalog/route.ts");
+ const dashboard=read("app/api/admin/dashboard/route.ts");
  for(const name of ["Phones","Mac","Phone Accessories","Tablets","Cases & Protectors","Watches","Headphones & Speakers","PC Accessories","Camera","Gadgets","Networking","Gaming","Drone"])assert.ok(taxonomy.includes('name:"'+name+'"'),name);
  assert.match(taxonomy,/name:"Power Banks"/);
  assert.match(taxonomy,/name:"Chargers & Adapters"/);
@@ -216,6 +220,9 @@ test("Nexora taxonomy has separate Camera and Networking categories with custome
  assert.match(migration,/parent_id uuid references public\.categories/);
  assert.match(route,/CommerceShop initialCategory/);
  assert.match(route,/DemoShop initialCategory/);
+ assert.match(admin,/categoryParentId/);
+ assert.match(api,/parent_id:uuid\.nullable\(\)\.optional\(\)/);
+ assert.match(dashboard,/categories/);
 });
 test("price/product card links remain bound to Nexora products, without fake claims",()=>{
  const live=read("components/CommerceShop.tsx");
