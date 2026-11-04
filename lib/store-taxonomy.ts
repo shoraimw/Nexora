@@ -26,9 +26,9 @@ export const storeCategories:StoreCategory[]=[
   {name:"Tablet Accessories",slug:"tablet-accessories",hint:"Cases, keyboards and more"}
  ]},
  {name:"Cases & Protectors",slug:"cases-protectors",hint:"Cases for your devices",description:"Cases, covers and screen protection for your everyday devices.",subcategories:[
-  {name:"Apple Cases",slug:"apple-cases",hint:"iPhone and Apple device cases"},
-  {name:"Samsung Cases",slug:"samsung-cases",hint:"Galaxy cases"},
-  {name:"Google Pixel Cases",slug:"google-pixel-cases",hint:"Pixel protection"},
+  {name:"Apple",slug:"apple-cases",hint:"iPhone and Apple device cases"},
+  {name:"Samsung",slug:"samsung-cases",hint:"Galaxy cases"},
+  {name:"Google Pixel",slug:"google-pixel-cases",hint:"Pixel protection"},
   {name:"Earbuds Cases",slug:"earbuds-cases",hint:"Protective earbud covers"},
   {name:"Screen Protectors",slug:"screen-protectors",hint:"Display protection"}
  ]},
@@ -58,16 +58,20 @@ export const storeCategories:StoreCategory[]=[
   {name:"Hard Drives",slug:"hard-drives",hint:"External hard drives and SSDs"},
   {name:"Desk Setup",slug:"desk-setup",hint:"Make your workspace yours"}
  ]},
- {name:"Camera & Networking",slug:"camera-networking",hint:"Capture & connect",description:"Cameras, routers and networking equipment for home and work.",subcategories:[
-  {name:"Cameras",slug:"cameras",hint:"Capture everyday moments"},
-  {name:"Routers",slug:"routers",hint:"Home and office Wi-Fi"},
-  {name:"TP-Link Routers",slug:"tp-link-routers",hint:"TP-Link networking"},
-  {name:"Network Accessories",slug:"network-accessories",hint:"Adapters and connectivity"}
+ {name:"Camera",slug:"camera",hint:"Capture every angle",description:"Cameras and accessories for creators, travellers and everyday moments.",subcategories:[
+  {name:"Cameras",slug:"cameras",hint:"Digital and compact cameras"},
+  {name:"Action Cameras",slug:"action-cameras",hint:"Capture the action"},
+  {name:"Camera Accessories",slug:"camera-accessories",hint:"Batteries, tripods and more"}
  ]},
  {name:"Gadgets",slug:"gadgets",hint:"Clever everyday tech",description:"Small useful gadgets and lifestyle technology for everyday life.",subcategories:[
   {name:"Daily Lifestyle",slug:"daily-lifestyle",hint:"Useful everyday finds"},
   {name:"Charging Fans",slug:"charging-fans",hint:"Portable rechargeable fans"},
   {name:"TV Boxes",slug:"tv-boxes",hint:"Smart TV and streaming boxes"}
+ ]},
+ {name:"Networking",slug:"networking",hint:"Stay connected",description:"Routers and networking equipment for reliable home and office connectivity.",subcategories:[
+  {name:"Routers",slug:"routers",hint:"Home and office Wi-Fi"},
+  {name:"TP-Link Routers",slug:"tp-link-routers",hint:"Explore TP-Link routers"},
+  {name:"Network Accessories",slug:"network-accessories",hint:"Adapters and connectivity"}
  ]},
  {name:"Gaming",slug:"gaming",hint:"Gear up and play",description:"Gaming consoles, controllers and peripherals.",subcategories:[
   {name:"Gaming Consoles",slug:"gaming-consoles",hint:"Gaming systems"},
