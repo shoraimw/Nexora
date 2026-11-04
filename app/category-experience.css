@@ -64,3 +64,22 @@ html[data-theme="dark"] .retail-mega-heading strong{color:#e6edf2}
 @media(prefers-reduced-motion:reduce){
  .retail-category-card:hover{transform:none}
 }
+
+/* Category tabs mirror the reference store; every tab opens its own collection. */
+.retail-nav-inner{gap:clamp(8px,1.05vw,16px)!important}
+.retail-nav-inner>a.retail-category-nav-link{flex:0 0 auto;padding:13px 0;color:#f4f6f8;font-size:10px;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.retail-nav-inner>a.retail-category-nav-link:hover{color:#ff986e}
+.retail-nav-inner>a.retail-category-nav-link:focus-visible{outline-color:#ff986e;outline-offset:3px}
+.nexora-subcategory-nav{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:4px 0 12px;margin:-4px 0 14px;scrollbar-width:thin;scrollbar-color:#d9e0e5 transparent}
+.nexora-subcategory-nav a{flex:0 0 auto;padding:8px 12px;border:1px solid #e3e8eb;border-radius:30px;background:#fff;color:#53616b;font-size:10px;font-weight:750;white-space:nowrap;transition:background .18s,border-color .18s,color .18s}
+.nexora-subcategory-nav a:hover,.nexora-subcategory-nav a.is-active{border-color:#e9a487;background:#fff2ec;color:#c65d37}
+html[data-theme="dark"] .nexora-subcategory-nav a{border-color:#344957;background:#172a37;color:#c2cdd5}
+html[data-theme="dark"] .nexora-subcategory-nav a:hover,html[data-theme="dark"] .nexora-subcategory-nav a.is-active{border-color:#a96347;background:#35271f;color:#ffb08e}
+@media(max-width:790px){
+ .retail-nav-inner>a.retail-category-nav-link{font-size:9px}
+ .nexora-subcategory-nav{margin-top:0;padding-bottom:10px}
+}
+@media(max-width:540px){
+ .retail-nav-inner>a.retail-category-nav-link{font-size:8px}
+ .nexora-subcategory-nav a{padding:7px 10px;font-size:9px}
+}

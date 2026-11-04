@@ -13,6 +13,7 @@
 
 ## Catalog and customer experience
 - [x] Original transparent Nexora logo provided and applied to header, footer, and browser tab
+- [ ] Hierarchical category migration 009 applied; all 13 category tabs and subcategory routes checked
 - [ ] Demo products removed; real images, variant prices, warranties and stock reviewed
 - [ ] Mobile UI tested on common phones and slow mobile connections
 - [ ] Dark/light theme, mobile navigation drawer, skip link, search suggestions and scroll controls tested with keyboard and touch

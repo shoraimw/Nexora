@@ -43,7 +43,7 @@ export function ShopFilterToolbar({filters,onChange,brands,results,categories=["
  },[open]);
  const change=<K extends keyof ShopFilterState>(key:K,value:ShopFilterState[K])=>setDraft(current=>({...current,[key]:value,...(key==="category"?{subcategory:""}:{})}));
  const apply=()=>{onChange({...draft,query:filters.query,sort:filters.sort});setOpen(false);};
- const clear=()=>{const cleared={...initialFilters,query:filters.query,sort:filters.sort};setDraft(cleared);onChange(cleared);setOpen(false);};
+ const clear=()=>{const cleared={...initialFilters,category:filters.category,query:filters.query,sort:filters.sort};setDraft(cleared);onChange(cleared);setOpen(false);};
  return <>
   <div className="retail-shop-toolbar">
    <label className="retail-shop-search"><Search size={17}/><input type="search" value={filters.query} onChange={e=>onChange({...filters,query:e.target.value})} placeholder="Search products, brands and categories..." aria-label="Search products"/></label>

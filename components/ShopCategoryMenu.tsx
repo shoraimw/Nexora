@@ -2,14 +2,14 @@
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
-import {ArrowUpRight,ChevronDown,Menu,Smartphone,Laptop,BatteryCharging,Tablet,ShieldCheck,Watch,Headphones,Keyboard,Camera,Lightbulb,Gamepad2,Plane,Grid2X2} from "lucide-react";
+import {ArrowUpRight,ChevronDown,Menu,Smartphone,Laptop,BatteryCharging,Tablet,ShieldCheck,Watch,Headphones,Keyboard,Camera,Lightbulb,Gamepad2,Plane,Grid2X2,Router} from "lucide-react";
 import type {LucideIcon} from "lucide-react";
 import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 
 const icons:Record<string,LucideIcon>={
  "Phones":Smartphone,"Mac":Laptop,"Phone Accessories":BatteryCharging,"Tablets":Tablet,
  "Cases & Protectors":ShieldCheck,"Watches":Watch,"Headphones & Speakers":Headphones,
- "PC Accessories":Keyboard,"Camera & Networking":Camera,"Gadgets":Lightbulb,
+ "PC Accessories":Keyboard,"Camera":Camera,"Gadgets":Lightbulb,"Networking":Router,
  "Gaming":Gamepad2,"Drone":Plane
 };
 export function ShopCategoryMenu(){
