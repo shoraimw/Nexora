@@ -157,9 +157,9 @@ html[data-theme="dark"] .nexora-scroll-top{background:#1b2e3c;color:#fff;border-
 html[data-theme="dark"] .nexora-floating-contact{background:#1a2b38;color:#ffb18f;border-color:#624a40}
 html[data-theme="dark"] .nexora-not-found-art{box-shadow:0 20px 40px #0005}
 html[data-theme="dark"] .nexora-not-found form button{background:#e66c43}
-html[data-theme="dark"] .nexora-brand-header .nexora-logo-dark-theme{display:block}
-html[data-theme="dark"] .nexora-brand-header .nexora-logo-light-theme{display:none}
-.nexora-brand-header .nexora-logo-dark-theme{display:none}
+.retail-brand-header .nexora-logo-dark-theme{display:none}
+html[data-theme="dark"] .retail-brand-header .nexora-logo-dark-theme{display:block}
+html[data-theme="dark"] .retail-brand-header .nexora-logo-light-theme{display:none}
 @media(max-width:790px){
  .nexora-mobile-menu-trigger{display:grid}
  .retail-nav{display:none}
