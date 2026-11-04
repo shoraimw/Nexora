@@ -29,7 +29,7 @@ export const metadata:Metadata={
  robots:{index:true,follow:true}
 };
 export default function RootLayout({children}:{children:React.ReactNode}){
- return <html lang="en"><body><ConfirmProvider><CartProvider>
+ return <html lang="en"><body><a className="skip-link" href="#main-content">Skip to content</a><ConfirmProvider><CartProvider>
   <header className="retail-site-header">
    <div className="retail-container retail-header-main">
     <MobileMenu/>

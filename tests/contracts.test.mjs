@@ -117,7 +117,7 @@ test("offers navigation glows only with active offers and offers page has empty 
  const css=read("app/offers.css");
  assert.match(nav,/is-live/);
  assert.match(nav,/No offers/);
- assert.match(layout,/retail-header-actions"><OffersNavLink/);
+ assert.match(layout,/retail-header-actions"><ThemeToggle\/><OffersNavLink/);
  assert.match(layout,/OffersNavLink compact/);
  assert.match(page,/No offers now/);
  assert.match(page,/offer\.coupon_code/);
@@ -230,7 +230,7 @@ test("Nexora header logo is compact and responsive while footer branding stays u
 
 test("global Nexora experience includes accessible theme, search, mobile menu and utilities",()=>{
  const layout=read("app/layout.tsx"),experience=read("components/SiteExperience.tsx"),search=read("components/SiteSearch.tsx"),menu=read("components/MobileMenu.tsx"),css=read("app/site-experience.css");
- assert.match(layout,/ConfirmProvider/);assert.match(layout,/id="main-content"/);assert.match(layout,/ThemeToggle/);assert.match(layout,/SiteSearch/);assert.match(layout,/MobileMenu/);
+ assert.match(layout,/ConfirmProvider/);assert.match(layout,/id="main-content"/);assert.match(layout,/skip-link/);assert.match(layout,/ThemeToggle/);assert.match(layout,/SiteSearch/);assert.match(layout,/MobileMenu/);
  assert.match(experience,/requestAnimationFrame/);assert.match(experience,/nexora_cookie_choice/);assert.match(experience,/utm_source/);assert.match(experience,/navigator\.clipboard/);
  assert.match(search,/\/api\/catalog/);assert.match(menu,/aria-modal="true"/);assert.match(css,/html\[data-theme="dark"\]/);assert.match(css,/nexora-scroll-progress/);assert.match(css,/nexora-scroll-top/);assert.match(css,/nexora-floating-contact/);
 });
