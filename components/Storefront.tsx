@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useEffect,useMemo,useState} from "react";
 import {ArrowRight,ShoppingBag,ChevronRight,ArrowUpRight} from "lucide-react";
 import {categories,currency,products, type Product} from "@/lib/catalog";
+import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 import {useCart} from "@/components/CartProvider";
 import {ChatWidget} from "@/components/ChatWidget";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
@@ -17,7 +18,7 @@ function DemoProductCard({product}:{product:Product}){
    {product.tag&&<span className="retail-product-badge">{product.tag}</span>}
    <span className="retail-preview-badge">Preview</span><span className="retail-quick-view"><ArrowUpRight size={17}/></span>
   </Link>
-  <div className="retail-product-info"><span className="retail-product-category">{product.category}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
+  <div className="retail-product-info"><span className="retail-product-category">{product.category}{product.subcategory?" · "+product.subcategory:""}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
    <div className="retail-price-row"><strong>{currency(product.price)}</strong>{product.previous&&<s>{currency(product.previous)}</s>}</div>
    <span className="retail-stock preview-stock">Illustrative listing</span>
    <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>View details <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={"Add "+product.name+" to preview bag"} disabled={product.id==="NX-D07"||product.id==="NX-D08"} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
@@ -26,7 +27,7 @@ function DemoProductCard({product}:{product:Product}){
 }
 function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:Product[];href?:string}){
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,10).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
 }
 export function Storefront(){
  const demoBrands=Array.from(new Set(products.map(p=>p.brand).filter((b):b is string=>!!b)));
@@ -35,34 +36,33 @@ export function Storefront(){
    <div className="retail-home-catalog">
     <RetailBrandDirectory brands={demoBrands} preview/>
     <DemoProductSection eyebrow="CURATED DEMO PREVIEW" title="Featured Products" items={products.slice(0,5)}/>
-    <DemoProductSection eyebrow="DISCOVER THE COLLECTION" title="Trending Products" items={products.filter(p=>p.tag==="Trending"||p.student)}/>
-    <DemoProductSection eyebrow="LATEST CONCEPTS" title="New Arrival" items={products.slice().reverse()}/>
-    <DemoProductSection eyebrow="EVERYDAY TECH" title="Gadgets & Accessories" items={products.filter(p=>["Audio","Accessories","Wearables","Desk Setup"].includes(p.category))}/>
-    <DemoProductSection eyebrow="LISTEN YOUR WAY" title="Audio & sound" items={products.filter(p=>p.category==="Audio")} href="/shop?category=Audio"/>
-    <DemoProductSection eyebrow="SMARTER EVERYDAY" title="Wearables" items={products.filter(p=>p.category==="Wearables")} href="/shop?category=Wearables"/>
-    <DemoProductSection eyebrow="MADE FOR STUDY DAYS" title="Student picks" items={products.filter(p=>p.student)} href="/shop?category=Student%20Picks"/>
+    <DemoProductSection eyebrow="DISCOVER THE COLLECTION" title="Trending Products" items={products.filter(p=>p.tag==="Trending"||p.student).slice(0,5)}/>
+    <DemoProductSection eyebrow="LATEST CONCEPTS" title="New Arrivals" items={products.slice(-5).reverse()}/>
+    <DemoProductSection eyebrow="MADE FOR STUDY DAYS" title="Student Picks" items={products.filter(p=>p.collections?.includes("Student Picks"))} href="/shop?category=Student%20Picks"/>
+    {["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Gaming"].map(name=>{const category=storeCategories.find(c=>c.name===name);const items=products.filter(p=>p.category===name);return category&&items.length?<DemoProductSection key={name} eyebrow="EXPLORE THE CATEGORY" title={name} items={items} href={categoryHref(category)}/>:null;})}
    </div><RetailPromoBanners/>
   </div><ChatWidget/>
  </main>;
 }
 type IndexedProduct=ShopFilterProduct & {product:Product};
-export function DemoShop(){
- const [filters,setFilters]=useState<ShopFilterState>(initialFilters);
- useEffect(()=>{const p=new URLSearchParams(window.location.search);const cn=p.get("connection");setFilters(f=>({...f,query:p.get("q")||"",category:p.get("category")||"All",brand:p.get("brand")||"",connection:cn==="wireless"?"wireless":cn==="wired"?"wired":"all"}));},[]);
+export function DemoShop({initialCategory="All",initialSubcategory="",categoryDescription=""}:{initialCategory?:string;initialSubcategory?:string;categoryDescription?:string}){
+ const [filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
+ useEffect(()=>{const p=new URLSearchParams(window.location.search);const cn=p.get("connection");setFilters(f=>({...f,query:p.get("q")||"",category:p.get("category")||initialCategory||"All",subcategory:p.get("subcategory")||initialSubcategory||"",brand:p.get("brand")||"",connection:cn==="wireless"?"wireless":cn==="wired"?"wired":"all"}));},[]);
  const indexed=useMemo<IndexedProduct[]>(()=>products.map((p,index)=>({
-  id:p.id,name:p.name,category:p.category,brand:p.brand||"",searchText:[p.description,...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
+  id:p.id,name:p.name,category:p.category,subcategory:p.subcategory||"",brand:p.brand||"",collections:p.collections||[],searchText:[p.description,...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
   pricePaisa:Math.round(p.price*100),compareAtPaisa:p.previous?Math.round(p.previous*100):undefined,
   available:p.id!=="NX-D07"&&p.id!=="NX-D08",featured:index<3,
   createdAt:String(products.length-index).padStart(3,"0"),collections:p.student?["Student Picks"]:[],product:p
  })),[]);
  const visible=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
- const categoryOptions=["All",...categories.filter(x=>x!=="All")];
+ const categoryOptions=storeCategories.map(category=>category.name);
+ const subcategories=storeCategories.find(category=>category.name===filters.category)?.subcategories.map(subcategory=>subcategory.name)||[];
  return <main className="retail-container retail-shop-page">
-  <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/><span>Shop</span></div>
-  <div className="retail-shop-heading"><div><span className="retail-eyebrow">THE NEXORA COLLECTION</span><h1>Shop all gadgets</h1><p>Search by brand, connection, availability and price.</p></div><span>{visible.length} preview products</span></div>
-  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={visible.length} categories={categoryOptions}/>
-  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.category==="All"?"All products":filters.category}</strong><span>Preview catalog · brands are examples, not live inventory</span></div>
+  <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">Shop</Link><ChevronRight size={13}/><span>{initialSubcategory||initialCategory}</span></>:<span>Shop</span>}</div>
+  <div className="retail-shop-heading"><div><span className="retail-eyebrow">{initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES"}</span><h1>{initialSubcategory||initialCategory!=="All"?initialSubcategory||initialCategory:"Shop all gadgets"}</h1><p>{categoryDescription||"Search by brand, connection, availability and price."}</p></div><span>{visible.length} preview products</span></div>
+  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={visible.length} categories={categoryOptions} subcategories={subcategories}/>
+  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.subcategory||(filters.category==="All"?"All products":filters.category)}</strong><span>Preview catalog · brands are examples, not live inventory</span></div>
    {visible.length?<div className="retail-product-grid">{visible.map(p=><DemoProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>No products found</h3><p>Try another search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,query:filters.query})}>Clear all filters</button></div>}
   </section><ChatWidget/>
  </main>;

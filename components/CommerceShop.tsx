@@ -7,6 +7,7 @@ import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {RetailBrandDirectory} from "@/components/RetailBrandDirectory";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
 import type {LiveProduct,LiveVariant} from "@/lib/catalog-live";
+import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 const money=(value:number)=>"৳"+(value/100).toLocaleString("en-BD",{maximumFractionDigits:2});
 function displayVariant(product:LiveProduct):LiveVariant|undefined{
  const variants=[...product.variants].sort((a,b)=>a.price_paisa-b.price_paisa);
@@ -32,44 +33,45 @@ function ProductCard({product}:{product:LiveProduct}){
 }
 function ProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:LiveProduct[];href?:string}){
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,10).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
 }
 type IndexedProduct=ShopFilterProduct&{product:LiveProduct};
-export function CommerceShop({homepage=false}:{homepage?:boolean}){
- const [items,setItems]=useState<LiveProduct[]>([]),[ready,setReady]=useState(false),[filters,setFilters]=useState<ShopFilterState>(initialFilters);
+export function CommerceShop({homepage=false,initialCategory="All",initialSubcategory="",categoryDescription=""}:{homepage?:boolean;initialCategory?:string;initialSubcategory?:string;categoryDescription?:string}){
+ const [items,setItems]=useState<LiveProduct[]>([]),[ready,setReady]=useState(false),[filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
  useEffect(()=>{let active=true;const params=new URLSearchParams(window.location.search);
-  setFilters(f=>({...f,query:params.get("q")||"",category:params.get("category")||"All",brand:params.get("brand")||"",connection:params.get("connection")==="wireless"?"wireless":params.get("connection")==="wired"?"wired":"all"}));
+  setFilters(f=>({...f,query:params.get("q")||"",category:params.get("category")||initialCategory||"All",subcategory:params.get("subcategory")||initialSubcategory||"",brand:params.get("brand")||"",connection:params.get("connection")==="wireless"?"wireless":params.get("connection")==="wired"?"wired":"all"}));
   fetch("/api/catalog",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Catalog request failed");return r.json();}).then(x=>{if(active){setItems(x.products||[]);setReady(true);}}).catch(()=>{if(active)setReady(true);});
   return()=>{active=false;};
  },[]);
  const indexed=useMemo<IndexedProduct[]>(()=>items.map(p=>{const v=displayVariant(p);return{
-  id:p.id,name:p.title,category:p.category,brand:p.brand,searchText:[p.description,p.warranty,...Object.values(p.specs||{}).map(String),...p.variants.flatMap(v=>[v.name,v.color||""])].join(" "),connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
+  id:p.id,name:p.title,category:p.category,subcategory:p.subcategory,brand:p.brand,collections:p.collections,searchText:[p.description,p.warranty,...Object.values(p.specs||{}).map(String),...p.variants.flatMap(v=>[v.name,v.color||""])].join(" "),connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
   pricePaisa:v?.price_paisa||0,compareAtPaisa:v?.compare_at_paisa,available:p.variants.some(v=>v.available>0),
   featured:p.featured,createdAt:p.created_at,product:p
  };}),[items]);
  const shown=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
- const categories=useMemo(()=>["All",...Array.from(new Set(items.map(p=>p.category))).sort()],[items]);
+ const categories=useMemo(()=>storeCategories.map(category=>category.name),[]);
+ const subcategories=useMemo(()=>storeCategories.find(category=>category.name===filters.category)?.subcategories.map(subcategory=>subcategory.name)||[],[filters.category]);
  const featured=useMemo(()=>items.filter(p=>p.featured).slice(0,10),[items]);
  const trending=useMemo(()=>items.filter(p=>p.review_count>0).sort((a,b)=>b.review_count-a.review_count||b.review_average-a.review_average).slice(0,10),[items]);
  const newest=useMemo(()=>[...items].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||"")).slice(0,10),[items]);
- const gadgets=useMemo(()=>items.filter(p=>["audio","wearables","accessories","desk setup"].includes(p.category.toLowerCase())).slice(0,10),[items]);
- const homeGroups=useMemo(()=>["Audio","Wearables","Accessories","Desk Setup","Student Picks"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,10)})).filter(g=>g.items.length),[items]);
+ const studentPicks=useMemo(()=>items.filter(p=>p.collections.includes("Student Picks")).slice(0,5),[items]);
+ const homeGroups=useMemo(()=>["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Gaming"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5),category:storeCategories.find(c=>c.name===name)})).filter(g=>g.items.length),[items]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
   <RetailBrandDirectory brands={brands}/>
   {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
    <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured Products" items={featured}/>
    <ProductSection eyebrow="CUSTOMER FAVOURITES" title="Trending Products" items={trending}/>
    <ProductSection eyebrow="LATEST ADDITIONS" title="New Arrival" items={newest}/>
-   <ProductSection eyebrow="EVERYDAY TECH" title="Gadgets & Accessories" items={gadgets}/>
-   {homeGroups.map(g=><ProductSection key={g.name} eyebrow="SHOP BY CATEGORY" title={g.name} items={g.items} href={"/shop?category="+encodeURIComponent(g.name)}/>)}
+   {studentPicks.length>0&&<ProductSection eyebrow="MADE FOR STUDY DAYS" title="Student Picks" items={studentPicks} href="/shop?category=Student%20Picks"/>}
+   {homeGroups.map(g=><ProductSection key={g.name} eyebrow="EXPLORE THE CATEGORY" title={g.name} items={g.items} href={g.category?categoryHref(g.category):"/shop"}/>)}
   </>}
  </div></div>;
  return <main className="retail-container retail-shop-page">
-  <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/><span>Shop</span></div>
-  <div className="retail-shop-heading"><div><span className="retail-eyebrow">THE NEXORA COLLECTION</span><h1>Shop all gadgets</h1><p>Search by brand, connection, availability and price.</p></div><span>{shown.length} products</span></div>
-  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={shown.length} categories={categories}/>
-  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.category==="All"?"All products":filters.category}</strong><span>{ready?"Verified catalog listings":"Loading catalog"}</span></div>
+  <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">Shop</Link><ChevronRight size={13}/><span>{initialSubcategory||initialCategory}</span></>:<span>Shop</span>}</div>
+  <div className="retail-shop-heading"><div><span className="retail-eyebrow">{initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES"}</span><h1>{initialSubcategory||initialCategory!=="All"?initialSubcategory||initialCategory:"Shop all gadgets"}</h1><p>{categoryDescription||"Search by brand, connection, availability and price."}</p></div><span>{shown.length} products</span></div>
+  <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={shown.length} categories={categories} subcategories={subcategories}/>
+  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.subcategory||(filters.category==="All"?"All products":filters.category)}</strong><span>{ready?"Verified catalog listings":"Loading catalog"}</span></div>
    {!ready?<div className="retail-loading">Loading products…</div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>{items.length?"No matching products":"No products published yet"}</h3><p>Adjust your search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,query:filters.query})}>Clear all filters</button></div>}
   </section>
  </main>;
