@@ -1,3 +1,5 @@
+import {storeCategories} from "@/lib/store-taxonomy";
+
 export type Product = {
   id:string;slug:string;name:string;category:string;subcategory?:string;price:number;
   previous?:number;description:string;features:string[];variants:string[];image?:string;
@@ -44,6 +46,5 @@ export const products:Product[]=[
  demo("NX-D32","Nexora (concept)","study-combo","Student Setup Combo","PC Accessories","Desk Setup",1590,"A proposed budget-conscious gadget bundle for students.",["Curated essentials concept","Bundle contents to be confirmed","Demo only"],["Demo only"],"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85",{tag:"Student pick",student:true,collections:["Student Picks"]})
 ];
 export const categories=["All",...storeCategories.map(category=>category.name),"Student Picks","Mystery Box"];
-import {storeCategories} from "@/lib/store-taxonomy";
 export function currency(value:number){return "৳"+value.toLocaleString("en-BD");}
 export function bySlug(slug:string){return products.find(product=>product.slug===slug);}

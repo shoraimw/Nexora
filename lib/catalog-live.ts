@@ -6,4 +6,31 @@ export async function liveCatalog():Promise<LiveProduct[]>{if(!configured)return
  const reviewResult=reviewIds.length?await s.rpc("nexora_product_review_summaries",{p_product_ids:reviewIds}):{data:[],error:null};
  const reviewMap=new Map<string,{count:number;average:number}>();
  if(!reviewResult.error)for(const r of (reviewResult.data||[]) as {product_id:string;review_count:number;average_rating:number}[])reviewMap.set(r.product_id,{count:Number(r.review_count||0),average:Number(r.average_rating||0)});
- const cats=new Map((categories||[]).map(x=>[x.id,x]));const stock=new Map((inventory||[]).map(x=>[x.variant_id,Math.max(0,x.on_hand-x.reserved)]));return(products||[]).map(p=>{const node=p.category_id?cats.get(p.category_id):undefined;const parent=node?.parent_id?cats.get(node.parent_id):undefined;const rawCollection=p.specs?.collection;const rawCollections=p.specs?.collections;const collections=[...(typeof rawCollection==="string"?[rawCollection]:[]),...(typeof rawCollections==="string"?rawCollections.split(",").map(v=>v.trim()).filter(Boolean):[])];return({id:p.id,slug:p.slug,title:p.title,description:p.description,brand:p.brand,warranty:p.warranty,specs:p.specs||{},featured:p.featured,created_at:p.created_at,category:parent?.name||node?.name||"Gadgets",subcategory:parent?node?.name||"": "",category_slug:parent?.slug||node?.slug||"gadgets",subcategory_slug:parent?node?.slug||"": "",collections,review_count:reviewMap.get(p.id)?.count||0,review_average:reviewMap.get(p.id)?.average||0,images:(images||[]).filter(i=>i.product_id===p.id).map(i=>({url:i.url,alt:i.alt||p.title})),variants:(variants||[]).filter(v=>v.product_id===p.id).map(v=>({id:v.id,sku:v.sku,name:v.name,color:v.color,price_paisa:v.price_paisa,compare_at_paisa:v.compare_at_paisa,available:stock.get(v.id)||0}))});}).filter(p=>p.variants.length>0&&(!p.id||!products?.find(raw=>raw.id===p.id)?.category_id||cats.has(products.find(raw=>raw.id===p.id)!.category_id!)));
+ const cats=new Map((categories||[]).map(x=>[x.id,x]));
+ const stock=new Map((inventory||[]).map(x=>[x.variant_id,Math.max(0,x.on_hand-x.reserved)]));
+ return (products||[]).flatMap(p=>{
+  const node=p.category_id?cats.get(p.category_id):undefined;
+  if(p.category_id&&!node)return [];
+  const parent=node?.parent_id?cats.get(node.parent_id):undefined;
+  const rawCollection=p.specs?.collection;
+  const rawCollections=p.specs?.collections;
+  const collections=[
+   ...(typeof rawCollection==="string"?[rawCollection]:[]),
+   ...(typeof rawCollections==="string"?rawCollections.split(",").map(v=>v.trim()).filter(Boolean):[])
+  ];
+  const productVariants=(variants||[]).filter(v=>v.product_id===p.id).map(v=>({
+   id:v.id,sku:v.sku,name:v.name,color:v.color,price_paisa:v.price_paisa,
+   compare_at_paisa:v.compare_at_paisa,available:stock.get(v.id)||0
+  }));
+  if(!productVariants.length)return [];
+  return [{
+   id:p.id,slug:p.slug,title:p.title,description:p.description,brand:p.brand,
+   warranty:p.warranty,specs:p.specs||{},featured:p.featured,created_at:p.created_at,
+   category:parent?.name||node?.name||"Gadgets",subcategory:parent?node?.name||"":"",
+   category_slug:parent?.slug||node?.slug||"gadgets",subcategory_slug:parent?node?.slug||"":"",
+   collections,review_count:reviewMap.get(p.id)?.count||0,review_average:reviewMap.get(p.id)?.average||0,
+   images:(images||[]).filter(i=>i.product_id===p.id).map(i=>({url:i.url,alt:i.alt||p.title})),
+   variants:productVariants
+  }];
+ });
+}

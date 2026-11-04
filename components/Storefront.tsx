@@ -2,7 +2,7 @@
 import Link from "next/link";
 import {useEffect,useMemo,useState} from "react";
 import {ArrowRight,ShoppingBag,ChevronRight,ArrowUpRight} from "lucide-react";
-import {categories,currency,products, type Product} from "@/lib/catalog";
+import {currency,products, type Product} from "@/lib/catalog";
 import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 import {useCart} from "@/components/CartProvider";
 import {ChatWidget} from "@/components/ChatWidget";
@@ -49,10 +49,10 @@ export function DemoShop({initialCategory="All",initialSubcategory="",categoryDe
  const [filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
  useEffect(()=>{const p=new URLSearchParams(window.location.search);const cn=p.get("connection");setFilters(f=>({...f,query:p.get("q")||"",category:p.get("category")||initialCategory||"All",subcategory:p.get("subcategory")||initialSubcategory||"",brand:p.get("brand")||"",connection:cn==="wireless"?"wireless":cn==="wired"?"wired":"all"}));},[]);
  const indexed=useMemo<IndexedProduct[]>(()=>products.map((p,index)=>({
-  id:p.id,name:p.name,category:p.category,subcategory:p.subcategory||"",brand:p.brand||"",collections:p.collections||[],searchText:[p.description,...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
+  id:p.id,name:p.name,category:p.category,subcategory:p.subcategory||"",brand:p.brand||"",collections:p.collections||(p.student?["Student Picks"]:[]),searchText:[p.description,...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
   pricePaisa:Math.round(p.price*100),compareAtPaisa:p.previous?Math.round(p.previous*100):undefined,
   available:p.id!=="NX-D07"&&p.id!=="NX-D08",featured:index<3,
-  createdAt:String(products.length-index).padStart(3,"0"),collections:p.student?["Student Picks"]:[],product:p
+  createdAt:String(products.length-index).padStart(3,"0"),product:p
  })),[]);
  const visible=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
