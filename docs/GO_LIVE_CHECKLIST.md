@@ -15,6 +15,8 @@
 - [x] Original transparent Nexora logo provided and applied to header, footer, and browser tab
 - [ ] Demo products removed; real images, variant prices, warranties and stock reviewed
 - [ ] Mobile UI tested on common phones and slow mobile connections
+- [ ] Dark/light theme, mobile navigation drawer, skip link, search suggestions and scroll controls tested with keyboard and touch
+- [ ] Print layout, custom 404, cookie/storage notice and confirmation dialogs tested
 - [ ] Search, filters, cart and variant switching tested
 - [ ] Hero autoplay, reduced-motion behaviour and mobile filter drawer tested
 - [ ] Product descriptions/specifications checked for accuracy
@@ -37,6 +39,8 @@
 - [ ] Steadfast dispatch and tracking working with actual consignment IDs
 
 ## Communication and privacy
+- [ ] Newsletter opt-in migration 008 applied; consent records remain private to owners
+- [ ] Newsletter delivery stays disabled until a verified sender and unsubscribe process are ready
 - [ ] Sender domain/email verified; order received/verified/shipped/delivered emails tested
 - [ ] Email failure retry and duplicate-delivery protections tested
 - [ ] Guest tracking token cannot be guessed; another person's invoice inaccessible
