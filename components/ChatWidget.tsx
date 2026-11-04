@@ -3,10 +3,12 @@ import {useEffect,useState} from "react";
 import Link from "next/link";
 import {Bot,MessageCircle,Send,X,Trash2} from "lucide-react";
 import {authHeaders,browserDb} from "@/lib/browser";
+import {useConfirm} from "@/components/ConfirmProvider";
 type LinkResult={slug:string;name:string;image?:string;variants?:{name:string;price:string;available:number}[]};
 type Message={role:"assistant"|"user";text:string;links?:LinkResult[]};
 const greeting:Message={role:"assistant",text:"Hi! Welcome to Nexora. Ask me about a gadget, color, price, stock, delivery or warranty. I'll check verified information when the live catalog is connected."};
 export function ChatWidget(){
+ const confirmAction=useConfirm();
  const [open,setOpen]=useState(false),[input,setInput]=useState(""),[messages,setMessages]=useState<Message[]>([greeting]),[save,setSave]=useState(false),[loading,setLoading]=useState(false),[sessionId,setSessionId]=useState<string|undefined>(),[authenticated,setAuthenticated]=useState(false);
  useEffect(()=>{
   try{if(localStorage.getItem("nexora_chat_consent")==="yes"){setSave(true);const local=JSON.parse(localStorage.getItem("nexora_chat_history")||"[]");if(Array.isArray(local)&&local.length)setMessages(local.slice(-40));}}
@@ -14,8 +16,8 @@ export function ChatWidget(){
   const supabase=browserDb();if(supabase){void supabase.auth.getUser().then(({data})=>setAuthenticated(!!data.user));const {data}=supabase.auth.onAuthStateChange((_event,session)=>setAuthenticated(!!session?.user));return()=>data.subscription.unsubscribe();}
  },[]);
  useEffect(()=>{if(save){try{localStorage.setItem("nexora_chat_history",JSON.stringify(messages.slice(-40)));}catch{}}},[messages,save]);
- function toggleSave(value:boolean){setSave(value);if(value)localStorage.setItem("nexora_chat_consent","yes");else{localStorage.removeItem("nexora_chat_consent");localStorage.removeItem("nexora_chat_history");}}
- function clearHistory(){setMessages([greeting]);setSessionId(undefined);localStorage.removeItem("nexora_chat_history");}
+ async function toggleSave(value:boolean){if(!value&&save&&!await confirmAction("Stop remembering this chat on this device and delete its locally saved messages?",{title:"Delete saved chat",confirmLabel:"Delete saved chat",danger:true}))return;setSave(value);if(value)localStorage.setItem("nexora_chat_consent","yes");else{localStorage.removeItem("nexora_chat_consent");localStorage.removeItem("nexora_chat_history");}}
+ async function clearHistory(){if(!await confirmAction("Clear the conversation currently stored in this browser?",{title:"Clear this conversation",confirmLabel:"Clear chat",danger:true}))return;setMessages([greeting]);setSessionId(undefined);localStorage.removeItem("nexora_chat_history");}
  async function send(){
   const question=input.trim();if(!question||loading)return;
   setLoading(true);setInput("");setMessages(m=>[...m,{role:"user",text:question}]);
@@ -35,7 +37,7 @@ export function ChatWidget(){
     <span><b>{p.name}</b>{p.variants?.length&&<small>{p.variants.map(v=>v.name+" "+v.price+(v.available>0?" · In stock":" · Out of stock")).join(" / ")}</small>}</span><span>↗</span>
    </Link>)}</div>:null}
   </div>)}{loading&&<span className="chat-loading">Checking Nexora information…</span>}</div>
-  <div className="chat-consent"><label><input type="checkbox" checked={save} onChange={e=>toggleSave(e.target.checked)}/> Remember on this device</label><button onClick={clearHistory} aria-label="Delete local chat"><Trash2 size={15}/></button></div>
+  <div className="chat-consent"><label><input type="checkbox" checked={save} onChange={e=>void toggleSave(e.target.checked)}/> Remember on this device</label><button onClick={()=>void clearHistory()} aria-label="Delete local chat"><Trash2 size={15}/></button></div>
   <form className="chat-input" onSubmit={e=>{e.preventDefault();void send();}}><input maxLength={300} aria-label="Ask Nexora" value={input} onChange={e=>setInput(e.target.value)} placeholder="What gadget do you need?"/><button disabled={!input.trim()||loading} aria-label="Send"><Send size={17}/></button></form>
   <small className="chat-disclaimer">{authenticated?"Enable account chat history under Profile to sync across devices.":"Sign in for product images in chat and optional account history."} Don't send private payment details.</small>
  </section>}

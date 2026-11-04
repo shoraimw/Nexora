@@ -227,3 +227,27 @@ test("Nexora header logo is compact and responsive while footer branding stays u
  assert.match(css,/retail-brand-header\{width:88px/);
  assert.match(css,/retail-brand-footer\{width:175px/);
 });
+
+test("global Nexora experience includes accessible theme, search, mobile menu and utilities",()=>{
+ const layout=read("app/layout.tsx"),experience=read("components/SiteExperience.tsx"),search=read("components/SiteSearch.tsx"),menu=read("components/MobileMenu.tsx"),css=read("app/site-experience.css");
+ assert.match(layout,/ConfirmProvider/);assert.match(layout,/id="main-content"/);assert.match(layout,/ThemeToggle/);assert.match(layout,/SiteSearch/);assert.match(layout,/MobileMenu/);
+ assert.match(experience,/requestAnimationFrame/);assert.match(experience,/nexora_cookie_choice/);assert.match(experience,/utm_source/);assert.match(experience,/navigator\.clipboard/);
+ assert.match(search,/\/api\/catalog/);assert.match(menu,/aria-modal="true"/);assert.match(css,/html\[data-theme="dark"\]/);assert.match(css,/nexora-scroll-progress/);assert.match(css,/nexora-scroll-top/);assert.match(css,/nexora-floating-contact/);
+});
+test("newsletter requires explicit consent, server validation, rate limits and private database storage",()=>{
+ const api=read("app/api/newsletter/route.ts"),sql=read("database/008_newsletter_subscribers.sql"),ui=read("components/NewsletterSignup.tsx");
+ assert.match(api,/z\.literal\(true\)/);assert.match(api,/sameOrigin/);assert.match(api,/rateAllow/);assert.match(api,/newsletter_subscribers/);
+ assert.match(sql,/enable row level security/i);assert.match(sql,/revoke all on public\.newsletter_subscribers from anon,authenticated/i);assert.match(ui,/setState\("success"\)/);
+ assert.match(read("app/api/admin/dashboard/route.ts"),/newsletterSubscribers/);
+});
+test("destructive actions use styled confirmation dialogs and password visibility is available",()=>{
+ const provider=read("components/ConfirmProvider.tsx"),account=read("app/account/page.tsx"),admin=read("app/admin/page.tsx"),chat=read("components/ChatWidget.tsx");
+ assert.match(provider,/role="alertdialog"/);assert.match(account,/confirmAction/);assert.match(admin,/confirmAction/);assert.doesNotMatch(admin,/if\(!confirm\(/);assert.match(chat,/confirmAction/);
+ assert.match(read("components/PasswordField.tsx"),/visible\?"text":"password"/);
+});
+test("customer help includes expandable FAQs and last-reviewed metadata",()=>{
+ assert.match(read("app/contact/page.tsx"),/FaqAccordion/);assert.match(read("app/contact/page.tsx"),/LastUpdated/);assert.match(read("app/policies/page.tsx"),/LastUpdated/);assert.match(read("components/FaqAccordion.tsx"),/<details/);
+});
+test("custom 404 and print stylesheet are installed",()=>{
+ assert.match(read("app/not-found.tsx"),/Browse gadgets/);assert.match(read("app/print.css"),/@media print/);assert.match(read("app/layout.tsx"),/print\.css/);
+});

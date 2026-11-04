@@ -1,0 +1,184 @@
+/* Nexora site-wide experience layer */
+html{scroll-padding-top:140px}
+button:not(:disabled),a[role="button"]{transition:background-color .18s,color .18s,border-color .18s,box-shadow .18s,transform .18s,filter .18s}
+button:not(:disabled):hover{filter:brightness(.96)}
+button:not(:disabled):active{transform:translateY(1px)}
+button:disabled{cursor:not-allowed;opacity:.55}
+.skip-link{position:fixed;z-index:2000;top:10px;left:10px;padding:12px 16px;border-radius:5px;background:#142b40;color:#fff;font-size:13px;font-weight:800;transform:translateY(-160%);transition:transform .18s}
+.skip-link:focus{transform:translateY(0)}
+#main-content{outline:none}
+.nexora-theme-toggle,.nexora-mobile-menu-trigger{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid #e2e7eb;border-radius:50%;background:#fff;color:#263b4b;cursor:pointer}
+.nexora-mobile-menu-trigger{display:none;width:38px;height:38px;border-radius:5px}
+.nexora-site-search{position:relative;width:100%;max-width:670px;justify-self:center;min-width:0}
+.nexora-site-search .retail-search{max-width:none}
+.nexora-search-spinner{flex:0 0 auto;animation:nexora-spin .9s linear infinite}
+@keyframes nexora-spin{to{transform:rotate(360deg)}}
+.nexora-search-results{position:absolute;z-index:130;top:calc(100% + 8px);left:0;right:0;max-height:min(72vh,560px);overflow:auto;padding:13px;background:#fff;border:1px solid #e3e8ec;border-radius:8px;box-shadow:0 18px 48px #12283b24}
+.nexora-search-label{display:block;margin:4px 5px 8px;color:#8b969e;font-size:9px;font-weight:900;letter-spacing:1.4px}
+.nexora-search-product{display:flex;align-items:center;gap:11px;min-height:62px;padding:8px;border-radius:5px;color:#253743}
+.nexora-search-product:hover,.nexora-search-pages a:hover{background:#f5f7f8}
+.nexora-search-product img,.nexora-search-placeholder{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;object-fit:contain;border-radius:5px;background:#f2f4f5}
+.nexora-search-product>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.nexora-search-product strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nexora-search-product small,.nexora-search-pages small{font-size:10px;color:#87939c}
+.nexora-search-product>b{font-size:11px;color:#d7653d}
+.nexora-search-pages{display:grid;gap:4px}
+.nexora-search-pages a{display:flex;align-items:center;gap:9px;padding:10px;border-radius:5px;font-size:11px;font-weight:750;color:#344956}
+.nexora-search-pages a>span{display:flex;flex:1;flex-direction:column;gap:3px}
+.nexora-search-empty{padding:12px;color:#7e8b94;font-size:11px}
+.nexora-search-all{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;padding:12px 9px;border:0;border-top:1px solid #edf0f2;background:#fff;color:#d7653d;text-align:left;font-size:11px;font-weight:850}
+.nexora-scroll-progress{position:fixed;z-index:1200;top:0;left:0;right:0;height:3px;pointer-events:none}
+.nexora-scroll-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#f08a61,#e65e37);box-shadow:0 0 9px #e66c4380}
+.nexora-scroll-top{position:fixed;z-index:100;right:22px;bottom:150px;display:grid;place-items:center;width:42px;height:42px;border:1px solid #dce3e8;border-radius:50%;background:#fff;color:#20394b;box-shadow:0 5px 18px #10283d20;cursor:pointer}
+.nexora-scroll-top:hover{background:#172e42;color:#fff}
+.nexora-floating-contact{position:fixed;z-index:90;left:20px;bottom:22px;display:inline-flex;align-items:center;gap:9px;min-height:43px;padding:0 15px;border:1px solid #f1c4b1;border-radius:24px;background:#fff;color:#b95131;box-shadow:0 7px 24px #12283b1c;font-size:11px;font-weight:850}
+.nexora-floating-contact:hover{background:#fff3ed;transform:translateY(-2px)}
+.nexora-cookie-banner{position:fixed;z-index:140;left:18px;bottom:18px;width:min(390px,calc(100vw - 36px));padding:20px 18px 15px;border:1px solid #dfe5e9;border-radius:9px;background:#fff;color:#253743;box-shadow:0 15px 45px #12283b24}
+.nexora-cookie-banner>strong{display:block;padding-right:24px;font-size:13px}
+.nexora-cookie-banner>p{margin:8px 0 13px;color:#6e7b84;font-size:11px;line-height:1.6}
+.nexora-cookie-banner>div{display:flex;gap:8px}
+.nexora-cookie-banner>div button{min-height:34px;padding:0 12px;border:1px solid #dce3e8;border-radius:4px;background:#fff;color:#40515d;font-size:10px;font-weight:800}
+.nexora-cookie-banner>div button.is-primary{border-color:#172e42;background:#172e42;color:#fff}
+.nexora-cookie-close{position:absolute;top:11px;right:11px;display:grid;place-items:center;width:27px;height:27px;border:0;border-radius:50%;background:#f3f5f6;color:#5b6871}
+.nexora-newsletter{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);align-items:center;gap:32px;margin:0 auto 28px;padding:27px 30px;border:1px solid #e4e9ed;border-radius:7px;background:#f1f4f6}
+.nexora-newsletter-copy>span{display:flex;align-items:center;gap:7px;color:#d7653d;font-size:9px;font-weight:900;letter-spacing:1.3px}
+.nexora-newsletter-copy h2{margin:8px 0 6px;color:#1d3040;font-size:clamp(19px,2vw,25px);letter-spacing:-.7px}
+.nexora-newsletter-copy p{margin:0;color:#71808a;font-size:11px;line-height:1.6}
+.nexora-newsletter-form{display:flex;flex-direction:column;gap:10px}
+.nexora-newsletter-field{display:flex;gap:7px;min-height:43px}
+.nexora-newsletter-field input{flex:1;min-width:0;padding:0 12px;border:1px solid #dce3e8;border-radius:4px;background:#fff;color:#233746;font-size:11px}
+.nexora-newsletter-field button{display:grid;place-items:center;width:44px;flex:0 0 44px;border:0;border-radius:4px;background:#172e42;color:#fff}
+.nexora-newsletter-consent{display:flex;align-items:center;gap:7px;color:#71808a;font-size:10px}
+.nexora-newsletter-consent input{accent-color:#e66c43}
+.nexora-newsletter-error{color:#b44732;font-size:10px}
+.nexora-newsletter-success{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid #b8d9c7;border-radius:5px;background:#f0faf4;color:#246844}
+.nexora-newsletter-success>span{display:flex;flex-direction:column;gap:4px}
+.nexora-newsletter-success strong{font-size:13px}
+.nexora-newsletter-success small{font-size:10px;line-height:1.5}
+.nexora-faq{margin-top:38px;padding:27px;border:1px solid #e5eaee;border-radius:7px;background:#fff}
+.nexora-faq h2{margin:8px 0 18px;color:#1c2e3c;font-size:clamp(22px,3vw,30px);letter-spacing:-.8px}
+.nexora-faq-list{border-top:1px solid #e8edf0}
+.nexora-faq-item{border-bottom:1px solid #e8edf0}
+.nexora-faq-item summary{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 2px;color:#293d4b;font-size:12px;font-weight:800;cursor:pointer;list-style:none}
+.nexora-faq-item summary::-webkit-details-marker{display:none}
+.nexora-faq-item summary svg{flex:0 0 auto;color:#d66b45;transition:transform .2s}
+.nexora-faq-item[open] summary svg{transform:rotate(180deg)}
+.nexora-faq-item p{max-width:850px;margin:0;padding:0 28px 17px 2px;color:#6c7982;font-size:11px;line-height:1.8}
+.nexora-last-updated{margin-top:28px;padding-top:13px;border-top:1px solid #e8edf0;color:#87939b;font-size:10px}
+.nexora-not-found{min-height:65vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 22px;text-align:center}
+.nexora-not-found-code{color:#d86b44;font-size:9px;font-weight:900;letter-spacing:2px}
+.nexora-not-found-art{position:relative;display:flex;align-items:center;justify-content:center;width:150px;height:130px;margin:17px 0 5px;border-radius:24px;background:radial-gradient(circle at 35% 25%,#25465c,#12283b 65%);color:#ff9a6e}
+.nexora-not-found-art span{font-size:90px;font-weight:950;letter-spacing:-12px}
+.nexora-not-found-art i{position:absolute;right:14px;top:6px;color:#fff;font-size:48px;font-style:normal}
+.nexora-not-found h1{max-width:650px;margin:10px 0;color:#1b2e3c;font-size:clamp(32px,5vw,52px);line-height:1.04;letter-spacing:-2px}
+.nexora-not-found>p:not(.retail-eyebrow){max-width:520px;color:#78858d;font-size:13px;line-height:1.7}
+.nexora-not-found>div:last-of-type{display:flex;align-items:center;gap:19px;margin:14px 0 22px}
+.nexora-not-found-home{display:inline-flex;align-items:center;gap:6px;color:#425665;font-size:11px;font-weight:800}
+.nexora-not-found form{display:flex;align-items:center;gap:10px;width:min(420px,100%);height:44px;padding:4px 5px 4px 12px;border:1px solid #dfe5e8;border-radius:5px;background:#fff;color:#80909a}
+.nexora-not-found form input{flex:1;min-width:0;border:0;outline:0;color:#283d4b;font-size:11px}
+.nexora-not-found form button{height:34px;padding:0 14px;border:0;border-radius:4px;background:#172e42;color:#fff;font-size:10px;font-weight:850}
+.nexora-password-label{display:flex;flex-direction:column;gap:8px}
+.nexora-password-wrap{display:flex;align-items:center;position:relative;width:100%}
+.nexora-password-wrap input{width:100%;padding-right:45px!important}
+.nexora-password-toggle{position:absolute;right:7px;display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:4px;background:transparent;color:#7c8992}
+.nexora-password-toggle:hover{background:#f0f3f5;color:#263e4e}
+.nexora-dialog-backdrop{position:fixed;z-index:1500;inset:0;display:grid;place-items:center;padding:18px;background:#0b1825a8;backdrop-filter:blur(4px)}
+.nexora-confirm-dialog{position:relative;width:min(440px,100%);padding:28px;border:1px solid #e4e9ed;border-radius:10px;background:#fff;color:#1d2e3b;box-shadow:0 25px 80px #07152255}
+.nexora-confirm-icon{display:grid;place-items:center;width:42px;height:42px;margin-bottom:15px;border-radius:50%;background:#fff3e9;color:#d86b42}
+.nexora-confirm-icon.is-danger{background:#fff0ed;color:#b83e32}
+.nexora-confirm-dialog h2{margin:0 35px 8px 0;font-size:20px;letter-spacing:-.5px}
+.nexora-confirm-dialog>p{margin:0;color:#687781;font-size:12px;line-height:1.7}
+.nexora-confirm-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:23px}
+.nexora-confirm-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:39px;padding:0 14px;border:1px solid #dfe5e9;border-radius:4px;background:#fff;color:#40515d;font-size:11px;font-weight:850}
+.nexora-confirm-actions .nexora-confirm-accept{border-color:#172e42;background:#172e42;color:#fff}
+.nexora-confirm-actions .nexora-confirm-accept.is-danger{border-color:#b84235;background:#b84235}
+.nexora-confirm-x{position:absolute;top:13px;right:13px;display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:50%;background:#f3f5f6;color:#65737c}
+.nexora-mobile-menu-backdrop{position:fixed;z-index:300;inset:0;display:flex;background:#0c1926a8;backdrop-filter:blur(3px)}
+.nexora-mobile-menu-panel{display:flex;flex-direction:column;width:min(390px,88vw);height:100%;padding:24px 20px max(20px,env(safe-area-inset-bottom));overflow:auto;background:#fff;box-shadow:20px 0 60px #06142140;animation:nexora-drawer-in .2s ease-out}
+@keyframes nexora-drawer-in{from{transform:translateX(-18px);opacity:.7}to{transform:translateX(0);opacity:1}}
+.nexora-mobile-menu-panel>header{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:1px solid #e9edef}
+.nexora-mobile-menu-panel>header>div{display:flex;flex-direction:column;gap:5px}
+.nexora-mobile-menu-panel>header strong{font-size:19px;color:#1d3040}
+.nexora-mobile-menu-eyebrow{color:#dc7048;font-size:9px;font-weight:900;letter-spacing:2px}
+.nexora-mobile-menu-panel>header button{display:grid;place-items:center;width:36px;height:36px;border:1px solid #e1e7eb;border-radius:50%;background:#fff;color:#344a59}
+.nexora-mobile-menu-links{display:grid;gap:5px;padding:20px 0}
+.nexora-mobile-menu-links a{display:flex;align-items:center;gap:12px;padding:13px 10px;border-radius:5px;color:#344956;font-size:12px;font-weight:800}
+.nexora-mobile-menu-links a:hover{background:#f3f6f7;color:#d7653d}
+.nexora-mobile-menu-links a span{flex:1}
+.nexora-mobile-menu-links a svg:last-child{color:#9ba7ae}
+.nexora-mobile-menu-owner{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding:13px;border:1px solid #e5eaed;border-radius:5px;color:#52616b;font-size:11px;font-weight:800}
+.nexora-mobile-menu-panel>p{margin:16px 0 0;color:#94a0a7;font-size:9px}
+.nexora-copy-code{position:absolute;z-index:2;top:8px;right:8px;padding:6px 9px;border:1px solid #46515c;border-radius:4px;background:#263746;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
+.nexora-copy-code.is-copied{background:#236344;border-color:#236344}
+pre{position:relative;padding-top:38px!important}
+.nexora-loading-spinner{display:inline-block;width:18px;height:18px;border:2px solid #dce3e8;border-top-color:#e66c43;border-radius:50%;animation:nexora-spin .8s linear infinite;vertical-align:middle}
+.retail-loading{display:flex;align-items:center;gap:10px;padding:38px;color:#74828c;font-size:12px}
+.retail-loading:before{content:"";width:17px;height:17px;border:2px solid #dce3e8;border-top-color:#e66c43;border-radius:50%;animation:nexora-spin .8s linear infinite}
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{background:#0c151e;color:#e7edf2}
+html[data-theme="dark"] .retail-site-header,html[data-theme="dark"] .retail-nav,html[data-theme="dark"] .retail-mobile-nav{background:#111e29;border-color:#293946}
+html[data-theme="dark"] .retail-site-header{box-shadow:0 4px 16px #0004}
+html[data-theme="dark"] .retail-nav-inner>a,html[data-theme="dark"] .retail-header-actions>a{color:#c8d2d9}
+html[data-theme="dark"] .retail-header-actions .retail-cart{background:#263f52}
+html[data-theme="dark"] .retail-search,html[data-theme="dark"] .nexora-search-results{background:#172632;border-color:#344653;color:#b7c3cb}
+html[data-theme="dark"] .retail-search input,html[data-theme="dark"] .nexora-search-product,html[data-theme="dark"] .nexora-search-pages a{color:#e4ebf0}
+html[data-theme="dark"] .nexora-search-results{box-shadow:0 18px 48px #0008}
+html[data-theme="dark"] .nexora-search-product:hover,html[data-theme="dark"] .nexora-search-pages a:hover{background:#223746}
+html[data-theme="dark"] .nexora-search-all{background:#172632;border-color:#344653}
+html[data-theme="dark"] .retail-home,html[data-theme="dark"] .retail-shop-page{background:#0c151e}
+html[data-theme="dark"] .retail-product-card,html[data-theme="dark"] .retail-category-card,html[data-theme="dark"] .nexora-brand-directory,html[data-theme="dark"] .retail-filter-drawer,html[data-theme="dark"] .retail-mega-menu,html[data-theme="dark"] .retail-footer{background:#14232f;color:#e3eaf0;border-color:#2c3d49}
+html[data-theme="dark"] .retail-product-name,html[data-theme="dark"] .retail-section-heading h2,html[data-theme="dark"] .retail-category-card strong,html[data-theme="dark"] .retail-footer strong,html[data-theme="dark"] .retail-footer a{color:#e3eaf0}
+html[data-theme="dark"] .retail-product-category,html[data-theme="dark"] .retail-product-brand,html[data-theme="dark"] .retail-section-heading p,html[data-theme="dark"] .retail-footer p,html[data-theme="dark"] .retail-footer-bottom{color:#aab8c1}
+html[data-theme="dark"] .retail-trustbar,html[data-theme="dark"] .retail-category-section,html[data-theme="dark"] .retail-product-section{color:#e4ebf0}
+html[data-theme="dark"] .retail-trustbar>div,html[data-theme="dark"] .retail-category-card,html[data-theme="dark"] .nexora-brand-tile{border-color:#2b3c49}
+html[data-theme="dark"] .retail-filter-trigger,html[data-theme="dark"] .retail-sort-control select,html[data-theme="dark"] .retail-filter-drawer input,html[data-theme="dark"] .retail-filter-drawer select,html[data-theme="dark"] .retail-filter-price-fields input{background:#172632;color:#e1e9ee;border-color:#3a4d5b}
+html[data-theme="dark"] .retail-filter-drawer>header h2,html[data-theme="dark"] .retail-filter-field,html[data-theme="dark"] .retail-filter-options,html[data-theme="dark"] .retail-filter-price-block{color:#d6e0e6}
+html[data-theme="dark"] .retail-mega-links a{background:#172632;border-color:#344653;color:#dce5ea}
+html[data-theme="dark"] .retail-mega-menu>div:first-child strong{color:#e7edf2}
+html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mobile-menu-trigger{background:#1c2d3a;color:#f4b18f;border-color:#40525f}
+html[data-theme="dark"] .nexora-newsletter,html[data-theme="dark"] .nexora-faq,html[data-theme="dark"] .account-card,html[data-theme="dark"] .checkout-large,html[data-theme="dark"] .tracking-result,html[data-theme="dark"] .login-box,html[data-theme="dark"] .admin-panel,html[data-theme="dark"] .detail-info-section,html[data-theme="dark"] .detail-copy{background:#14232f;color:#e4ebf0;border-color:#2b3c49}
+html[data-theme="dark"] .nexora-newsletter-copy h2,html[data-theme="dark"] .nexora-faq h2,html[data-theme="dark"] .nexora-faq-item summary,html[data-theme="dark"] .nexora-not-found h1{color:#e7edf2}
+html[data-theme="dark"] .nexora-newsletter-copy p,html[data-theme="dark"] .nexora-faq-item p,html[data-theme="dark"] .nexora-last-updated,html[data-theme="dark"] .customer-page .muted,html[data-theme="dark"] .detail-muted{color:#aab8c1}
+html[data-theme="dark"] .nexora-newsletter-field input,html[data-theme="dark"] .nexora-not-found form,html[data-theme="dark"] .nexora-not-found form input,html[data-theme="dark"] .nexora-password-wrap input,html[data-theme="dark"] .account-card input,html[data-theme="dark"] .login-box input,html[data-theme="dark"] .admin-panel input,html[data-theme="dark"] .admin-panel textarea,html[data-theme="dark"] .admin-panel select,html[data-theme="dark"] .checkout-large input,html[data-theme="dark"] .checkout-large textarea{background:#0f1b25;color:#e6edf2;border-color:#354957}
+html[data-theme="dark"] .nexora-faq-item,html[data-theme="dark"] .nexora-faq-list,html[data-theme="dark"] .nexora-last-updated{border-color:#2b3c49}
+html[data-theme="dark"] .nexora-cookie-banner,html[data-theme="dark"] .nexora-confirm-dialog,html[data-theme="dark"] .nexora-mobile-menu-panel{background:#14232f;color:#e6edf2;border-color:#354957}
+html[data-theme="dark"] .nexora-cookie-banner>p,html[data-theme="dark"] .nexora-confirm-dialog>p{color:#aab8c1}
+html[data-theme="dark"] .nexora-cookie-banner>div button,html[data-theme="dark"] .nexora-confirm-actions button,html[data-theme="dark"] .nexora-mobile-menu-panel>header button{background:#1c303e;color:#e6edf2;border-color:#3b505e}
+html[data-theme="dark"] .nexora-cookie-banner>div button.is-primary,html[data-theme="dark"] .nexora-confirm-actions .nexora-confirm-accept{background:#e66c43;color:#fff;border-color:#e66c43}
+html[data-theme="dark"] .nexora-mobile-menu-panel>header strong,html[data-theme="dark"] .nexora-mobile-menu-links a,html[data-theme="dark"] .nexora-mobile-menu-owner{color:#e6edf2}
+html[data-theme="dark"] .nexora-mobile-menu-links a:hover{background:#213644}
+html[data-theme="dark"] .nexora-scroll-top{background:#1b2e3c;color:#fff;border-color:#3c505e}
+html[data-theme="dark"] .nexora-floating-contact{background:#1a2b38;color:#ffb18f;border-color:#624a40}
+html[data-theme="dark"] .nexora-not-found-art{box-shadow:0 20px 40px #0005}
+html[data-theme="dark"] .nexora-not-found form button{background:#e66c43}
+html[data-theme="dark"] .nexora-brand-header .nexora-logo-dark-theme{display:block}
+html[data-theme="dark"] .nexora-brand-header .nexora-logo-light-theme{display:none}
+.nexora-brand-header .nexora-logo-dark-theme{display:none}
+@media(max-width:790px){
+ .nexora-mobile-menu-trigger{display:grid}
+ .retail-nav{display:none}
+ .retail-header-main{grid-template-columns:38px minmax(0,1fr) auto!important;gap:9px!important}
+ .retail-brand-header{justify-self:start}
+ .nexora-site-search{grid-column:1/-1;grid-row:2;max-width:none}
+ .retail-header-actions{gap:7px}
+ .retail-header-actions .nexora-theme-toggle{width:33px;height:33px;flex-basis:33px}
+ .nexora-floating-contact{left:10px;bottom:150px;padding:0 12px;min-height:39px}
+ .nexora-floating-contact span{display:none}
+ .nexora-scroll-top{right:12px;bottom:145px}
+ .nexora-cookie-banner{left:10px;bottom:80px;width:min(370px,calc(100vw - 20px))}
+ .nexora-newsletter{grid-template-columns:1fr;gap:17px;padding:21px 17px}
+ .nexora-faq{padding:19px 15px}
+ .nexora-not-found{min-height:58vh;padding:50px 16px}
+ .nexora-mobile-menu-panel{width:min(370px,90vw)}
+}
+@media(max-width:540px){
+ .nexora-site-search .retail-search{height:39px}
+ .nexora-site-search .retail-search button{height:29px;padding:0 12px}
+ .nexora-theme-toggle{width:31px;height:31px;flex-basis:31px}
+ .nexora-newsletter-copy h2{font-size:20px}
+ .nexora-newsletter-field{min-height:40px}
+ .nexora-confirm-dialog{padding:23px 18px}
+ .nexora-confirm-actions{flex-direction:column-reverse}
+ .nexora-confirm-actions button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

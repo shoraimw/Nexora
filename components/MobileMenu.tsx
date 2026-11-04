@@ -1,0 +1,12 @@
+"use client";
+import Link from "next/link";
+import {usePathname} from "next/navigation";
+import {useEffect,useRef,useState} from "react";
+import {Menu,X,House,Grid2X2,Gift,PackageSearch,LifeBuoy,ShieldCheck,UserRound,ChevronRight} from "lucide-react";
+const links=[{href:"/",label:"Home",Icon:House},{href:"/shop",label:"All products",Icon:Grid2X2},{href:"/offers",label:"Offers & bundles",Icon:Gift},{href:"/track",label:"Track an order",Icon:PackageSearch},{href:"/contact",label:"Help & support",Icon:LifeBuoy},{href:"/policies",label:"Shopping policies",Icon:ShieldCheck},{href:"/account",label:"My account",Icon:UserRound}];
+export function MobileMenu(){
+ const [open,setOpen]=useState(false);const pathname=usePathname();const closeRef=useRef<HTMLButtonElement>(null);
+ useEffect(()=>setOpen(false),[pathname]);
+ useEffect(()=>{if(!open)return;const previous=document.activeElement as HTMLElement|null;const oldOverflow=document.body.style.overflow;document.body.style.overflow="hidden";closeRef.current?.focus();const key=(event:KeyboardEvent)=>{if(event.key==="Escape")setOpen(false);};document.addEventListener("keydown",key);return()=>{document.removeEventListener("keydown",key);document.body.style.overflow=oldOverflow;previous?.focus?.();};},[open]);
+ return <><button type="button" className="nexora-mobile-menu-trigger" aria-label="Open navigation menu" aria-expanded={open} aria-controls="nexora-mobile-menu" onClick={()=>setOpen(true)}><Menu size={21}/></button>{open&&<div className="nexora-mobile-menu-backdrop" onMouseDown={event=>{if(event.target===event.currentTarget)setOpen(false);}}><nav id="nexora-mobile-menu" className="nexora-mobile-menu-panel" aria-label="Mobile navigation" aria-modal="true" role="dialog"><header><div><span className="nexora-mobile-menu-eyebrow">NEXORA</span><strong>Explore the store</strong></div><button ref={closeRef} type="button" aria-label="Close navigation menu" onClick={()=>setOpen(false)}><X size={20}/></button></header><div className="nexora-mobile-menu-links">{links.map(({href,label,Icon})=><Link key={href} href={href} onClick={()=>setOpen(false)}><Icon size={18}/><span>{label}</span><ChevronRight size={16}/></Link>)}</div><Link className="nexora-mobile-menu-owner" href="/admin" onClick={()=>setOpen(false)}>Owner dashboard <ShieldCheck size={15}/></Link><p>Everyday tech, thoughtfully picked by Nexora.</p></nav></div>}</>;
+}

@@ -24,7 +24,10 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 - Consent-based browser chat history; account-synced chat history after sign-in and opt-in
 - Database-grounded shopping assistant (text for guests, product images for signed-in customers)
 - Optional Gemini Free Tier paraphrasing of **public verified catalog data only**, OFF by default
-- Contact and policies pages, with explicit unconfirmed policy placeholders
+- Contact and policies pages with expandable FAQs and last-reviewed dates
+- Dark/light theme, accessible mobile drawer, full catalog/page search, scroll progress and back-to-top control
+- Optional newsletter opt-in stored in a private Supabase table; marketing email is not sent until a verified sender is configured
+- Cookie/storage notice, outbound referral UTM tagging, copy controls for code blocks, and styled confirmation dialogs
 
 ### Two-owner admin
 - Role-verified owner dashboard (no default password)
@@ -62,6 +65,8 @@ Read **[docs/SETUP.md](docs/SETUP.md)** and **[docs/GO_LIVE_CHECKLIST.md](docs/G
 Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`.
 
 Never commit `.env.local`, API keys, password reset tokens, email recipient lists or real transactions.
+
+Newsletter sign-ups require the optional `database/008_newsletter_subscribers.sql` migration. Apply it after the existing migrations. Subscriber emails are available only to owner-authorized server routes. Newsletter delivery remains disabled until a verified sender is configured.
 
 ## IMPORTANT: launch boundaries
 

@@ -1,0 +1,10 @@
+@media print{
+ @page{margin:16mm}
+ html,body{background:#fff!important;color:#111!important;font-size:10pt!important}
+ .retail-site-header,.retail-nav,.retail-mobile-nav,.nexora-mobile-menu-trigger,.nexora-mobile-menu-backdrop,.nexora-scroll-progress,.nexora-scroll-top,.nexora-floating-contact,.nexora-cookie-banner,.chat-wrap,.retail-footer,.nexora-newsletter,.nexora-theme-toggle,.retail-primary-link,.nexora-search-results{display:none!important}
+ main,.retail-container,.container{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important}
+ a{color:#111!important;text-decoration:underline!important}
+ img{max-width:100%!important;break-inside:avoid}
+ table{border-collapse:collapse!important}
+ tr,section,article{break-inside:avoid}
+}
