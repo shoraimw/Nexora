@@ -62,7 +62,7 @@ Open http://localhost:3000. Preview catalog data is illustrative, and checkout i
 ## Full backend setup (later, when owners are ready)
 
 Read **[docs/SETUP.md](docs/SETUP.md)** and **[docs/GO_LIVE_CHECKLIST.md](docs/GO_LIVE_CHECKLIST.md)**.
-Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`.
+Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`, `007_product_reviews.sql`, and `008_newsletter_subscribers.sql`.
 
 Never commit `.env.local`, API keys, password reset tokens, email recipient lists or real transactions.
 
