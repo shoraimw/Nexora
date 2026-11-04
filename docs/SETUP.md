@@ -19,9 +19,10 @@
 6. Then `database/006_store_offers.sql` (owner-managed offers with scheduled visibility).
 7. Then `database/007_product_reviews.sql` (verified-purchase reviews, private moderation queue and aggregate ratings).
 8. Then `database/008_newsletter_subscribers.sql` (explicit newsletter consent storage; owner-only subscriber list; no marketing email is sent until a verified sender is configured).
-9. Confirm RLS is enabled on every public table, and non-admin users cannot query orders, claims, admin memberships, newsletter subscribers or audit logs directly.
-10. Confirm storage buckets exist: `nexora-products` (public product imagery) and `nexora-avatars` (private signed URLs).
-11. These migrations have NOT been tested against a live Supabase instance in this conversation. Test using a fresh staging database and a representative order lifecycle before launch.
+9. Then `database/009_hierarchical_categories.sql` (13 top-level gadget categories and their subcategories; existing product references are preserved/normalised).
+10. Confirm RLS is enabled on every public table, and non-admin users cannot query orders, claims, admin memberships, newsletter subscribers or audit logs directly.
+11. Confirm storage buckets exist: `nexora-products` (public product imagery) and `nexora-avatars` (private signed URLs).
+12. These migrations have NOT been tested against a live Supabase instance in this conversation. Test using a fresh staging database and a representative order lifecycle before launch.
 
 ## 3. Environment variables (place in hosting Secrets UI, NOT GitHub)
 

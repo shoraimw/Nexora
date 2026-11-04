@@ -13,7 +13,8 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 ## What exists in the repository
 
 ### Customer storefront
-- Responsive home and product discovery with categories, search, price sorting, featured items
+- Cinematic responsive homepage with lightweight CSS 3D floating gadget showcase, parallax interaction, rotating promotions and reduced-motion support
+- 13 top-level gadget categories with nested subcategory landing pages, category-first homepage merchandising and mobile-friendly category browsing
 - Real Supabase catalog API (owner-approved products only); demo listings shown when backend is not configured
 - Shop filters: category, dynamic brand suggestions, explicit wired/wireless connectivity, BDT min/max price, in-stock only, sale only and sorting
 - Filter engine has functional regression tests (`tests/shop-filters.test.mjs`); demo brands are fictional sample values, not real inventory
@@ -62,7 +63,7 @@ Open http://localhost:3000. Preview catalog data is illustrative, and checkout i
 ## Full backend setup (later, when owners are ready)
 
 Read **[docs/SETUP.md](docs/SETUP.md)** and **[docs/GO_LIVE_CHECKLIST.md](docs/GO_LIVE_CHECKLIST.md)**.
-Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`, `007_product_reviews.sql`, and `008_newsletter_subscribers.sql`.
+Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`, `007_product_reviews.sql`, and `008_newsletter_subscribers.sql`, and `009_hierarchical_categories.sql`.
 
 Never commit `.env.local`, API keys, password reset tokens, email recipient lists or real transactions.
 

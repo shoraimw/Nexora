@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useEffect,useState} from "react";
-import {ArrowRight,Smartphone,Laptop,BatteryCharging,Tablet,ShieldCheck,Watch,Headphones,Keyboard,Camera,Lightbulb,Gamepad2,Plane,Truck,PackageCheck,MessageCircle,Grid2X2} from "lucide-react";
+import {ArrowRight,Smartphone,Laptop,BatteryCharging,Tablet,ShieldCheck,Watch,Headphones,Keyboard,Camera,Lightbulb,Gamepad2,Plane,Truck,PackageCheck,MessageCircle,Grid2X2,Router} from "lucide-react";
 import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 
 const slides=[
@@ -12,7 +12,7 @@ const slides=[
 const categoryIcons:Record<string,typeof Smartphone>={
  "Phones":Smartphone,"Mac":Laptop,"Phone Accessories":BatteryCharging,"Tablets":Tablet,
  "Cases & Protectors":ShieldCheck,"Watches":Watch,"Headphones & Speakers":Headphones,
- "PC Accessories":Keyboard,"Camera & Networking":Camera,"Gadgets":Lightbulb,
+ "PC Accessories":Keyboard,"Camera":Camera,"Networking":Router,"Gadgets":Lightbulb,
  "Gaming":Gamepad2,"Drone":Plane
 };
 export function RetailHero(){
@@ -59,7 +59,7 @@ export function RetailTrustBar(){
 }
 export function RetailCategoryGrid(){
  return <section className="retail-category-section">
-  <div className="retail-section-heading"><div><span className="retail-eyebrow">BROWSE THE COLLECTION</span><h2>Shop by category</h2><p>Find the right gear for your everyday.</p></div><Link href="/shop" className="retail-section-link">All categories <ArrowRight size={16}/></Link></div>
+  <div className="retail-section-heading"><div><span className="retail-eyebrow">BROWSE THE COLLECTION</span><h2>Featured Categories</h2><p>Jump straight to the gear you are looking for.</p></div><Link href="/shop" className="retail-section-link">All categories <ArrowRight size={16}/></Link></div>
   <div className="retail-category-grid">{storeCategories.map(category=>{const Icon=categoryIcons[category.name]||Grid2X2;return <Link key={category.slug} href={categoryHref(category)} className="retail-category-card"><span className="retail-category-icon"><Icon size={25} strokeWidth={1.65}/></span><strong>{category.name}</strong><small>{category.hint}</small><ArrowRight className="retail-category-arrow" size={15}/></Link>;})}</div>
  </section>;
 }

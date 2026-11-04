@@ -8,7 +8,8 @@ import {useCart} from "@/components/CartProvider";
 import {ChatWidget} from "@/components/ChatWidget";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
-import {RetailHero,RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
+import {RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
+import {Nexora3DHero} from "@/components/Nexora3DHero";
 import {RetailBrandDirectory} from "@/components/RetailBrandDirectory";
 function DemoProductCard({product}:{product:Product}){
  const {add}=useCart();
@@ -21,7 +22,7 @@ function DemoProductCard({product}:{product:Product}){
   <div className="retail-product-info"><span className="retail-product-category">{product.category}{product.subcategory?" · "+product.subcategory:""}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
    <div className="retail-price-row"><strong>{currency(product.price)}</strong>{product.previous&&<s>{currency(product.previous)}</s>}</div>
    <span className="retail-stock preview-stock">Illustrative listing</span>
-   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>View details <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={"Add "+product.name+" to preview bag"} disabled={product.id==="NX-D07"||product.id==="NX-D08"} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
+   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>View details <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={"Add "+product.name+" to preview bag"} disabled={true} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
   </div>
  </article>;
 }
@@ -32,7 +33,7 @@ function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eye
 export function Storefront(){
  const demoBrands=Array.from(new Set(products.map(p=>p.brand).filter((b):b is string=>!!b)));
  return <main className="retail-home">
-  <div className="retail-container"><RetailTrustBar/><RetailHero/><RetailCategoryGrid/>
+  <div className="retail-container"><Nexora3DHero/><RetailTrustBar/><RetailCategoryGrid/>
    <div className="retail-home-catalog">
     <RetailBrandDirectory brands={demoBrands} preview/>
     <DemoProductSection eyebrow="CURATED DEMO PREVIEW" title="Featured Products" items={products.slice(0,5)}/>
@@ -51,16 +52,17 @@ export function DemoShop({initialCategory="All",initialSubcategory="",categoryDe
  const indexed=useMemo<IndexedProduct[]>(()=>products.map((p,index)=>({
   id:p.id,name:p.name,category:p.category,subcategory:p.subcategory||"",brand:p.brand||"",collections:p.collections||(p.student?["Student Picks"]:[]),searchText:[p.description,...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
   pricePaisa:Math.round(p.price*100),compareAtPaisa:p.previous?Math.round(p.previous*100):undefined,
-  available:p.id!=="NX-D07"&&p.id!=="NX-D08",featured:index<3,
+  available:false,featured:index<3,
   createdAt:String(products.length-index).padStart(3,"0"),product:p
  })),[]);
  const visible=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
- const categoryOptions=storeCategories.map(category=>category.name);
+ const categoryOptions=[...storeCategories.map(category=>category.name),"Student Picks","Mystery Box"];
  const subcategories=storeCategories.find(category=>category.name===filters.category)?.subcategories.map(subcategory=>subcategory.name)||[];
  return <main className="retail-container retail-shop-page">
   <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">Shop</Link><ChevronRight size={13}/><span>{initialSubcategory||initialCategory}</span></>:<span>Shop</span>}</div>
-  <div className="retail-shop-heading"><div><span className="retail-eyebrow">{initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES"}</span><h1>{initialSubcategory||initialCategory!=="All"?initialSubcategory||initialCategory:"Shop all gadgets"}</h1><p>{categoryDescription||"Search by brand, connection, availability and price."}</p></div><span>{visible.length} preview products</span></div>
+  <div className="retail-shop-heading"><div><span className="retail-eyebrow">{initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES"}</span><h1>{filters.subcategory||filters.category!=="All"?filters.subcategory||filters.category:"Shop all gadgets"}</h1><p>{categoryDescription||"Search by brand, connection, availability and price."}</p></div><span>{visible.length} preview products</span></div>
+  {storeCategories.find(category=>category.name===filters.category)?.subcategories.length?<nav className="nexora-subcategory-nav" aria-label={filters.category+" subcategories"}><Link href={categoryHref(storeCategories.find(category=>category.name===filters.category)!)} className={!filters.subcategory?"is-active":""}>All {filters.category}</Link>{storeCategories.find(category=>category.name===filters.category)!.subcategories.map(subcategory=><Link key={subcategory.slug} href={categoryHref(storeCategories.find(category=>category.name===filters.category)!,subcategory)} className={filters.subcategory===subcategory.name?"is-active":""}>{subcategory.name}</Link>)}</nav>:null}
   <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={visible.length} categories={categoryOptions} subcategories={subcategories}/>
   <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.subcategory||(filters.category==="All"?"All products":filters.category)}</strong><span>Preview catalog · brands are examples, not live inventory</span></div>
    {visible.length?<div className="retail-product-grid">{visible.map(p=><DemoProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>No products found</h3><p>Try another search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,query:filters.query})}>Clear all filters</button></div>}

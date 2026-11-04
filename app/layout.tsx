@@ -3,7 +3,6 @@ import Link from "next/link";
 import {ArrowUpRight,UserRound,Store,PackageSearch,LifeBuoy} from "lucide-react";
 import {CartProvider} from "@/components/CartProvider";
 import {HeaderCart} from "@/components/HeaderCart";
-import {ShopCategoryMenu} from "@/components/ShopCategoryMenu";
 import {OffersNavLink} from "@/components/OffersNavLink";
 import {ConfirmProvider} from "@/components/ConfirmProvider";
 import {MobileMenu} from "@/components/MobileMenu";
@@ -22,6 +21,7 @@ import "./retail-interactions.css";
 import "./offers.css";
 import "./gadget-layout.css";
 import "./category-experience.css";
+import "./hero-3d.css";
 import "./site-experience.css";
 import "./print.css";
 export const metadata:Metadata={
@@ -39,11 +39,8 @@ export default function RootLayout({children}:{children:React.ReactNode}){
     <SiteSearch/>
     <div className="retail-header-actions"><ThemeToggle/><OffersNavLink/><Link href="/account"><UserRound size={19}/><span>Account</span></Link><HeaderCart/></div>
    </div>
-   <nav className="retail-nav" aria-label="Main navigation"><div className="retail-container retail-nav-inner">
-    <ShopCategoryMenu/>
-    <Link href="/">Home</Link><Link href="/shop">All products</Link>
+   <nav className="retail-nav" aria-label="Shop categories"><div className="retail-container retail-nav-inner">
     {storeCategories.map(category=><Link className="retail-category-nav-link" key={category.slug} href={categoryHref(category)}>{category.name}</Link>)}
-    <Link href={collectionLinks[0].href}>Student picks</Link><Link href={collectionLinks[1].href}>Mystery box</Link><Link href="/contact">Help & support</Link>
    </div></nav>
   </header>
   <nav className="retail-mobile-nav" aria-label="Mobile navigation"><Link href="/shop"><Store size={19}/>Shop</Link><Link href="/track"><PackageSearch size={19}/>Orders</Link><OffersNavLink compact/><Link href="/account"><UserRound size={19}/>Account</Link><Link href="/contact"><LifeBuoy size={19}/>Help</Link></nav>

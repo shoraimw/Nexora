@@ -185,20 +185,37 @@ test("review rating control uses an accessible fieldset and keyboard-operable bu
  assert.match(detail,/role="img"/);
 });
 
-test("reference-style catalog has brand directory, curated groups and a responsive layout",()=>{
- const live=read("components/CommerceShop.tsx");
+test("Nexora homepage uses a custom animated CSS 3D hero and category-first merchandising",()=>{
+ const live=read("components/CommerceHome.tsx");
  const demo=read("components/Storefront.tsx");
- const css=read("app/gadget-layout.css");
- assert.match(live,/RetailBrandDirectory/);
- assert.match(demo,/RetailBrandDirectory/);
- for(const label of ["Featured Products","Trending Products","New Arrival","Gadgets & Accessories"]){
-  assert.ok(live.includes(label),label);
-  assert.ok(demo.includes(label),label+" demo");
- }
- assert.match(css,/nexora-brand-grid/);
- assert.match(css,/nexora-card-actions/);
- assert.match(css,/@media\(max-width:540px\)/);
- assert.match(read("app/layout.tsx"),/gadget-layout.css/);
+ const hero=read("components/Nexora3DHero.tsx");
+ const css=read("app/hero-3d.css");
+ assert.match(live,/Nexora3DHero/);
+ assert.match(demo,/Nexora3DHero/);
+ assert.match(hero,/nexora-device-phone/);
+ assert.match(hero,/nexora-device-watch/);
+ assert.match(hero,/nexora-device-headphones/);
+ assert.match(hero,/window\.setInterval/);
+ assert.match(css,/perspective:/);
+ assert.match(css,/rotateY/);
+ assert.match(css,/@keyframes nexora-float-phone/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.match(read("app/layout.tsx"),/hero-3d\.css/);
+ assert.match(read("app/layout.tsx"),/retail-category-nav-link/);
+});
+test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories",()=>{
+ const taxonomy=read("lib/store-taxonomy.ts");
+ const migration=read("database/009_hierarchical_categories.sql");
+ const route=read("app/category/[slug]/[[...subcategory]]/page.tsx");
+ for(const name of ["Phones","Mac","Phone Accessories","Tablets","Cases & Protectors","Watches","Headphones & Speakers","PC Accessories","Camera","Gadgets","Networking","Gaming","Drone"])assert.ok(taxonomy.includes('name:"'+name+'"'),name);
+ assert.match(taxonomy,/name:"Power Banks"/);
+ assert.match(taxonomy,/name:"Chargers & Adapters"/);
+ assert.match(taxonomy,/name:"TP-Link Routers"/);
+ assert.match(taxonomy,/name:"Gaming Consoles"/);
+ assert.match(taxonomy,/name:"Daily Lifestyle"/);
+ assert.match(migration,/parent_id uuid references public\.categories/);
+ assert.match(route,/CommerceShop initialCategory/);
+ assert.match(route,/DemoShop initialCategory/);
 });
 test("price/product card links remain bound to Nexora products, without fake claims",()=>{
  const live=read("components/CommerceShop.tsx");
