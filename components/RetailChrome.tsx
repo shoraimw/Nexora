@@ -1,23 +1,20 @@
 "use client";
 import Link from "next/link";
 import {useEffect,useState} from "react";
-import {ArrowRight,Headphones,Watch,Lightbulb,Cable,GraduationCap,Gift,Heart,Grid2X2,Truck,PackageCheck,MessageCircle,ShieldCheck} from "lucide-react";
+import {ArrowRight,Smartphone,Laptop,BatteryCharging,Tablet,ShieldCheck,Watch,Headphones,Keyboard,Camera,Lightbulb,Gamepad2,Plane,Truck,PackageCheck,MessageCircle,Grid2X2} from "lucide-react";
+import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 
 const slides=[
  {kicker:"THE NEXORA COLLECTION",title:"Small upgrades.\nBetter everyday.",description:"Discover useful gadgets, clever accessories and everyday essentials selected for modern life.",cta:"Shop all gadgets",href:"/shop",image:"https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1800&q=90",alt:"Wireless earbuds on a clean studio background"},
- {kicker:"MAKE YOUR DESK YOURS",title:"A better setup\nstarts here.",description:"Little additions for work, study and everything in between.",cta:"Explore desk essentials",href:"/shop?category=Desk%20Setup",image:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=90",alt:"Modern desk and laptop setup"},
+ {kicker:"MAKE YOUR DESK YOURS",title:"A better setup\nstarts here.",description:"Little additions for work, study and everything in between.",cta:"Explore desk essentials",href:"/category/pc-accessories/desk-setup",image:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=90",alt:"Modern desk and laptop setup"},
  {kicker:"GIFTS, WITHOUT THE GUESSWORK",title:"Find a little\nsomething special.",description:"Thoughtful finds, fun surprises and gifts that feel personal.",cta:"Discover gift picks",href:"/shop?category=Mystery%20Box",image:"https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1800&q=90",alt:"Gift box wrapped for a special occasion"}
 ];
-const categories=[
- {name:"Audio",hint:"Earbuds & speakers",Icon:Headphones},
- {name:"Wearables",hint:"Watches & bands",Icon:Watch},
- {name:"Accessories",hint:"Everyday essentials",Icon:Cable},
- {name:"Desk Setup",hint:"Work & study space",Icon:Lightbulb},
- {name:"Student Picks",hint:"Smart budget finds",Icon:GraduationCap},
- {name:"Mystery Box",hint:"Unexpected gifts",Icon:Gift},
- {name:"Plushies",hint:"Soft little gifts",Icon:Heart},
- {name:"All Products",hint:"Browse everything",Icon:Grid2X2,href:"/shop"}
-];
+const categoryIcons:Record<string,typeof Smartphone>={
+ "Phones":Smartphone,"Mac":Laptop,"Phone Accessories":BatteryCharging,"Tablets":Tablet,
+ "Cases & Protectors":ShieldCheck,"Watches":Watch,"Headphones & Speakers":Headphones,
+ "PC Accessories":Keyboard,"Camera & Networking":Camera,"Gadgets":Lightbulb,
+ "Gaming":Gamepad2,"Drone":Plane
+};
 export function RetailHero(){
  const [active,setActive]=useState(0);
  const [pausedByFocus,setPausedByFocus]=useState(false);
@@ -63,7 +60,7 @@ export function RetailTrustBar(){
 export function RetailCategoryGrid(){
  return <section className="retail-category-section">
   <div className="retail-section-heading"><div><span className="retail-eyebrow">BROWSE THE COLLECTION</span><h2>Shop by category</h2><p>Find the right gear for your everyday.</p></div><Link href="/shop" className="retail-section-link">All categories <ArrowRight size={16}/></Link></div>
-  <div className="retail-category-grid">{categories.map(({name,hint,Icon,href})=><Link key={name} href={href||("/shop?category="+encodeURIComponent(name))} className="retail-category-card"><span className="retail-category-icon"><Icon size={25} strokeWidth={1.65}/></span><strong>{name}</strong><small>{hint}</small><ArrowRight className="retail-category-arrow" size={15}/></Link>)}</div>
+  <div className="retail-category-grid">{storeCategories.map(category=>{const Icon=categoryIcons[category.name]||Grid2X2;return <Link key={category.slug} href={categoryHref(category)} className="retail-category-card"><span className="retail-category-icon"><Icon size={25} strokeWidth={1.65}/></span><strong>{category.name}</strong><small>{category.hint}</small><ArrowRight className="retail-category-arrow" size={15}/></Link>;})}</div>
  </section>;
 }
 export function RetailPromoBanners(){
