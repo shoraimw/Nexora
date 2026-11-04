@@ -1,0 +1,66 @@
+
+/* Nexora's structured product taxonomy and category browsing */
+.retail-category-trigger{height:34px;display:inline-flex;align-items:center;gap:8px;padding:0 12px;border:0;border-radius:4px;background:#f3f5f6;color:#263640;font-size:11px;font-weight:800;white-space:nowrap;cursor:pointer}
+.retail-category-dropdown[data-open="true"] .retail-category-trigger{background:#172e42;color:#fff}
+.retail-category-trigger .chevron-open{transform:rotate(180deg)}
+.retail-mega-menu-catalog{width:min(1040px,calc(100vw - 32px));max-height:min(76vh,760px);overflow:auto;padding:22px}
+.retail-mega-heading strong{font-size:15px;color:#1b2e3a}
+.retail-mega-heading p{margin:5px 0 15px;color:#82909a;font-size:11px}
+.retail-mega-category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.retail-mega-category{min-width:0;padding:12px;border:1px solid #e8edf0;border-radius:6px;background:#fff}
+.retail-mega-category-title{display:flex;align-items:center;gap:8px;color:#1d3546;font-size:12px}
+.retail-mega-category-title>svg:first-child{color:#e66c43;flex:none}
+.retail-mega-category-title>svg:last-child{margin-left:auto;color:#97a3ab}
+.retail-mega-category>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.retail-mega-category>div a{padding:5px 7px;border-radius:3px;background:#f5f7f8;color:#65727c;font-size:10px}
+.retail-mega-category>div a:hover{background:#fff0e9;color:#bf5735}
+.retail-mega-view-all{display:inline-flex;margin-top:10px;color:#d96540;font-size:10px;font-weight:800}
+.retail-nav-inner{justify-content:flex-start!important;gap:clamp(12px,1.55vw,22px)!important;overflow-x:auto;overflow-y:visible;scrollbar-width:none}
+.retail-nav-inner::-webkit-scrollbar{display:none}
+.retail-nav-inner>a{flex:0 0 auto}
+.retail-nav-inner .retail-category-dropdown{flex:0 0 auto}
+.retail-category-nav-link{white-space:nowrap}
+.retail-category-section{padding-top:20px}
+.retail-category-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.retail-category-card{position:relative;min-width:0;padding:14px 13px;align-items:flex-start;text-align:left;gap:8px}
+.retail-category-card strong{font-size:12px;line-height:1.35}
+.retail-category-card small{font-size:10px;line-height:1.4;color:#87939b}
+.retail-category-icon{width:40px;height:40px;border-radius:8px}
+.retail-category-arrow{position:absolute;right:12px;top:13px}
+.retail-category-card:hover{border-color:#e9b39f;transform:translateY(-2px)}
+.retail-shop-heading h1{max-width:720px}
+.retail-shop-heading p{max-width:700px}
+.retail-product-category{display:block;min-height:14px}
+.retail-category-crumb{color:#74818a;font-size:11px}
+.nexora-mobile-categories{display:flex;flex-direction:column;gap:7px;margin:18px 0;padding-top:17px;border-top:1px solid #e8ecef}
+.nexora-mobile-categories>strong{margin-bottom:5px;color:#84919a;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.nexora-mobile-categories details{border:1px solid #e9edf0;border-radius:6px;background:#fff;overflow:hidden}
+.nexora-mobile-categories summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;color:#304351;font-size:12px;font-weight:800;cursor:pointer;list-style:none}
+.nexora-mobile-categories summary::-webkit-details-marker{display:none}
+.nexora-mobile-categories details[open] summary{background:#f7f8f9;color:#d96540}
+.nexora-mobile-categories details>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:8px}
+.nexora-mobile-categories details>div a{padding:8px;background:#f7f8f9;border-radius:4px;color:#687680;font-size:10px}
+.nexora-mobile-categories details>div a:first-child{grid-column:1/-1;color:#d96540;font-weight:800}
+html[data-theme="dark"] .retail-mega-category,html[data-theme="dark"] .nexora-mobile-categories details{background:#172a37;border-color:#344b59}
+html[data-theme="dark"] .retail-mega-category-title,html[data-theme="dark"] .nexora-mobile-categories summary{color:#e5edf2}
+html[data-theme="dark"] .retail-mega-category>div a,html[data-theme="dark"] .nexora-mobile-categories details>div a{background:#213744;color:#b8c5cc}
+html[data-theme="dark"] .retail-category-trigger{background:#203541;color:#e8eff3}
+html[data-theme="dark"] .retail-mega-heading strong{color:#e6edf2}
+@media(max-width:1100px){
+ .retail-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .retail-mega-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:790px){
+ .retail-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .retail-mega-menu-catalog{left:0;width:min(95vw,700px)}
+}
+@media(max-width:540px){
+ .retail-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .retail-category-card{min-height:105px;padding:11px}
+ .retail-category-card strong{font-size:11px}
+ .retail-category-card small{display:block;font-size:9px}
+ .retail-mega-category-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .retail-category-card:hover{transform:none}
+}
