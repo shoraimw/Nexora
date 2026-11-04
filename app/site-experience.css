@@ -33,6 +33,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .nexora-scroll-top:hover{background:#172e42;color:#fff}
 .nexora-floating-contact{position:fixed;z-index:90;left:20px;bottom:22px;display:inline-flex;align-items:center;gap:9px;min-height:43px;padding:0 15px;border:1px solid #f1c4b1;border-radius:24px;background:#fff;color:#b95131;box-shadow:0 7px 24px #12283b1c;font-size:11px;font-weight:850}
 .nexora-floating-contact:hover{background:#fff3ed;transform:translateY(-2px)}
+.nexora-floating-contact.is-hidden{visibility:hidden;pointer-events:none}
 .nexora-cookie-banner{position:fixed;z-index:140;left:18px;bottom:18px;width:min(390px,calc(100vw - 36px));padding:20px 18px 15px;border:1px solid #dfe5e9;border-radius:9px;background:#fff;color:#253743;box-shadow:0 15px 45px #12283b24}
 .nexora-cookie-banner>strong{display:block;padding-right:24px;font-size:13px}
 .nexora-cookie-banner>p{margin:8px 0 13px;color:#6e7b84;font-size:11px;line-height:1.6}
@@ -111,6 +112,11 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .nexora-copy-code{position:absolute;z-index:2;top:8px;right:8px;padding:6px 9px;border:1px solid #46515c;border-radius:4px;background:#263746;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
 .nexora-copy-code.is-copied{background:#236344;border-color:#236344}
 pre{position:relative;padding-top:38px!important}
+.nexora-route-loading{width:min(1320px,calc(100% - 48px));min-height:65vh;margin:28px auto;display:flex;flex-direction:column;gap:16px}
+.nexora-route-loading-hero{height:clamp(220px,30vw,390px);border-radius:8px}
+.nexora-route-loading-heading{width:220px;height:24px}
+.nexora-route-loading-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.nexora-route-loading-card{height:190px}
 .nexora-loading-spinner{display:inline-block;width:18px;height:18px;border:2px solid #dce3e8;border-top-color:#e66c43;border-radius:50%;animation:nexora-spin .8s linear infinite;vertical-align:middle}
 .retail-loading{display:flex;align-items:center;gap:10px;padding:38px;color:#74828c;font-size:12px}
 .retail-loading:before{content:"";width:17px;height:17px;border:2px solid #dce3e8;border-top-color:#e66c43;border-radius:50%;animation:nexora-spin .8s linear infinite}
@@ -167,6 +173,8 @@ html[data-theme="dark"] .nexora-brand-header .nexora-logo-light-theme{display:no
  .nexora-scroll-top{right:12px;bottom:145px}
  .nexora-cookie-banner{left:10px;bottom:80px;width:min(370px,calc(100vw - 20px))}
  .nexora-newsletter{grid-template-columns:1fr;gap:17px;padding:21px 17px}
+ .nexora-route-loading-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .nexora-route-loading-card{height:145px}
  .nexora-faq{padding:19px 15px}
  .nexora-not-found{min-height:58vh;padding:50px 16px}
  .nexora-mobile-menu-panel{width:min(370px,90vw)}

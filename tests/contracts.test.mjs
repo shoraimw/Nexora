@@ -249,5 +249,5 @@ test("customer help includes expandable FAQs and last-reviewed metadata",()=>{
  assert.match(read("app/contact/page.tsx"),/FaqAccordion/);assert.match(read("app/contact/page.tsx"),/LastUpdated/);assert.match(read("app/policies/page.tsx"),/LastUpdated/);assert.match(read("components/FaqAccordion.tsx"),/<details/);
 });
 test("custom 404 and print stylesheet are installed",()=>{
- assert.match(read("app/not-found.tsx"),/Browse gadgets/);assert.match(read("app/print.css"),/@media print/);assert.match(read("app/layout.tsx"),/print\.css/);
+ assert.match(read("app/not-found.tsx"),/Browse gadgets/);assert.match(read("app/loading.tsx"),/nexora-route-loading/);assert.match(read("app/print.css"),/@media print/);assert.match(read("app/layout.tsx"),/print\.css/);
 });
