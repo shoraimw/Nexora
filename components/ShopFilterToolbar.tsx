@@ -10,12 +10,13 @@ type Props={
  brands:string[];
  results:number;
  categories?:string[];
+ subcategories?:string[];
 };
 function activeFilterCount(f:ShopFilterState){
- return Number(f.category!=="All")+Number(!!f.brand.trim())+Number(f.connection!=="all")+
+ return Number(f.category!=="All")+Number(!!f.subcategory)+Number(!!f.brand.trim())+Number(f.connection!=="all")+
   Number(f.inStockOnly)+Number(f.onSaleOnly)+Number(!!f.minPriceBdt.trim())+Number(!!f.maxPriceBdt.trim());
 }
-export function ShopFilterToolbar({filters,onChange,brands,results,categories=["All"]}:Props){
+export function ShopFilterToolbar({filters,onChange,brands,results,categories=["All"],subcategories=[]}:Props){
  const [open,setOpen]=useState(false);
  const [draft,setDraft]=useState<ShopFilterState>(filters);
  const triggerRef=useRef<HTMLButtonElement>(null);
@@ -40,7 +41,7 @@ export function ShopFilterToolbar({filters,onChange,brands,results,categories=["
   drawer?.querySelector<HTMLElement>(".retail-filter-close")?.focus();
   return()=>{document.removeEventListener("keydown",closeOnKey);document.body.style.overflow=previous;triggerRef.current?.focus();};
  },[open]);
- const change=<K extends keyof ShopFilterState>(key:K,value:ShopFilterState[K])=>setDraft(current=>({...current,[key]:value}));
+ const change=<K extends keyof ShopFilterState>(key:K,value:ShopFilterState[K])=>setDraft(current=>({...current,[key]:value,...(key==="category"?{subcategory:""}:{})}));
  const apply=()=>{onChange({...draft,query:filters.query,sort:filters.sort});setOpen(false);};
  const clear=()=>{const cleared={...initialFilters,query:filters.query,sort:filters.sort};setDraft(cleared);onChange(cleared);setOpen(false);};
  return <>
@@ -55,6 +56,7 @@ export function ShopFilterToolbar({filters,onChange,brands,results,categories=["
     <header><div><span className="retail-eyebrow">REFINE YOUR SEARCH</span><h2 id="nexora-filter-title">Filters</h2><p>Find the right gadget for you.</p></div><button type="button" className="retail-filter-close" onClick={()=>setOpen(false)} aria-label="Close filters"><X size={19}/></button></header>
     <div className="retail-filter-drawer-body">
      <label className="retail-filter-field"><span>Category</span><select value={draft.category} onChange={e=>change("category",e.target.value)}>{Array.from(new Set(["All",...categories])).map(category=><option key={category} value={category}>{category==="All"?"All categories":category}</option>)}</select></label>
+     <label className="retail-filter-field"><span>Subcategory</span><select value={draft.subcategory} onChange={e=>change("subcategory",e.target.value)} disabled={!subcategories.length} aria-label="Filter by subcategory"><option value="">All subcategories</option>{subcategories.map(subcategory=><option key={subcategory} value={subcategory}>{subcategory}</option>)}</select></label>
      <label className="retail-filter-field"><span>Brand</span><input type="search" list="nexora-filter-brands" value={draft.brand} onChange={e=>change("brand",e.target.value)} placeholder="Search or select a brand" aria-label="Filter by brand"/><datalist id="nexora-filter-brands">{brands.map(brand=><option key={brand} value={brand}/>)}</datalist></label>
      <label className="retail-filter-field"><span>Connection</span><select value={draft.connection} onChange={e=>change("connection",e.target.value as ConnectionFilter)} aria-label="Filter by connection type"><option value="all">All connection types</option><option value="wireless">Wireless</option><option value="wired">Wired</option></select></label>
      <div className="retail-filter-price-block"><span>Price range (৳)</span><div className="retail-filter-price-fields"><label><small>Minimum</small><input type="number" value={draft.minPriceBdt} min="0" max="1000000" step="0.01" placeholder="৳ 0" onChange={e=>change("minPriceBdt",e.target.value)} aria-label="Minimum price in BDT"/></label><label><small>Maximum</small><input type="number" value={draft.maxPriceBdt} min="0" max="1000000" step="0.01" placeholder="Any" onChange={e=>change("maxPriceBdt",e.target.value)} aria-label="Maximum price in BDT"/></label></div></div>

@@ -3,18 +3,18 @@
 export type ConnectionFilter = "all" | "wireless" | "wired";
 export type ProductSort = "featured" | "newest" | "low" | "high" | "name" | "discount";
 export type ShopFilterState = {
-  category: string; query: string; brand: string; connection: ConnectionFilter;
+  category: string; subcategory:string; query: string; brand: string; connection: ConnectionFilter;
   inStockOnly: boolean; onSaleOnly: boolean;
   minPriceBdt: string; maxPriceBdt: string; sort: ProductSort;
 };
 export type ShopFilterProduct = {
-  id: string; name: string; category: string; brand?: string | null; searchText?: string;
+  id: string; name: string; category: string; subcategory?:string|null; brand?: string | null; searchText?: string;
   connectionType?: string | null; pricePaisa: number;
   compareAtPaisa?: number | null; available: boolean;
   featured?: boolean; createdAt?: string | null; collections?: string[];
 };
 export const initialFilters: ShopFilterState = {
-  category:"All",query:"",brand:"",connection:"all",
+  category:"All",subcategory:"",query:"",brand:"",connection:"all",
   inStockOnly:false,onSaleOnly:false,minPriceBdt:"",maxPriceBdt:"",sort:"featured"
 };
 export function connectionFlags(raw: unknown): {wireless:boolean;wired:boolean} {
@@ -46,7 +46,8 @@ export function selectMatchingProducts<T extends ShopFilterProduct>(products:rea
  const min=priceBoundBdt(f.minPriceBdt),max=priceBoundBdt(f.maxPriceBdt);
  const matched=products.filter(p=>{
   if(category&&category!=="all"&&p.category.toLocaleLowerCase("en")!==category&&!(p.collections||[]).some(c=>c.toLocaleLowerCase("en")===category))return false;
-  if(query&&![p.name,p.brand||"",p.category,p.searchText||""].join(" ").toLocaleLowerCase("en").includes(query))return false;
+  if(f.subcategory&&p.subcategory?.toLocaleLowerCase("en")!==f.subcategory.toLocaleLowerCase("en"))return false;
+  if(query&&![p.name,p.brand||"",p.category,p.subcategory||"",p.searchText||""].join(" ").toLocaleLowerCase("en").includes(query))return false;
   if(brand&&!(p.brand||"").toLocaleLowerCase("en").includes(brand))return false;
   if(f.connection!=="all"&&!connectionFlags(p.connectionType)[f.connection])return false;
   if(f.inStockOnly&&!p.available)return false;
@@ -67,7 +68,7 @@ export function selectMatchingProducts<T extends ShopFilterProduct>(products:rea
  });
 }
 export function countAppliedFilters(f:ShopFilterState):number{
- return Number(f.category!=="All")+Number(!!f.query.trim())+Number(!!f.brand.trim())+
+ return Number(f.category!=="All")+Number(!!f.subcategory)+Number(!!f.query.trim())+Number(!!f.brand.trim())+
   Number(f.connection!=="all")+Number(f.inStockOnly)+Number(f.onSaleOnly)+
   Number(!!f.minPriceBdt.trim())+Number(!!f.maxPriceBdt.trim());
 }
