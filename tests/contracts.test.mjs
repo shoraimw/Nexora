@@ -367,6 +367,9 @@ test("MotionSites visual review is repeatable in CI and scroll reveals remain pr
  assert.match(experience,/new MutationObserver/);
  assert.match(experience,/prefers-reduced-motion/);
  assert.match(css,/\.nexora-reveal\.is-visible/);
+ assert.match(css,/\.nexora-reveal\{opacity:1/);
+ assert.match(css,/@keyframes nexora-scroll-rise/);
+ assert.doesNotMatch(css,/\.nexora-reveal\{[^}]*opacity:0/);
  assert.match(css,/@keyframes nexora-copy-rise/);
 });
 test("3D studio protects low-data devices and WebGL lifecycle",()=>{
@@ -389,6 +392,6 @@ test("3D hero avoids an oversized podium and the floating support affordance is 
  assert.match(css,/nexora-floating-contact\{display:none!important\}/);
  assert.match(shoot,/first-visit\.png/);
  assert.match(shoot,/f"{name}-dark\.png"/);
- assert.match(shoot,/Switch to dark mode/);
+ assert.match(shoot,/\.nexora-theme-toggle/);
  assert.match(shoot,/nexora-cookie-close/);
 });
