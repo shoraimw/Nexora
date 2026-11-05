@@ -257,7 +257,8 @@ export function Nexora3DScene({label}:{label:string}){
     cameraIsland.position.set(-.27,.72,-.105);
     const cameraRingMaterial=new THREE.MeshPhysicalMaterial({color:0xb5c1cb,metalness:.96,roughness:.18,clearcoat:1});
     const cameraLensMaterial=new THREE.MeshPhysicalMaterial({color:0x071b2c,metalness:.45,roughness:.08,clearcoat:1,clearcoatRoughness:.02});
-    [[-.4,.88],[-.4,.64],[-.16,.64]].forEach(([x,y])=>{
+    const cameraPositions:[number,number][]=[[-.4,.88],[-.4,.64],[-.16,.64]];
+    cameraPositions.forEach(([x,y])=>{
      const ring=addMesh(phone,new THREE.TorusGeometry(.075,.012,12,36),cameraRingMaterial);
      ring.position.set(x,y,-.137);
      ring.rotation.y=Math.PI;
