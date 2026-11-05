@@ -124,35 +124,37 @@ export function Nexora3DScene({label}:{label:string}){
     const bounds=host.getBoundingClientRect();
     const width=Math.max(1,bounds.width);
     const height=Math.max(1,bounds.height);
-    scene=new THREE.Scene();
+    const activeScene=new THREE.Scene();
+    scene=activeScene;
     const camera=new THREE.PerspectiveCamera(34,width/height,.1,60);
     camera.position.set(0,.18,8.5);
     camera.lookAt(0,0,0);
 
     try{
-     renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"high-performance"});
+     const activeRenderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"high-performance"});
+     renderer=activeRenderer;
     }catch{
      host.dataset.webgl="fallback";
      return;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.55));
-    renderer.setSize(width,height);
-    renderer.setClearColor(0x000000,0);
-    renderer.outputColorSpace=THREE.SRGBColorSpace;
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure=1.12;
-    renderer.shadowMap.enabled=true;
-    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-    renderer.domElement.className="nexora-webgl-canvas";
-    renderer.domElement.setAttribute("aria-hidden","true");
-    host.appendChild(renderer.domElement);
+    activeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.55));
+    activeRenderer.setSize(width,height);
+    activeRenderer.setClearColor(0x000000,0);
+    activeRenderer.outputColorSpace=THREE.SRGBColorSpace;
+    activeRenderer.toneMapping=THREE.ACESFilmicToneMapping;
+    activeRenderer.toneMappingExposure=1.12;
+    activeRenderer.shadowMap.enabled=true;
+    activeRenderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    activeRenderer.domElement.className="nexora-webgl-canvas";
+    activeRenderer.domElement.setAttribute("aria-hidden","true");
+    host.appendChild(activeRenderer.domElement);
 
-    const pmrem=new THREE.PMREMGenerator(renderer);
+    const pmrem=new THREE.PMREMGenerator(activeRenderer);
     environmentTarget=pmrem.fromScene(new RoomEnvironment(),.04);
-    scene.environment=environmentTarget.texture;
+    activeScene.environment=environmentTarget.texture;
     pmrem.dispose();
 
-    scene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,2.1));
+    activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,2.1));
     scene.add(new THREE.AmbientLight(0xffffff,.34));
     const keyLight=new THREE.DirectionalLight(0xffe1ce,4.3);
     keyLight.position.set(-3.8,5.2,5.5);
@@ -196,8 +198,8 @@ export function Nexora3DScene({label}:{label:string}){
 
     // Smartphone: satin titanium rails, layered glass and a custom-lit OLED display.
     const phone=new THREE.Group();
-    rounded(phone,1.04,2.12,.145,.115,titanium);
-    rounded(phone,.997,2.075,.025,.095,blackGlass).position.z=.078;
+    rounded(phone,1.04,2.12,.145,.065,titanium);
+    rounded(phone,.997,2.075,.025,.012,blackGlass).position.z=.078;
     const phoneTexture=makeScreenTexture(THREE,"phone");
     if(phoneTexture){
      const phoneScreen=addMesh(phone,new THREE.ShapeGeometry(roundedShape(THREE,.944,1.995,.078),12),new THREE.MeshBasicMaterial({map:phoneTexture,toneMapped:false}));
@@ -205,7 +207,7 @@ export function Nexora3DScene({label}:{label:string}){
      phoneScreen.castShadow=false;
      phoneScreen.receiveShadow=false;
     }
-    rounded(phone,.29,.064,.014,.03,blackGlass).position.set(0,.925,.105);
+    rounded(phone,.29,.064,.014,.006,blackGlass).position.set(0,.925,.105);
     const selfieLens=addMesh(phone,new THREE.SphereGeometry(.018,16,12),new THREE.MeshPhysicalMaterial({color:0x315f83,metalness:.25,roughness:.08,clearcoat:1}));
     selfieLens.position.set(.105,.925,.118);
     rounded(phone,.025,.22,.048,.012,darkTitanium).position.set(.535,.38,.005);
@@ -217,10 +219,10 @@ export function Nexora3DScene({label}:{label:string}){
 
     // Smartwatch: curved-looking band, polished case, crown and luminous dial.
     const watch=new THREE.Group();
-    rounded(watch,.47,.82,.115,.16,silicone).position.set(0,.82,-.02);
+    rounded(watch,.47,.82,.115,.05,silicone).position.set(0,.82,-.02);
     rounded(watch,.47,.82,.115,.16,silicone).position.set(0,-.82,-.02);
-    rounded(watch,.9,.98,.22,.205,titanium);
-    rounded(watch,.82,.9,.035,.18,blackGlass).position.z=.119;
+    rounded(watch,.9,.98,.22,.095,titanium);
+    rounded(watch,.82,.9,.035,.016,blackGlass).position.z=.119;
     const watchTexture=makeScreenTexture(THREE,"watch");
     if(watchTexture){
      const dial=addMesh(watch,new THREE.ShapeGeometry(roundedShape(THREE,.755,.825,.15),12),new THREE.MeshBasicMaterial({map:watchTexture,toneMapped:false}));
@@ -250,10 +252,10 @@ export function Nexora3DScene({label}:{label:string}){
      const cup=rounded(headphones,.46,.72,.43,.18,titanium);
      cup.position.set(side*.7,-.22,.045);
      cup.rotation.z=side*-.08;
-     const pad=rounded(headphones,.38,.62,.13,.16,cushion);
+     const pad=rounded(headphones,.38,.62,.13,.055,cushion);
      pad.position.set(side*.7,-.22,.29);
      pad.rotation.z=side*-.08;
-     const inner=rounded(headphones,.25,.43,.018,.12,darkTitanium);
+     const inner=rounded(headphones,.25,.43,.018,.008,darkTitanium);
      inner.position.set(side*.7,-.22,.365);
      inner.rotation.z=side*-.08;
     });
@@ -276,7 +278,7 @@ export function Nexora3DScene({label}:{label:string}){
      const head=addMesh(bud,new THREE.SphereGeometry(.12,24,20),pearl);
      head.scale.set(1,.9,.78);
      head.position.y=.045;
-     const stem=rounded(bud,.085,.25,.075,.04,pearl);
+     const stem=rounded(bud,.085,.25,.075,.03,pearl);
      stem.position.set(0,-.13,.018);
      stem.rotation.z=side*.1;
      const sensor=addMesh(bud,new THREE.SphereGeometry(.022,12,10),blackGlass);
@@ -299,7 +301,7 @@ export function Nexora3DScene({label}:{label:string}){
     rim.rotation.x=Math.PI/2;
     rim.position.set(0,-1.645,-.15);
     rim.castShadow=false;
-    const ground=addMesh(scene,new THREE.PlaneGeometry(200,200),new THREE.MeshStandardMaterial({color:0x0a1521,roughness:.88,metalness:.12}));
+    const ground=addMesh(activeScene,new THREE.PlaneGeometry(200,200),new THREE.MeshStandardMaterial({color:0x0a1521,roughness:.88,metalness:.12}));
     ground.rotation.x=-Math.PI/2;
     ground.position.y=-1.82;
     ground.receiveShadow=true;
@@ -313,14 +315,13 @@ export function Nexora3DScene({label}:{label:string}){
     ];
 
     const resize=()=>{
-     if(!renderer)return;
      const rect=host.getBoundingClientRect();
      const nextWidth=Math.max(1,rect.width);
      const nextHeight=Math.max(1,rect.height);
      camera.aspect=nextWidth/nextHeight;
      camera.updateProjectionMatrix();
-     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.55));
-     renderer.setSize(nextWidth,nextHeight);
+     activeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.55));
+     activeRenderer.setSize(nextWidth,nextHeight);
     };
     resizeObserver=new ResizeObserver(resize);
     resizeObserver.observe(host);
@@ -336,7 +337,7 @@ export function Nexora3DScene({label}:{label:string}){
     const animate=(time:number)=>{
      if(disposed)return;
      animationFrame=window.requestAnimationFrame(animate);
-     if(!renderer||!scene||!pageVisible||!inViewport)return;
+     if(!pageVisible||!inViewport)return;
      const seconds=time*.001;
      if(!reducedMotion){
       const targetY=pointerRef.current.x*.17+Math.sin(seconds*.24)*.035;
@@ -347,7 +348,7 @@ export function Nexora3DScene({label}:{label:string}){
        item.object.position.y=item.baseY+Math.sin(seconds*.88+item.phase)*item.amount;
       });
      }
-     renderer.render(scene,camera);
+     activeRenderer.render(activeScene,camera);
     };
     host.dataset.webgl="ready";
     animationFrame=window.requestAnimationFrame(animate);
