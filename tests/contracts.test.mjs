@@ -377,3 +377,18 @@ test("3D studio protects low-data devices and WebGL lifecycle",()=>{
  assert.match(scene,/webglLost/);
  assert.match(scene,/removeEventListener\("webglcontextlost"/);
 });
+
+
+test("3D hero avoids an oversized podium and the floating support affordance is not duplicated",()=>{
+ const scene=read("components/Nexora3DScene.tsx");
+ const css=read("app/nexora-showroom.css");
+ const shoot=read("scripts/shoot.py");
+ assert.doesNotMatch(scene,/CylinderGeometry\(2\.55/);
+ assert.doesNotMatch(scene,/ShadowMaterial/);
+ assert.match(scene,/root\.rotation\.y=-\.9/);
+ assert.match(css,/nexora-floating-contact\{display:none!important\}/);
+ assert.match(shoot,/desktop-first-visit\.png/);
+ assert.match(shoot,/mobile-first-visit\.png/);
+ assert.match(shoot,/Switch to dark mode/);
+ assert.match(shoot,/nexora-cookie-close/);
+});
