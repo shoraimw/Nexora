@@ -222,7 +222,7 @@ export function Nexora3DScene({label}:{label:string}){
     // Smartwatch: curved-looking band, polished case, crown and luminous dial.
     const watch=new THREE.Group();
     rounded(watch,.47,.82,.115,.05,silicone).position.set(0,.82,-.02);
-    rounded(watch,.47,.82,.115,.16,silicone).position.set(0,-.82,-.02);
+    rounded(watch,.47,.82,.115,.05,silicone).position.set(0,-.82,-.02);
     rounded(watch,.9,.98,.22,.095,titanium);
     rounded(watch,.82,.9,.035,.016,blackGlass).position.z=.119;
     const watchTexture=makeScreenTexture(THREE,"watch");
