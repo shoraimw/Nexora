@@ -84,16 +84,17 @@ def with_playwright():
             except Exception:
                 pass
             page.screenshot(path=str(out / f"{name}-first-visit.png"), full_page=full)
+            page.evaluate("document.querySelector('.nexora-cookie-banner .nexora-cookie-close')?.click()");
             try:
-                page.locator(".nexora-cookie-banner .nexora-cookie-close").click(force=True, timeout=1200)
-                page.wait_for_selector(".nexora-cookie-banner", state="hidden", timeout=2000)
-            except Exception as error:
-                print(f"[visual QA] cookie notice dismissal: {error}")
+                page.wait_for_function("!document.querySelector('.nexora-cookie-banner')", timeout=1800)
+            except Exception:
+                print("[visual QA] cookie notice remained visible after the consent click")
             try:
-                page.get_by_role("button", name="Show promotion 01").click(timeout=1200)
+                page.locator(".nexora-hero-dots button").first.click(force=True, timeout=1200)
                 page.wait_for_timeout(120)
             except Exception:
                 pass
+            page.screenshot(path=str(out / f"{name}-viewport.png"), full_page=False)
             if full:
                 page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
                 page.wait_for_timeout(900)
@@ -102,7 +103,7 @@ def with_playwright():
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
             qa = page.evaluate(QA_JS)
             try:
-                page.locator(".nexora-theme-toggle").click(force=True, timeout=1200)
+                page.locator(".nexora-theme-toggle:visible").first.click(force=True, timeout=1200)
                 page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=2000)
                 page.wait_for_timeout(250)
                 page.screenshot(path=str(out / f"{name}-dark.png"), full_page=full)
