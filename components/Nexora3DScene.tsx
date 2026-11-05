@@ -314,7 +314,7 @@ export function Nexora3DScene({label}:{label:string}){
      const grille=addMesh(phone,new THREE.SphereGeometry(.012,10,8),darkTitanium);
      grille.position.set(-.19+i*.095,-1.055,.015);
     }
-    phone.position.set(-.72,.12,.25);
+    phone.position.set(-.62,-.12,.25);
     phone.rotation.set(-.045,.26,-.105);
     root.add(phone);
 
@@ -357,7 +357,7 @@ export function Nexora3DScene({label}:{label:string}){
     const crownCap=addMesh(watch,new THREE.CylinderGeometry(.045,.045,.012,24),darkTitanium);
     crownCap.rotation.z=Math.PI/2;
     crownCap.position.set(.565,.12,.015);
-    watch.position.set(1.42,.57,-.12);
+    watch.position.set(1.35,.35,-.12);
     watch.rotation.set(-.08,-.32,.075);
     watch.scale.setScalar(.77);
     root.add(watch);
@@ -386,9 +386,9 @@ export function Nexora3DScene({label}:{label:string}){
       detail.position.set(side*.7+(i-1)*.075,-.25,.247);
      }
     });
-    headphones.position.set(-1.86,-.93,-.28);
+    headphones.position.set(-1.55,-.88,-.28);
     headphones.rotation.set(-.04,.17,-.08);
-    headphones.scale.setScalar(.82);
+    headphones.scale.setScalar(.78);
     root.add(headphones);
 
     // Wireless charging case with a hinge, status light and sculpted earbuds.
@@ -427,18 +427,10 @@ export function Nexora3DScene({label}:{label:string}){
     earbuds.scale.setScalar(.76);
     root.add(earbuds);
 
-    // A dark anodised display plinth grounds the floating products and catches shadows.
-    const floorMaterial=new THREE.MeshStandardMaterial({color:0x101d2b,metalness:.42,roughness:.48});
-    const plinth=addMesh(root,new THREE.CylinderGeometry(2.55,2.7,.14,96),floorMaterial);
-    plinth.position.set(0,-1.73,-.15);
-    plinth.receiveShadow=true;
-    const rim=addMesh(root,new THREE.TorusGeometry(2.48,.012,8,120),new THREE.MeshBasicMaterial({color:0xff9a70,transparent:true,opacity:.62}));
-    rim.rotation.x=Math.PI/2;
-    rim.position.set(0,-1.645,-.15);
-    rim.castShadow=false;
-    const ground=addMesh(activeScene,new THREE.PlaneGeometry(200,200),new THREE.MeshStandardMaterial({color:0x0a1521,roughness:.88,metalness:.12}));
+    // A transparent shadow receiver keeps the devices grounded without a bulky display platform.
+    const ground=addMesh(activeScene,new THREE.PlaneGeometry(200,200),new THREE.ShadowMaterial({color:0x050d16,opacity:.24}));
     ground.rotation.x=-Math.PI/2;
-    ground.position.y=-1.82;
+    ground.position.y=-1.72;
     ground.receiveShadow=true;
     ground.castShadow=false;
 
