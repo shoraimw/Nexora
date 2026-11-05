@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useRef,type PointerEvent as ReactPointerEvent} from "react";
+import {useEffect,useRef,type KeyboardEvent as ReactKeyboardEvent,type PointerEvent as ReactPointerEvent} from "react";
 
 function roundedShape(THREE:typeof import("three"),width:number,height:number,radius:number){
  const shape=new THREE.Shape();
@@ -416,7 +416,7 @@ export function Nexora3DScene({label}:{label:string}){
      camera.position.z=isCompact?9.6:8.5;
      camera.fov=isCompact?36:34;
      camera.updateProjectionMatrix();
-     root.scale.setScalar(isCompact?.84:1);
+     root.scale.setScalar(isCompact ? 0.84 : 1);
      activeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isCompact?1.2:1.55));
      activeRenderer.setSize(nextWidth,nextHeight);
     };
@@ -519,8 +519,17 @@ export function Nexora3DScene({label}:{label:string}){
   pointerRef.current.x=0;
   pointerRef.current.y=0;
  };
+ const handleKeyDown=(event:ReactKeyboardEvent<HTMLDivElement>)=>{
+  const step=.16;
+  if(event.key==="ArrowLeft")pointerRef.current.x=Math.max(-1,pointerRef.current.x-step);
+  else if(event.key==="ArrowRight")pointerRef.current.x=Math.min(1,pointerRef.current.x+step);
+  else if(event.key==="ArrowUp")pointerRef.current.y=Math.max(-1,pointerRef.current.y-step);
+  else if(event.key==="ArrowDown")pointerRef.current.y=Math.min(1,pointerRef.current.y+step);
+  else return;
+  event.preventDefault();
+ };
 
- return <div ref={hostRef} className="nexora-webgl-stage" role="group" tabIndex={0} aria-label={"Interactive 3D gadget display. Drag to rotate the smartphone, smartwatch, headphones and wireless earbuds. Featured collection: "+label} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onPointerLeave={handlePointerLeave}>
+ return <div ref={hostRef} className="nexora-webgl-stage" role="group" tabIndex={0} aria-label={"Interactive 3D gadget display. Drag or use arrow keys to rotate the smartphone, smartwatch, headphones and wireless earbuds. Featured collection: "+label} onKeyDown={handleKeyDown} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onPointerLeave={handlePointerLeave}>
   <div className="nexora-webgl-fallback" aria-hidden="true">
    <span className="nexora-fallback-phone"><i/></span>
    <span className="nexora-fallback-watch"><i/></span>
