@@ -94,7 +94,7 @@ export function Nexora3DHero(){
     <span>CURATED FOR EVERY DAY</span><strong>{scene.label}</strong>
    </div>
    <div className="nexora-hero-stage-index" aria-hidden="true">
-    <span>NX / 2026</span><span>SCROLL TO EXPLORE <i>↓</i></span>
+    <span>NX / 2026</span><span>DRAG TO ROTATE · SCROLL TO EXPLORE <i>↓</i></span>
    </div>
   </div>
  </section>;

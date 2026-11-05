@@ -57,6 +57,12 @@
 .nexora-hero-orbit-two{width:560px;height:360px;border-color:#ffffff10;transform:translate(-50%,-50%) rotate(56deg);animation:nexora-orbit-spin 55s linear infinite reverse}
 .nexora-webgl-stage{position:absolute;z-index:2;inset:0;overflow:hidden;cursor:grab;touch-action:pan-y;background:radial-gradient(ellipse at 50% 47%,#263c4c30,transparent 65%)}
 .nexora-webgl-stage:active{cursor:grabbing}
+
+.nexora-webgl-stage:focus-visible{outline:2px solid var(--hero-accent);outline-offset:-5px}
+.nexora-webgl-stage[data-webgl="loading"] .nexora-webgl-fallback{display:flex;opacity:.72}
+.nexora-webgl-stage[data-webgl="ready"] .nexora-webgl-fallback{display:flex;opacity:0;transition:opacity .4s ease}
+.nexora-webgl-stage[data-webgl="ready"] .nexora-webgl-canvas{animation:nexora-webgl-reveal .55s ease-out both}
+@keyframes nexora-webgl-reveal{from{opacity:0}to{opacity:1}}
 .nexora-webgl-canvas{display:block;width:100%;height:100%;outline:none}
 .nexora-webgl-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;pointer-events:none}
 .nexora-webgl-stage[data-webgl="fallback"] .nexora-webgl-fallback{display:flex}
@@ -126,6 +132,6 @@
  .nexora-fallback-earbuds{right:10%;bottom:17%;scale:.75;transform-origin:bottom right}
 }
 @media(prefers-reduced-motion:reduce){
- .nexora-hero-live-dot,.nexora-hero-ambient,.nexora-hero-orbit,.nexora-hero-floating-label{animation:none!important}
+ .nexora-hero-live-dot,.nexora-hero-ambient,.nexora-hero-orbit,.nexora-hero-floating-label,.nexora-webgl-canvas{animation:none!important}
  .nexora-hero-primary,.nexora-hero-secondary,.nexora-hero-arrows button{transition:none}
 }
