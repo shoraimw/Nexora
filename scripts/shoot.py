@@ -39,12 +39,27 @@ QA_JS = """() => {
   const imgs = [...document.images].filter(i => i.complete && i.naturalWidth === 0).map(i => i.src.slice(0, 90));
   const fonts = [...document.fonts].filter(f => f.status === 'loaded').map(f => f.family.replace(/"/g, ''));
   const h1 = document.querySelector('h1');
+  const action = document.querySelector('.nexora-card-shop-link');
+  const actionStyle = action ? getComputedStyle(action) : null;
+  const rgb = color => (color.match(/[\\d.]+/g) || []).slice(0, 3).map(Number);
+  const luminance = color => {
+    const channels = rgb(color).map(v => {
+      const c = v / 255;
+      return c <= .04045 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);
+    });
+    return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+  };
+  const actionContrast = actionStyle ? (() => {
+    const a = luminance(actionStyle.color), b = luminance(actionStyle.backgroundColor);
+    return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+  })() : null;
   return {
     title: document.title,
     scrollWidth: document.documentElement.scrollWidth, viewport: vw,
     horizontalOverflow: document.documentElement.scrollWidth > vw + 1, overflowingElements: wide,
     pageHeight: document.documentElement.scrollHeight,
     videos: vids, brokenImages: imgs, fontsLoaded: [...new Set(fonts)],
+    cardAction: actionStyle ? {tag: action.tagName, color: actionStyle.color, background: actionStyle.backgroundColor, contrast: actionContrast, minHeight: actionStyle.minHeight, radius: actionStyle.borderRadius} : null,
     h1: h1 ? {text: h1.innerText.slice(0, 80), fontSize: getComputedStyle(h1).fontSize, font: getComputedStyle(h1).fontFamily.slice(0, 40)} : null,
   };
 }"""
@@ -125,6 +140,9 @@ def with_playwright():
             failures.append(f"{name}: broken images: {', '.join(qa['brokenImages'])}")
         if qa.get("consoleErrors"):
             failures.append(f"{name}: browser console errors: {', '.join(qa['consoleErrors'])}")
+        action = qa.get("cardAction")
+        if action and action.get("contrast") is not None and action["contrast"] < 4.5:
+            failures.append(f"{name}: product action contrast is only {action['contrast']:.2f}:1")
     if failures:
         raise RuntimeError("Visual QA failed:\\n" + "\\n".join(failures))
     return report
