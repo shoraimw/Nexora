@@ -118,9 +118,22 @@ function makeBrushedMetalTexture(THREE:typeof import("three")){
  return texture;
 }
 
+type InteractionState={
+ yaw:number;
+ pitch:number;
+ dragging:boolean;
+ lastX:number;
+ lastY:number;
+ lastTime:number;
+ velocityYaw:number;
+ velocityPitch:number;
+ lastInput:number;
+};
+
 export function Nexora3DScene({label}:{label:string}){
  const hostRef=useRef<HTMLDivElement>(null);
- const pointerRef=useRef({x:0,y:0,dragging:false,lastX:0,lastY:0});
+ const interactionRef=useRef<InteractionState>({yaw:0,pitch:0,dragging:false,lastX:0,lastY:0,lastTime:0,velocityYaw:0,velocityPitch:0,lastInput:0});
+ const wakeRef=useRef<()=>void>(()=>{});
 
  useEffect(()=>{
   const host=hostRef.current;
@@ -136,10 +149,18 @@ export function Nexora3DScene({label}:{label:string}){
   let pageVisible=document.visibilityState==="visible";
   let inViewport=true;
   let reducedMotion=false;
+  interactionRef.current.lastInput=performance.now();
   host.dataset.webgl="loading";
 
-  const onVisibility=()=>{pageVisible=document.visibilityState==="visible";};
-  const onMotionChange=()=>{reducedMotion=motionQuery?.matches??false;};
+  const onVisibility=()=>{
+   pageVisible=document.visibilityState==="visible";
+   if(pageVisible)wakeRef.current();
+  };
+  const onMotionChange=()=>{
+   reducedMotion=motionQuery?.matches??false;
+   if(reducedMotion){interactionRef.current.velocityYaw=0;interactionRef.current.velocityPitch=0;}
+   wakeRef.current();
+  };
 
   const boot=async()=>{
    try{
@@ -173,7 +194,7 @@ export function Nexora3DScene({label}:{label:string}){
     activeRenderer.setClearColor(0x000000,0);
     activeRenderer.outputColorSpace=THREE.SRGBColorSpace;
     activeRenderer.toneMapping=THREE.ACESFilmicToneMapping;
-    activeRenderer.toneMappingExposure=1.12;
+    activeRenderer.toneMappingExposure=1.02;
     activeRenderer.shadowMap.enabled=true;
     activeRenderer.shadowMap.type=THREE.PCFSoftShadowMap;
     activeRenderer.domElement.className="nexora-webgl-canvas";
@@ -186,9 +207,9 @@ export function Nexora3DScene({label}:{label:string}){
     activeScene.environment=activeEnvironment.texture;
     pmrem.dispose();
 
-    activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,2.1));
-    activeScene.add(new THREE.AmbientLight(0xffffff,.34));
-    const keyLight=new THREE.DirectionalLight(0xffe1ce,4.3);
+    activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,1.35));
+    activeScene.add(new THREE.AmbientLight(0xffffff,.22));
+    const keyLight=new THREE.DirectionalLight(0xffe1ce,3.1);
     keyLight.position.set(-3.8,5.2,5.5);
     keyLight.castShadow=true;
     keyLight.shadow.mapSize.set(compactDevice?512:1024,compactDevice?512:1024);
@@ -200,13 +221,13 @@ export function Nexora3DScene({label}:{label:string}){
     keyLight.shadow.camera.top=5;
     keyLight.shadow.camera.bottom=-5;
     activeScene.add(keyLight);
-    const coolLight=new THREE.DirectionalLight(0x72c9ff,3.1);
+    const coolLight=new THREE.DirectionalLight(0x72c9ff,1.9);
     coolLight.position.set(4,2.5,-3);
     activeScene.add(coolLight);
-    const warmRim=new THREE.PointLight(0xff895f,34,8);
+    const warmRim=new THREE.PointLight(0xff895f,12,8);
     warmRim.position.set(-2,-.2,3.2);
     activeScene.add(warmRim);
-    const blueRim=new THREE.PointLight(0x5c9eff,28,8);
+    const blueRim=new THREE.PointLight(0x5c9eff,9,8);
     blueRim.position.set(2.8,1.3,-2);
     activeScene.add(blueRim);
 
@@ -425,6 +446,7 @@ export function Nexora3DScene({label}:{label:string}){
     resizeObserver.observe(host);
     intersectionObserver=new IntersectionObserver(entries=>{
      inViewport=entries[0]?.isIntersecting??true;
+     if(inViewport)wakeRef.current();
     },{rootMargin:"120px"});
     intersectionObserver.observe(host);
     motionQuery=window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -433,26 +455,58 @@ export function Nexora3DScene({label}:{label:string}){
     document.addEventListener("visibilitychange",onVisibility);
 
     let lastRenderTime=0;
+    let lastFrameTime=0;
     const frameInterval=compactDevice?1000/30:1000/45;
     const animate=(time:number)=>{
-     if(disposed)return;
-     animationFrame=window.requestAnimationFrame(animate);
-     if(!pageVisible||!inViewport||time-lastRenderTime<frameInterval)return;
+     animationFrame=0;
+     if(disposed||!pageVisible||!inViewport)return;
+     if(time-lastRenderTime<frameInterval){
+      animationFrame=window.requestAnimationFrame(animate);
+      return;
+     }
+     const dt=Math.min(.05,Math.max(.001,(time-lastFrameTime)/1000));
+     lastFrameTime=time;
      lastRenderTime=time;
-     const seconds=time*.001;
+     const state=interactionRef.current;
      if(!reducedMotion){
-      const targetY=pointerRef.current.x*.3+Math.sin(seconds*.24)*.035;
-      const targetX=-pointerRef.current.y*.15;
-      root.rotation.y+=(targetY-root.rotation.y)*.035;
-      root.rotation.x+=(targetX-root.rotation.x)*.035;
+      if(!state.dragging){
+       state.yaw+=state.velocityYaw*dt;
+       state.pitch+=state.velocityPitch*dt;
+       const friction=Math.exp(-3.5*dt);
+       state.velocityYaw*=friction;
+       state.velocityPitch*=friction;
+       if(Math.abs(state.velocityYaw)<.015)state.velocityYaw=0;
+       if(Math.abs(state.velocityPitch)<.015)state.velocityPitch=0;
+      }
+      const idle=!state.dragging&&!state.velocityYaw&&!state.velocityPitch&&time-state.lastInput>1800;
+      const sway=idle?Math.sin(time*.00045)*.045:0;
+      const pitchSway=idle?Math.sin(time*.0006)*.012:0;
+      root.rotation.y+=(state.yaw+sway-root.rotation.y)*.12;
+      root.rotation.x+=(state.pitch+pitchSway-root.rotation.x)*.12;
       floaters.forEach(item=>{
-       item.object.position.y=item.baseY+Math.sin(seconds*.88+item.phase)*item.amount;
+       item.object.position.y=item.baseY+Math.sin(time*.00088+item.phase)*item.amount;
       });
+     }else{
+      state.velocityYaw=0;
+      state.velocityPitch=0;
+      root.rotation.y=state.yaw;
+      root.rotation.x=state.pitch;
      }
      activeRenderer.render(activeScene,camera);
+     const keepAnimating=!reducedMotion;
+     if(keepAnimating||state.dragging||Math.abs(state.velocityYaw)>.015||Math.abs(state.velocityPitch)>.015){
+      animationFrame=window.requestAnimationFrame(animate);
+     }
     };
+    const wake=()=>{
+     if(!animationFrame&&!disposed&&pageVisible&&inViewport){
+      lastFrameTime=performance.now();
+      animationFrame=window.requestAnimationFrame(animate);
+     }
+    };
+    wakeRef.current=wake;
     host.dataset.webgl="ready";
-    animationFrame=window.requestAnimationFrame(animate);
+    wake();
    }catch{
     if(!disposed){
      host.dataset.webgl="fallback";
@@ -466,6 +520,7 @@ export function Nexora3DScene({label}:{label:string}){
   void boot();
   return()=>{
    disposed=true;
+   wakeRef.current=()=>{};
    window.cancelAnimationFrame(animationFrame);
    resizeObserver?.disconnect();
    intersectionObserver?.disconnect();
@@ -492,45 +547,63 @@ export function Nexora3DScene({label}:{label:string}){
  },[]);
 
  const handlePointerDown=(event:ReactPointerEvent<HTMLDivElement>)=>{
-  pointerRef.current.dragging=true;
-  pointerRef.current.lastX=event.clientX;
-  pointerRef.current.lastY=event.clientY;
+  if(event.pointerType==="mouse"&&event.button!==0)return;
+  const state=interactionRef.current;
+  state.dragging=true;
+  state.lastX=event.clientX;
+  state.lastY=event.clientY;
+  state.lastTime=event.timeStamp;
+  state.velocityYaw=0;
+  state.velocityPitch=0;
+  state.lastInput=performance.now();
   event.currentTarget.setPointerCapture(event.pointerId);
+  wakeRef.current();
  };
  const handlePointerMove=(event:ReactPointerEvent<HTMLDivElement>)=>{
-  const pointer=pointerRef.current;
-  const rect=event.currentTarget.getBoundingClientRect();
-  if(pointer.dragging){
-   pointer.x=Math.max(-1,Math.min(1,pointer.x+((event.clientX-pointer.lastX)/rect.width)*2.2));
-   pointer.y=Math.max(-1,Math.min(1,pointer.y+((event.clientY-pointer.lastY)/rect.height)*2.2));
-   pointer.lastX=event.clientX;
-   pointer.lastY=event.clientY;
-   return;
-  }
-  if(event.pointerType==="touch")return;
-  pointer.x=((event.clientX-rect.left)/rect.width-.5)*2;
-  pointer.y=((event.clientY-rect.top)/rect.height-.5)*2;
+  const state=interactionRef.current;
+  if(!state.dragging)return;
+  const dx=event.clientX-state.lastX;
+  const dy=event.clientY-state.lastY;
+  const elapsed=Math.max(1,event.timeStamp-state.lastTime);
+  const yawDelta=dx*.006;
+  const pitchDelta=event.pointerType==="touch"?0:dy*.0036;
+  state.yaw+=yawDelta;
+  state.pitch=Math.max(-.55,Math.min(.55,state.pitch+pitchDelta));
+  state.velocityYaw=state.velocityYaw*.72+(yawDelta/elapsed)*1000*.28;
+  state.velocityPitch=state.velocityPitch*.72+(pitchDelta/elapsed)*1000*.28;
+  state.lastX=event.clientX;
+  state.lastY=event.clientY;
+  state.lastTime=event.timeStamp;
+  state.lastInput=performance.now();
+  wakeRef.current();
  };
  const handlePointerUp=(event:ReactPointerEvent<HTMLDivElement>)=>{
-  pointerRef.current.dragging=false;
+  const state=interactionRef.current;
+  state.dragging=false;
+  if(event.type==="pointercancel"||event.timeStamp-state.lastTime>90){
+   state.velocityYaw=0;
+   state.velocityPitch=0;
+  }
+  state.lastInput=performance.now();
   if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
- };
- const handlePointerLeave=()=>{
-  if(pointerRef.current.dragging)return;
-  pointerRef.current.x=0;
-  pointerRef.current.y=0;
+  wakeRef.current();
  };
  const handleKeyDown=(event:ReactKeyboardEvent<HTMLDivElement>)=>{
-  const step=.16;
-  if(event.key==="ArrowLeft")pointerRef.current.x=Math.max(-1,pointerRef.current.x-step);
-  else if(event.key==="ArrowRight")pointerRef.current.x=Math.min(1,pointerRef.current.x+step);
-  else if(event.key==="ArrowUp")pointerRef.current.y=Math.max(-1,pointerRef.current.y-step);
-  else if(event.key==="ArrowDown")pointerRef.current.y=Math.min(1,pointerRef.current.y+step);
+  const state=interactionRef.current;
+  const step=.22;
+  if(event.key==="ArrowLeft")state.yaw-=step;
+  else if(event.key==="ArrowRight")state.yaw+=step;
+  else if(event.key==="ArrowUp")state.pitch=Math.max(-.55,state.pitch-step);
+  else if(event.key==="ArrowDown")state.pitch=Math.min(.55,state.pitch+step);
   else return;
+  state.velocityYaw=0;
+  state.velocityPitch=0;
+  state.lastInput=performance.now();
   event.preventDefault();
+  wakeRef.current();
  };
 
- return <div ref={hostRef} className="nexora-webgl-stage" role="group" tabIndex={0} aria-label={"Interactive 3D gadget display. Drag or use arrow keys to rotate the smartphone, smartwatch, headphones and wireless earbuds. Featured collection: "+label} onKeyDown={handleKeyDown} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onPointerLeave={handlePointerLeave}>
+ return <div ref={hostRef} className="nexora-webgl-stage" role="group" tabIndex={0} aria-label={"Interactive 3D gadget display. Drag horizontally to rotate the collection, or use the arrow keys. Featured collection: "+label} onKeyDown={handleKeyDown} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}>
   <div className="nexora-webgl-fallback" aria-hidden="true">
    <span className="nexora-fallback-phone"><i/></span>
    <span className="nexora-fallback-watch"><i/></span>
