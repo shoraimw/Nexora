@@ -252,8 +252,14 @@ html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mob
 .retail-stock.out-stock{color:#b64e42}
 .retail-stock.preview-stock{color:var(--nx-muted)}
 .nexora-card-actions{display:flex;align-items:center;gap:8px;width:100%;margin-top:auto;padding-top:12px}
-.nexora-card-shop-link{display:inline-flex;align-items:center;gap:6px;color:var(--nx-ink);font-size:10px;font-weight:800}
-.nexora-card-shop-link:hover{color:var(--nx-accent)}
+.nexora-card-shop-link{
+ min-height:36px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ padding:0 13px;border:1px solid var(--nx-ink);border-radius:999px;
+ background:var(--nx-ink);color:var(--nx-bg);font-size:10px;font-weight:800;
+ transition:background .2s,border-color .2s,color .2s,transform .2s;
+}
+.nexora-card-shop-link:hover{background:var(--nx-accent);border-color:var(--nx-accent);color:var(--nx-accent-ink);transform:translateY(-1px)}
+.nexora-card-shop-link:focus-visible{outline:2px solid var(--nx-accent);outline-offset:3px}
 .nexora-card-bag{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;margin-left:auto;border:1px solid var(--nx-line);border-radius:50%;background:var(--nx-bg);color:var(--nx-ink)}
 .nexora-card-bag:hover:not(:disabled){border-color:var(--nx-accent);background:var(--nx-accent-soft);color:var(--nx-accent)}
 .nexora-card-bag:disabled{opacity:.42}
