@@ -251,6 +251,7 @@ export function Nexora3DScene({label}:{label:string}){
     activeScene.add(blueRim);
 
     const root=new THREE.Group();
+    root.rotation.y=-.9;
     activeScene.add(root);
     const addMesh=(parent:import("three").Object3D,geometry:import("three").BufferGeometry,material:import("three").Material)=>{
      const object=new THREE.Mesh(geometry,material);
@@ -441,13 +442,6 @@ export function Nexora3DScene({label}:{label:string}){
     ground.receiveShadow=true;
     ground.castShadow=false;
 
-    const floaters=[
-     {object:phone,baseY:.12,phase:0,amount:.055},
-     {object:watch,baseY:.57,phase:1.3,amount:.07},
-     {object:headphones,baseY:-.93,phase:2.2,amount:.045},
-     {object:earbuds,baseY:-1.12,phase:3.1,amount:.06}
-    ];
-
     const resize=()=>{
      const rect=host.getBoundingClientRect();
      const nextWidth=Math.max(1,rect.width);
@@ -502,9 +496,6 @@ export function Nexora3DScene({label}:{label:string}){
       const pitchSway=idle?Math.sin(time*.0006)*.012:0;
       root.rotation.y+=(state.yaw+sway-root.rotation.y)*.12;
       root.rotation.x+=(state.pitch+pitchSway-root.rotation.x)*.12;
-      floaters.forEach(item=>{
-       item.object.position.y=item.baseY+Math.sin(time*.00088+item.phase)*item.amount;
-      });
      }else{
       state.velocityYaw=0;
       state.velocityPitch=0;
