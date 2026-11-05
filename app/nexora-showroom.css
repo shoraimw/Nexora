@@ -444,3 +444,24 @@ html[data-theme="dark"] .retail-breadcrumb a,html[data-theme="dark"] .retail-sho
  .nexora-hero-overline,.nexora-hero-copy h1,.nexora-hero-description,.nexora-hero-actions,.nexora-hero-controls{animation:none}
  .nexora-reveal,.nexora-reveal.is-visible{opacity:1;transform:none;filter:none;transition:none}
 }
+
+
+/* Compact, non-obstructive first-visit notice. */
+.nexora-cookie-banner{
+ width:min(340px,calc(100vw - 32px));padding:14px 14px 12px;
+ border-radius:13px;box-shadow:0 10px 32px rgba(10,24,36,.16);
+}
+.nexora-cookie-banner>strong{font-size:11px}
+.nexora-cookie-banner>p{margin:5px 0 9px;font-size:9px;line-height:1.42}
+.nexora-cookie-banner>div{gap:7px}
+.nexora-cookie-banner>div button{min-height:30px;padding:0 11px;border-radius:999px;font-size:9px}
+.nexora-cookie-close{top:8px;right:8px;width:24px;height:24px}
+@media(max-width:540px){
+ .nexora-cookie-banner{
+  left:12px;bottom:calc(79px + env(safe-area-inset-bottom));
+  width:calc(100vw - 24px);padding:11px 12px 10px;border-radius:12px;
+ }
+ .nexora-cookie-banner>strong{font-size:10px}
+ .nexora-cookie-banner>p{font-size:8.5px;line-height:1.35;margin:4px 0 7px;max-width:340px}
+ .nexora-cookie-banner>div button{min-height:28px;padding:0 10px;font-size:8px}
+}
