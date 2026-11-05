@@ -33,7 +33,7 @@ function ProductCard({product}:{product:LiveProduct}){
 }
 function ProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:LiveProduct[];href?:string}){
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,4).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
 }
 type IndexedProduct=ShopFilterProduct&{product:LiveProduct};
 export function CommerceShop({homepage=false,initialCategory="All",initialSubcategory="",categoryDescription=""}:{homepage?:boolean;initialCategory?:string;initialSubcategory?:string;categoryDescription?:string}){
@@ -56,7 +56,6 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
  const trending=useMemo(()=>items.filter(p=>p.review_count>0).sort((a,b)=>b.review_count-a.review_count||b.review_average-a.review_average).slice(0,10),[items]);
  const newest=useMemo(()=>[...items].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||"")).slice(0,10),[items]);
  const studentPicks=useMemo(()=>items.filter(p=>p.collections.includes("Student Picks")).slice(0,5),[items]);
- const homeGroups=useMemo(()=>["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Networking","Gaming"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5),category:storeCategories.find(c=>c.name===name)})).filter(g=>g.items.length),[items]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
   <RetailBrandDirectory brands={brands}/>
   {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
@@ -64,7 +63,6 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
    <ProductSection eyebrow="CUSTOMER FAVOURITES" title="Trending Products" items={trending}/>
    <ProductSection eyebrow="LATEST ADDITIONS" title="New Arrival" items={newest}/>
    {studentPicks.length>0&&<ProductSection eyebrow="MADE FOR STUDY DAYS" title="Student Picks" items={studentPicks} href="/shop?category=Student%20Picks"/>}
-   {homeGroups.map(g=><ProductSection key={g.name} eyebrow="EXPLORE THE CATEGORY" title={g.name} items={g.items} href={g.category?categoryHref(g.category):"/shop"}/>)}
   </>}
  </div></div>;
  return <main className="retail-container retail-shop-page">

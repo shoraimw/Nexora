@@ -13,7 +13,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 ## What exists in the repository
 
 ### Customer storefront
-- Cinematic responsive homepage with a real-time Three.js WebGL gadget studio: brushed-metal microtexture, layered glass screens, a detailed triple-camera phone, shaped smartwatch straps, circular cushioned headphone cups and a hinged earbud case. Studio reflections, soft shadows, floating motion, mouse/touch drag-to-rotate and keyboard controls are paired with mobile frame-rate/pixel-ratio limits, reduced-motion support and a CSS loading/WebGL fallback.
+- Cinematic responsive homepage with a real-time Three.js WebGL gadget studio: brushed-metal microtexture, layered glass screens, a detailed triple-camera phone, shaped smartwatch straps, circular cushioned headphone cups and a hinged earbud case. A restrained studio intro, drag inertia, keyboard rotation, touch-safe page scrolling, low-power rendering, reduced-motion still rendering and context-loss/CSS fallbacks keep the scene polished without a heavy rendering engine. The current devices are original, unbranded procedural models rather than exact SKU-specific GLBs; licensed/vendor models can replace them later.
 - 13 top-level gadget categories with nested subcategory landing pages, category-first homepage merchandising and mobile-friendly category browsing
 - Real Supabase catalog API (owner-approved products only); demo listings shown when backend is not configured
 - Shop filters: category, dynamic brand suggestions, explicit wired/wireless connectivity, BDT min/max price, in-stock only, sale only and sorting
@@ -59,6 +59,21 @@ npm run dev
 ```
 
 Open http://localhost:3000. Preview catalog data is illustrative, and checkout is disabled.
+
+## Design system and visual QA
+
+- **[docs/NEXORA_SHOWROOM_SPEC.md](docs/NEXORA_SHOWROOM_SPEC.md)** is the source of truth for the premium showroom direction, typography, theme tokens, hero composition, motion and responsive acceptance criteria.
+- GitHub Actions captures desktop and mobile screenshots for first visit, light mode and dark mode. The `nexora-visual-review` artifact is retained for seven days.
+- The screenshot utility in `scripts/shoot.py` is adapted from the MotionSites Web Builder's MIT-licensed QA script; its copyright/license notice is retained in the file.
+
+For local screenshot review, start the app with `npm run dev`, then run:
+
+```bash
+python -m pip install playwright
+python -m playwright install chromium
+python scripts/shoot.py http://localhost:3000 shots/ --wait 2.5 --full
+```
+
 
 ## Full backend setup (later, when owners are ready)
 

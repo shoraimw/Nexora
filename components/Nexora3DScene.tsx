@@ -118,9 +118,22 @@ function makeBrushedMetalTexture(THREE:typeof import("three")){
  return texture;
 }
 
+type InteractionState={
+ yaw:number;
+ pitch:number;
+ dragging:boolean;
+ lastX:number;
+ lastY:number;
+ lastTime:number;
+ velocityYaw:number;
+ velocityPitch:number;
+ lastInput:number;
+};
+
 export function Nexora3DScene({label}:{label:string}){
  const hostRef=useRef<HTMLDivElement>(null);
- const pointerRef=useRef({x:0,y:0,dragging:false,lastX:0,lastY:0});
+ const interactionRef=useRef<InteractionState>({yaw:0,pitch:0,dragging:false,lastX:0,lastY:0,lastTime:0,velocityYaw:0,velocityPitch:0,lastInput:0});
+ const wakeRef=useRef<()=>void>(()=>{});
 
  useEffect(()=>{
   const host=hostRef.current;
@@ -129,6 +142,9 @@ export function Nexora3DScene({label}:{label:string}){
   let animationFrame=0;
   let renderer:import("three").WebGLRenderer|null=null;
   let scene:import("three").Scene|null=null;
+  let contextCanvas:HTMLCanvasElement|null=null;
+  let contextLostHandler:((event:Event)=>void)|null=null;
+  let webglLost=false;
   let environmentTarget:import("three").WebGLRenderTarget|null=null;
   let resizeObserver:ResizeObserver|null=null;
   let intersectionObserver:IntersectionObserver|null=null;
@@ -136,13 +152,23 @@ export function Nexora3DScene({label}:{label:string}){
   let pageVisible=document.visibilityState==="visible";
   let inViewport=true;
   let reducedMotion=false;
+  interactionRef.current.lastInput=performance.now();
   host.dataset.webgl="loading";
 
-  const onVisibility=()=>{pageVisible=document.visibilityState==="visible";};
-  const onMotionChange=()=>{reducedMotion=motionQuery?.matches??false;};
+  const onVisibility=()=>{
+   pageVisible=document.visibilityState==="visible";
+   if(pageVisible)wakeRef.current();
+  };
+  const onMotionChange=()=>{
+   reducedMotion=motionQuery?.matches??false;
+   if(reducedMotion){interactionRef.current.velocityYaw=0;interactionRef.current.velocityPitch=0;}
+   wakeRef.current();
+  };
 
   const boot=async()=>{
    try{
+    const connection=(navigator as Navigator & {connection?:{saveData?:boolean}}).connection;
+    if(connection?.saveData){host.dataset.webgl="fallback";return;}
     const [THREE,{RoundedBoxGeometry},{RoomEnvironment}]=await Promise.all([
      import("three"),
      import("three/addons/geometries/RoundedBoxGeometry.js"),
@@ -173,22 +199,36 @@ export function Nexora3DScene({label}:{label:string}){
     activeRenderer.setClearColor(0x000000,0);
     activeRenderer.outputColorSpace=THREE.SRGBColorSpace;
     activeRenderer.toneMapping=THREE.ACESFilmicToneMapping;
-    activeRenderer.toneMappingExposure=1.12;
+    activeRenderer.toneMappingExposure=1.02;
     activeRenderer.shadowMap.enabled=true;
     activeRenderer.shadowMap.type=THREE.PCFSoftShadowMap;
     activeRenderer.domElement.className="nexora-webgl-canvas";
     activeRenderer.domElement.setAttribute("aria-hidden","true");
     host.appendChild(activeRenderer.domElement);
+    contextCanvas=activeRenderer.domElement;
+    contextLostHandler=(event:Event)=>{
+     event.preventDefault();
+     webglLost=true;
+     host.dataset.webgl="fallback";
+     window.cancelAnimationFrame(animationFrame);
+     animationFrame=0;
+     activeRenderer.dispose();
+     activeRenderer.domElement.remove();
+     renderer=null;
+    };
+    contextCanvas.addEventListener("webglcontextlost",contextLostHandler,false);
 
     const pmrem=new THREE.PMREMGenerator(activeRenderer);
-    const activeEnvironment=pmrem.fromScene(new RoomEnvironment(),.04);
+    const room=new RoomEnvironment();
+    const activeEnvironment=pmrem.fromScene(room,.04);
+    room.dispose();
     environmentTarget=activeEnvironment;
     activeScene.environment=activeEnvironment.texture;
     pmrem.dispose();
 
-    activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,2.1));
-    activeScene.add(new THREE.AmbientLight(0xffffff,.34));
-    const keyLight=new THREE.DirectionalLight(0xffe1ce,4.3);
+    activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,1.35));
+    activeScene.add(new THREE.AmbientLight(0xffffff,.22));
+    const keyLight=new THREE.DirectionalLight(0xffe1ce,3.1);
     keyLight.position.set(-3.8,5.2,5.5);
     keyLight.castShadow=true;
     keyLight.shadow.mapSize.set(compactDevice?512:1024,compactDevice?512:1024);
@@ -200,17 +240,18 @@ export function Nexora3DScene({label}:{label:string}){
     keyLight.shadow.camera.top=5;
     keyLight.shadow.camera.bottom=-5;
     activeScene.add(keyLight);
-    const coolLight=new THREE.DirectionalLight(0x72c9ff,3.1);
+    const coolLight=new THREE.DirectionalLight(0x72c9ff,1.9);
     coolLight.position.set(4,2.5,-3);
     activeScene.add(coolLight);
-    const warmRim=new THREE.PointLight(0xff895f,34,8);
+    const warmRim=new THREE.PointLight(0xff895f,12,8);
     warmRim.position.set(-2,-.2,3.2);
     activeScene.add(warmRim);
-    const blueRim=new THREE.PointLight(0x5c9eff,28,8);
+    const blueRim=new THREE.PointLight(0x5c9eff,9,8);
     blueRim.position.set(2.8,1.3,-2);
     activeScene.add(blueRim);
 
     const root=new THREE.Group();
+    root.rotation.y=-.9;
     activeScene.add(root);
     const addMesh=(parent:import("three").Object3D,geometry:import("three").BufferGeometry,material:import("three").Material)=>{
      const object=new THREE.Mesh(geometry,material);
@@ -273,7 +314,7 @@ export function Nexora3DScene({label}:{label:string}){
      const grille=addMesh(phone,new THREE.SphereGeometry(.012,10,8),darkTitanium);
      grille.position.set(-.19+i*.095,-1.055,.015);
     }
-    phone.position.set(-.72,.12,.25);
+    phone.position.set(-.62,-.12,.25);
     phone.rotation.set(-.045,.26,-.105);
     root.add(phone);
 
@@ -316,7 +357,7 @@ export function Nexora3DScene({label}:{label:string}){
     const crownCap=addMesh(watch,new THREE.CylinderGeometry(.045,.045,.012,24),darkTitanium);
     crownCap.rotation.z=Math.PI/2;
     crownCap.position.set(.565,.12,.015);
-    watch.position.set(1.42,.57,-.12);
+    watch.position.set(1.35,.35,-.12);
     watch.rotation.set(-.08,-.32,.075);
     watch.scale.setScalar(.77);
     root.add(watch);
@@ -345,9 +386,9 @@ export function Nexora3DScene({label}:{label:string}){
       detail.position.set(side*.7+(i-1)*.075,-.25,.247);
      }
     });
-    headphones.position.set(-1.86,-.93,-.28);
+    headphones.position.set(-1.9,-.82,-.28);
     headphones.rotation.set(-.04,.17,-.08);
-    headphones.scale.setScalar(.82);
+    headphones.scale.setScalar(.78);
     root.add(headphones);
 
     // Wireless charging case with a hinge, status light and sculpted earbuds.
@@ -386,28 +427,6 @@ export function Nexora3DScene({label}:{label:string}){
     earbuds.scale.setScalar(.76);
     root.add(earbuds);
 
-    // A dark anodised display plinth grounds the floating products and catches shadows.
-    const floorMaterial=new THREE.MeshStandardMaterial({color:0x101d2b,metalness:.42,roughness:.48});
-    const plinth=addMesh(root,new THREE.CylinderGeometry(2.55,2.7,.14,96),floorMaterial);
-    plinth.position.set(0,-1.73,-.15);
-    plinth.receiveShadow=true;
-    const rim=addMesh(root,new THREE.TorusGeometry(2.48,.012,8,120),new THREE.MeshBasicMaterial({color:0xff9a70,transparent:true,opacity:.62}));
-    rim.rotation.x=Math.PI/2;
-    rim.position.set(0,-1.645,-.15);
-    rim.castShadow=false;
-    const ground=addMesh(activeScene,new THREE.PlaneGeometry(200,200),new THREE.MeshStandardMaterial({color:0x0a1521,roughness:.88,metalness:.12}));
-    ground.rotation.x=-Math.PI/2;
-    ground.position.y=-1.82;
-    ground.receiveShadow=true;
-    ground.castShadow=false;
-
-    const floaters=[
-     {object:phone,baseY:.12,phase:0,amount:.055},
-     {object:watch,baseY:.57,phase:1.3,amount:.07},
-     {object:headphones,baseY:-.93,phase:2.2,amount:.045},
-     {object:earbuds,baseY:-1.12,phase:3.1,amount:.06}
-    ];
-
     const resize=()=>{
      const rect=host.getBoundingClientRect();
      const nextWidth=Math.max(1,rect.width);
@@ -425,6 +444,7 @@ export function Nexora3DScene({label}:{label:string}){
     resizeObserver.observe(host);
     intersectionObserver=new IntersectionObserver(entries=>{
      inViewport=entries[0]?.isIntersecting??true;
+     if(inViewport)wakeRef.current();
     },{rootMargin:"120px"});
     intersectionObserver.observe(host);
     motionQuery=window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -433,26 +453,57 @@ export function Nexora3DScene({label}:{label:string}){
     document.addEventListener("visibilitychange",onVisibility);
 
     let lastRenderTime=0;
+    let lastFrameTime=0;
     const frameInterval=compactDevice?1000/30:1000/45;
     const animate=(time:number)=>{
-     if(disposed)return;
-     animationFrame=window.requestAnimationFrame(animate);
-     if(!pageVisible||!inViewport||time-lastRenderTime<frameInterval)return;
+     animationFrame=0;
+     if(disposed||webglLost||!pageVisible||!inViewport)return;
+     if(time-lastRenderTime<frameInterval){
+      animationFrame=window.requestAnimationFrame(animate);
+      return;
+     }
+     const dt=Math.min(.05,Math.max(.001,(time-lastFrameTime)/1000));
+     lastFrameTime=time;
      lastRenderTime=time;
-     const seconds=time*.001;
+     const state=interactionRef.current;
      if(!reducedMotion){
-      const targetY=pointerRef.current.x*.3+Math.sin(seconds*.24)*.035;
-      const targetX=-pointerRef.current.y*.15;
-      root.rotation.y+=(targetY-root.rotation.y)*.035;
-      root.rotation.x+=(targetX-root.rotation.x)*.035;
-      floaters.forEach(item=>{
-       item.object.position.y=item.baseY+Math.sin(seconds*.88+item.phase)*item.amount;
-      });
+      if(!state.dragging){
+       state.yaw+=state.velocityYaw*dt;
+       state.pitch+=state.velocityPitch*dt;
+       const friction=Math.exp(-3.5*dt);
+       state.velocityYaw*=friction;
+       state.velocityPitch*=friction;
+       if(Math.abs(state.velocityYaw)<.015)state.velocityYaw=0;
+       if(Math.abs(state.velocityPitch)<.015)state.velocityPitch=0;
+      }
+      const idle=!state.dragging&&!state.velocityYaw&&!state.velocityPitch&&time-state.lastInput>1800;
+      const sway=idle?Math.sin(time*.00045)*.045:0;
+      const pitchSway=idle?Math.sin(time*.0006)*.012:0;
+      root.rotation.y+=(state.yaw+sway-root.rotation.y)*.12;
+      root.rotation.x+=(state.pitch+pitchSway-root.rotation.x)*.12;
+     }else{
+      state.velocityYaw=0;
+      state.velocityPitch=0;
+      root.rotation.y=state.yaw;
+      root.rotation.x=state.pitch;
      }
      activeRenderer.render(activeScene,camera);
+     const keepAnimating=!reducedMotion;
+     if(keepAnimating||state.dragging||Math.abs(state.velocityYaw)>.015||Math.abs(state.velocityPitch)>.015){
+      animationFrame=window.requestAnimationFrame(animate);
+     }
     };
+    const wake=()=>{
+     if(!animationFrame&&!disposed&&!webglLost&&pageVisible&&inViewport){
+      lastFrameTime=performance.now();
+      animationFrame=window.requestAnimationFrame(animate);
+     }
+    };
+    wakeRef.current=wake;
+    await activeRenderer.compileAsync(activeScene,camera);
+    if(disposed||webglLost)return;
     host.dataset.webgl="ready";
-    animationFrame=window.requestAnimationFrame(animate);
+    wake();
    }catch{
     if(!disposed){
      host.dataset.webgl="fallback";
@@ -466,7 +517,9 @@ export function Nexora3DScene({label}:{label:string}){
   void boot();
   return()=>{
    disposed=true;
+   wakeRef.current=()=>{};
    window.cancelAnimationFrame(animationFrame);
+   if(contextCanvas&&contextLostHandler)contextCanvas.removeEventListener("webglcontextlost",contextLostHandler);
    resizeObserver?.disconnect();
    intersectionObserver?.disconnect();
    motionQuery?.removeEventListener("change",onMotionChange);
@@ -477,9 +530,13 @@ export function Nexora3DScene({label}:{label:string}){
      if(mesh.geometry)mesh.geometry.dispose();
      if(mesh.material){
       const materials=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+      const disposedTextures=new Set<import("three").Texture>();
       materials.forEach(material=>{
-       const mapped=material as import("three").Material & {map?:import("three").Texture};
-       mapped.map?.dispose();
+       const mapped=material as import("three").Material & Record<string,unknown>;
+       for(const key of ["map","roughnessMap","bumpMap","normalMap","metalnessMap","aoMap","emissiveMap","envMap","alphaMap","displacementMap"]){
+        const texture=mapped[key] as import("three").Texture|undefined;
+        if(texture&&!disposedTextures.has(texture)){texture.dispose();disposedTextures.add(texture);}
+       }
        material.dispose();
       });
      }
@@ -492,45 +549,63 @@ export function Nexora3DScene({label}:{label:string}){
  },[]);
 
  const handlePointerDown=(event:ReactPointerEvent<HTMLDivElement>)=>{
-  pointerRef.current.dragging=true;
-  pointerRef.current.lastX=event.clientX;
-  pointerRef.current.lastY=event.clientY;
+  if(event.pointerType==="mouse"&&event.button!==0)return;
+  const state=interactionRef.current;
+  state.dragging=true;
+  state.lastX=event.clientX;
+  state.lastY=event.clientY;
+  state.lastTime=event.timeStamp;
+  state.velocityYaw=0;
+  state.velocityPitch=0;
+  state.lastInput=performance.now();
   event.currentTarget.setPointerCapture(event.pointerId);
+  wakeRef.current();
  };
  const handlePointerMove=(event:ReactPointerEvent<HTMLDivElement>)=>{
-  const pointer=pointerRef.current;
-  const rect=event.currentTarget.getBoundingClientRect();
-  if(pointer.dragging){
-   pointer.x=Math.max(-1,Math.min(1,pointer.x+((event.clientX-pointer.lastX)/rect.width)*2.2));
-   pointer.y=Math.max(-1,Math.min(1,pointer.y+((event.clientY-pointer.lastY)/rect.height)*2.2));
-   pointer.lastX=event.clientX;
-   pointer.lastY=event.clientY;
-   return;
-  }
-  if(event.pointerType==="touch")return;
-  pointer.x=((event.clientX-rect.left)/rect.width-.5)*2;
-  pointer.y=((event.clientY-rect.top)/rect.height-.5)*2;
+  const state=interactionRef.current;
+  if(!state.dragging)return;
+  const dx=event.clientX-state.lastX;
+  const dy=event.clientY-state.lastY;
+  const elapsed=Math.max(1,event.timeStamp-state.lastTime);
+  const yawDelta=dx*.006;
+  const pitchDelta=event.pointerType==="touch"?0:dy*.0036;
+  state.yaw+=yawDelta;
+  state.pitch=Math.max(-.55,Math.min(.55,state.pitch+pitchDelta));
+  state.velocityYaw=state.velocityYaw*.72+(yawDelta/elapsed)*1000*.28;
+  state.velocityPitch=state.velocityPitch*.72+(pitchDelta/elapsed)*1000*.28;
+  state.lastX=event.clientX;
+  state.lastY=event.clientY;
+  state.lastTime=event.timeStamp;
+  state.lastInput=performance.now();
+  wakeRef.current();
  };
  const handlePointerUp=(event:ReactPointerEvent<HTMLDivElement>)=>{
-  pointerRef.current.dragging=false;
+  const state=interactionRef.current;
+  state.dragging=false;
+  if(event.type==="pointercancel"||event.timeStamp-state.lastTime>90){
+   state.velocityYaw=0;
+   state.velocityPitch=0;
+  }
+  state.lastInput=performance.now();
   if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
- };
- const handlePointerLeave=()=>{
-  if(pointerRef.current.dragging)return;
-  pointerRef.current.x=0;
-  pointerRef.current.y=0;
+  wakeRef.current();
  };
  const handleKeyDown=(event:ReactKeyboardEvent<HTMLDivElement>)=>{
-  const step=.16;
-  if(event.key==="ArrowLeft")pointerRef.current.x=Math.max(-1,pointerRef.current.x-step);
-  else if(event.key==="ArrowRight")pointerRef.current.x=Math.min(1,pointerRef.current.x+step);
-  else if(event.key==="ArrowUp")pointerRef.current.y=Math.max(-1,pointerRef.current.y-step);
-  else if(event.key==="ArrowDown")pointerRef.current.y=Math.min(1,pointerRef.current.y+step);
+  const state=interactionRef.current;
+  const step=.22;
+  if(event.key==="ArrowLeft")state.yaw-=step;
+  else if(event.key==="ArrowRight")state.yaw+=step;
+  else if(event.key==="ArrowUp")state.pitch=Math.max(-.55,state.pitch-step);
+  else if(event.key==="ArrowDown")state.pitch=Math.min(.55,state.pitch+step);
   else return;
+  state.velocityYaw=0;
+  state.velocityPitch=0;
+  state.lastInput=performance.now();
   event.preventDefault();
+  wakeRef.current();
  };
 
- return <div ref={hostRef} className="nexora-webgl-stage" role="group" tabIndex={0} aria-label={"Interactive 3D gadget display. Drag or use arrow keys to rotate the smartphone, smartwatch, headphones and wireless earbuds. Featured collection: "+label} onKeyDown={handleKeyDown} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onPointerLeave={handlePointerLeave}>
+ return <div ref={hostRef} className="nexora-webgl-stage" role="group" tabIndex={0} aria-label={"Interactive 3D gadget display. Drag horizontally to rotate the collection, or use the arrow keys. Featured collection: "+label} onKeyDown={handleKeyDown} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}>
   <div className="nexora-webgl-fallback" aria-hidden="true">
    <span className="nexora-fallback-phone"><i/></span>
    <span className="nexora-fallback-watch"><i/></span>

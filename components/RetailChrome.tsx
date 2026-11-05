@@ -50,15 +50,15 @@ export function RetailHero(){
 }
 export function RetailTrustBar(){
  const items=[
-  {Icon:Truck,title:"Delivery information",copy:"Clear details before checkout"},
+  {Icon:Truck,title:"Delivery details",copy:"See available options at checkout"},
   {Icon:PackageCheck,title:"Order tracking",copy:"Follow your order updates"},
-  {Icon:MessageCircle,title:"Shopping assistance",copy:"Help choosing the right product"},
+  {Icon:MessageCircle,title:"Shopping help",copy:"Get help choosing the right gear"},
   {Icon:ShieldCheck,title:"Clear policies",copy:"Know the details before you buy"}
  ];
  return <section className="retail-trustbar" aria-label="Shopping information">{items.map(({Icon,title,copy})=><div key={title}><span className="retail-trust-icon"><Icon size={21}/></span><span><strong>{title}</strong><small>{copy}</small></span></div>)}</section>;
 }
 export function RetailCategoryGrid(){
- return <section className="retail-category-section">
+ return <section id="featured-categories" className="retail-category-section">
   <div className="retail-section-heading"><div><span className="retail-eyebrow">BROWSE THE COLLECTION</span><h2>Featured Categories</h2><p>Jump straight to the gear you are looking for.</p></div><Link href="/shop" className="retail-section-link">All categories <ArrowRight size={16}/></Link></div>
   <div className="retail-category-grid">{storeCategories.map(category=>{const Icon=categoryIcons[category.name]||Grid2X2;return <Link key={category.slug} href={categoryHref(category)} className="retail-category-card"><span className="retail-category-icon"><Icon size={25} strokeWidth={1.65}/></span><strong>{category.name}</strong><small>{category.hint}</small><ArrowRight className="retail-category-arrow" size={15}/></Link>;})}</div>
  </section>;

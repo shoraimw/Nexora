@@ -23,6 +23,7 @@ import "./gadget-layout.css";
 import "./category-experience.css";
 import "./hero-3d.css";
 import "./site-experience.css";
+import "./nexora-showroom.css";
 import "./print.css";
 export const metadata:Metadata={
  title:{default:"Nexora | Connect with Modern World",template:"%s | Nexora"},
@@ -31,7 +32,7 @@ export const metadata:Metadata={
  robots:{index:true,follow:true}
 };
 export default function RootLayout({children}:{children:React.ReactNode}){
- return <html lang="en"><body><a className="skip-link" href="#main-content">Skip to content</a><ConfirmProvider><CartProvider>
+ return <html lang="en"><head><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/></head><body><a className="skip-link" href="#main-content">Skip to content</a><ConfirmProvider><CartProvider>
   <header className="retail-site-header">
    <div className="retail-container retail-header-main">
     <MobileMenu/>
