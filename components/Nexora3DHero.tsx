@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import {useEffect,useState} from "react";
-import {ArrowRight,ArrowUpRight,ChevronLeft,ChevronRight,Sparkles} from "lucide-react";
+import {ArrowRight,ArrowUpRight,ChevronLeft,ChevronRight} from "lucide-react";
 import {Nexora3DScene} from "@/components/Nexora3DScene";
 
 const scenes=[
- {eyebrow:"THE NEXORA COLLECTION",title:["Your everyday,","upgraded."],description:"Discover the gadgets, audio and little tech upgrades that make every day feel a little more extraordinary.",cta:"Explore the collection",href:"/shop",label:"EVERYDAY TECH",number:"01",accent:"orange"},
- {eyebrow:"MAKE YOUR SPACE YOURS",title:["Build a better","desk setup."],description:"Thoughtful tools for focused work, creative flow and everything you make happen at your desk.",cta:"Explore PC accessories",href:"/category/pc-accessories",label:"DESK ESSENTIALS",number:"02",accent:"blue"},
- {eyebrow:"LEVEL UP YOUR PLAY",title:["Ready for your","next game?"],description:"Find the controllers, keyboards and audio gear that bring your gaming setup together.",cta:"Explore gaming",href:"/category/gaming",label:"GAMING GEAR",number:"03",accent:"violet"}
+ {eyebrow:"THE NEXORA COLLECTION",title:["Good tech.","Better every day."],description:"Find the devices and everyday essentials that fit your life—from the first charge to the last song.",cta:"Shop the collection",href:"/shop",label:"EVERYDAY TECH",number:"01",accent:"orange"},
+ {eyebrow:"MAKE ROOM FOR BETTER WORK",title:["A better desk.","A clearer mind."],description:"Build a setup that feels right for focused work, creative flow and everything you make happen.",cta:"Explore desk essentials",href:"/category/pc-accessories",label:"DESK ESSENTIALS",number:"02",accent:"blue"},
+ {eyebrow:"READY WHEN YOU ARE",title:["Play your way.","Go a little further."],description:"Find the controllers, keyboards and audio gear that bring your gaming setup together.",cta:"Explore gaming",href:"/category/gaming",label:"GAMING GEAR",number:"03",accent:"violet"}
 ] as const;
 
 export function Nexora3DHero(){
@@ -50,23 +50,16 @@ export function Nexora3DHero(){
    if(!event.currentTarget.contains(event.relatedTarget as Node|null))setFocused(false);
   }}
  >
-  <div className="nexora-hero-noise" aria-hidden="true"/>
   <div className="nexora-hero-copy">
    <div className="nexora-hero-overline">
     <span className="nexora-hero-live-dot"/>
-    <span>THE FUTURE, IN YOUR EVERYDAY</span>
-    <Sparkles size={14}/>
+    <span>{scene.eyebrow}</span>
    </div>
-   <span className="nexora-hero-eyebrow">{scene.eyebrow}</span>
    <h1>{scene.title[0]}<br/><span>{scene.title[1]}</span></h1>
    <p className="nexora-hero-description">{scene.description}</p>
    <div className="nexora-hero-actions">
     <Link className="nexora-hero-primary" href={scene.href}>{scene.cta}<ArrowUpRight size={17}/></Link>
-    <Link className="nexora-hero-secondary" href="/category/phones">Discover phones <ArrowRight size={15}/></Link>
-   </div>
-   <div className="nexora-hero-proof">
-    <div className="nexora-hero-proof-icon"><span>N.</span></div>
-    <div><strong>One place. Every upgrade.</strong><small>Explore 13 thoughtfully organised categories</small></div>
+    <Link className="nexora-hero-secondary" href="/#featured-categories">Browse categories <ArrowRight size={15}/></Link>
    </div>
    <div className="nexora-hero-controls" aria-label="Featured promotions">
     <span className="nexora-hero-count"><b>{scene.number}</b><i>/ 03</i></span>
@@ -80,21 +73,11 @@ export function Nexora3DHero(){
    </div>
   </div>
 
-  <div className="nexora-hero-visual" aria-label="Nexora 3D product studio">
+  <div className="nexora-hero-visual" aria-label="Nexora interactive 3D product studio">
    <div className="nexora-hero-visual-grid" aria-hidden="true"/>
-   <div className="nexora-hero-ambient nexora-hero-ambient-one" aria-hidden="true"/>
-   <div className="nexora-hero-ambient nexora-hero-ambient-two" aria-hidden="true"/>
-   <div className="nexora-hero-orbit nexora-hero-orbit-one" aria-hidden="true"/>
-   <div className="nexora-hero-orbit nexora-hero-orbit-two" aria-hidden="true"/>
    <Nexora3DScene label={scene.label}/>
-   <div className="nexora-hero-floating-label nexora-floating-label-top" aria-hidden="true">
-    <span>01 / NEXORA STUDIO</span><strong>DESIGNED TO CONNECT</strong>
-   </div>
-   <div className="nexora-hero-floating-label nexora-floating-label-bottom" aria-hidden="true">
-    <span>CURATED FOR EVERY DAY</span><strong>{scene.label}</strong>
-   </div>
    <div className="nexora-hero-stage-index" aria-hidden="true">
-    <span>NX / 2026</span><span>DRAG TO ROTATE · SCROLL TO EXPLORE <i>↓</i></span>
+    <span>NX / PRODUCT STUDIO</span><span>DRAG TO ROTATE <i>↗</i></span>
    </div>
   </div>
  </section>;
