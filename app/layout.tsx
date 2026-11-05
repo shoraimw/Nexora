@@ -23,6 +23,7 @@ import "./gadget-layout.css";
 import "./category-experience.css";
 import "./hero-3d.css";
 import "./site-experience.css";
+import "./nexora-showroom.css";
 import "./print.css";
 export const metadata:Metadata={
  title:{default:"Nexora | Connect with Modern World",template:"%s | Nexora"},
