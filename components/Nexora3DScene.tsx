@@ -130,8 +130,9 @@ export function Nexora3DScene({label}:{label:string}){
     camera.position.set(0,.18,8.5);
     camera.lookAt(0,0,0);
 
+    let activeRenderer:import("three").WebGLRenderer;
     try{
-     const activeRenderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"high-performance"});
+     activeRenderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"high-performance"});
      renderer=activeRenderer;
     }catch{
      host.dataset.webgl="fallback";
@@ -150,8 +151,9 @@ export function Nexora3DScene({label}:{label:string}){
     host.appendChild(activeRenderer.domElement);
 
     const pmrem=new THREE.PMREMGenerator(activeRenderer);
-    environmentTarget=pmrem.fromScene(new RoomEnvironment(),.04);
-    activeScene.environment=environmentTarget.texture;
+    const activeEnvironment=pmrem.fromScene(new RoomEnvironment(),.04);
+    environmentTarget=activeEnvironment;
+    activeScene.environment=activeEnvironment.texture;
     pmrem.dispose();
 
     activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,2.1));
