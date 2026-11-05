@@ -301,3 +301,52 @@ test("customer help includes expandable FAQs and last-reviewed metadata",()=>{
 test("custom 404 and print stylesheet are installed",()=>{
  assert.match(read("app/not-found.tsx"),/Browse gadgets/);assert.match(read("app/loading.tsx"),/nexora-route-loading/);assert.match(read("app/print.css"),/@media print/);assert.match(read("app/layout.tsx"),/print\.css/);
 });
+
+
+test("Nexora homepage follows the premium showroom spec and keeps the first screen focused",()=>{
+ const spec=read("docs/NEXORA_SHOWROOM_SPEC.md");
+ const hero=read("components/Nexora3DHero.tsx");
+ const live=read("components/CommerceShop.tsx");
+ const demo=read("components/Storefront.tsx");
+ const css=read("app/nexora-showroom.css");
+ const layout=read("app/layout.tsx");
+ assert.match(spec,/Signature:\*\* a real-time Three\.js product studio/);
+ assert.match(hero,/Good tech\./);
+ assert.match(hero,/Better every day\./);
+ assert.match(hero,/Shop the collection/);
+ assert.match(hero,/Browse categories/);
+ assert.match(hero,/6500/);
+ assert.match(live,/items\.slice\(0,4\)/);
+ assert.match(demo,/items\.slice\(0,4\)/);
+ assert.doesNotMatch(live,/homeGroups/);
+ assert.doesNotMatch(demo,/\["Phones","Phone Accessories","Headphones & Speakers"/);
+ assert.match(css,/--nx-bg:#f4f3ef/);
+ assert.match(css,/html\[data-theme="dark"\]/);
+ assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+ assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(css,/retail-mobile-nav/);
+ assert.match(layout,/nexora-showroom\.css/);
+});
+test("3D showroom uses real drag inertia, touch scroll, reduced-motion still rendering and visibility pause",()=>{
+ const scene=read("components/Nexora3DScene.tsx");
+ const css=read("app/nexora-showroom.css");
+ assert.match(scene,/state\.yaw\+=yawDelta/);
+ assert.match(scene,/Math\.exp\(-3\.5\*dt\)/);
+ assert.match(scene,/event\.pointerType==="touch"\?0:dy\*\.0036/);
+ assert.match(scene,/onPointerCancel=\{handlePointerUp\}/);
+ assert.match(scene,/onKeyDown=\{handleKeyDown\}/);
+ assert.match(scene,/const keepAnimating=!reducedMotion/);
+ assert.match(scene,/IntersectionObserver/);
+ assert.match(scene,/visibilitychange/);
+ assert.match(css,/touch-action:pan-y/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+});
+test("all 13 category destinations remain visible in the featured category grid",()=>{
+ const chrome=read("components/RetailChrome.tsx");
+ const taxonomy=read("lib/store-taxonomy.ts");
+ assert.match(chrome,/id="featured-categories"/);
+ assert.match(chrome,/storeCategories\.map/);
+ for(const name of ["Phones","Mac","Phone Accessories","Tablets","Cases & Protectors","Watches","Headphones & Speakers","PC Accessories","Camera","Gadgets","Networking","Gaming","Drone"]){
+  assert.ok(taxonomy.includes('name:"'+name+'"'),name);
+ }
+});
