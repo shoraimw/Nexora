@@ -13,7 +13,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 ## What exists in the repository
 
 ### Customer storefront
-- Cinematic responsive homepage with a real-time Three.js WebGL gadget studio: brushed-metal microtexture, layered glass screens, a detailed triple-camera phone, shaped smartwatch straps, circular cushioned headphone cups and a hinged earbud case. A restrained studio intro, drag inertia, keyboard rotation, touch-safe page scrolling, low-power rendering, reduced-motion still rendering and context-loss/CSS fallbacks keep the scene polished without a heavy rendering engine.
+- Cinematic responsive homepage with a real-time Three.js WebGL gadget studio: brushed-metal microtexture, layered glass screens, a detailed triple-camera phone, shaped smartwatch straps, circular cushioned headphone cups and a hinged earbud case. A restrained studio intro, drag inertia, keyboard rotation, touch-safe page scrolling, low-power rendering, reduced-motion still rendering and context-loss/CSS fallbacks keep the scene polished without a heavy rendering engine. The current devices are original, unbranded procedural models rather than exact SKU-specific GLBs; licensed/vendor models can replace them later.
 - 13 top-level gadget categories with nested subcategory landing pages, category-first homepage merchandising and mobile-friendly category browsing
 - Real Supabase catalog API (owner-approved products only); demo listings shown when backend is not configured
 - Shop filters: category, dynamic brand suggestions, explicit wired/wireless connectivity, BDT min/max price, in-stock only, sale only and sorting
