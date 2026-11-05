@@ -203,7 +203,7 @@ test("Nexora homepage uses a real-time WebGL gadget studio and category-first me
  assert.match(scene,/RoomEnvironment/);
  assert.match(scene,/IntersectionObserver/);
  assert.match(scene,/prefers-reduced-motion/);
- assert.match(scene,/data-webgl="fallback"/);
+ assert.match(scene,/dataset\.webgl="fallback"/);
  assert.match(pkg,/"three": "\^0\.180\.0"/);
  assert.match(css,/nexora-webgl-stage/);
  assert.match(css,/nexora-hero-visual/);
