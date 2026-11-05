@@ -386,7 +386,7 @@ export function Nexora3DScene({label}:{label:string}){
       detail.position.set(side*.7+(i-1)*.075,-.25,.247);
      }
     });
-    headphones.position.set(-1.55,-.88,-.28);
+    headphones.position.set(-1.9,-.82,-.28);
     headphones.rotation.set(-.04,.17,-.08);
     headphones.scale.setScalar(.78);
     root.add(headphones);
