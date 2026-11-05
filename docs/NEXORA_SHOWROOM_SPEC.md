@@ -38,6 +38,8 @@ Copy:
 
 3D stage: actual Three.js scene, transparent canvas, 34° product-shot camera, RoomEnvironment PMREM, one soft key, one cool rim and a low-intensity warm rim. PBR titanium, glass, soft silicone and acoustic fabric. The four models share one balanced product composition, with a soft low-contrast grounding shadow rather than a bulky display podium. The 3D group is the only moving visual. Mouse/touch horizontal drag rotates the collection with restrained inertia; vertical touch remains page scroll; keyboard arrows rotate. Reduced-motion mode renders a still state until input. Pause rendering when off-screen or tab-hidden; cap DPR at 1.5 desktop / 1.2 mobile and frame rate at 45 / 30 FPS. Keep the CSS fallback visible until WebGL is ready and on context loss or failure.
 
+**Asset note:** the current gadgets are original procedural Three.js geometry, not imported product-specific GLB files. They are deliberately unbranded concept models, not exact representations of sale SKUs. When Nexora has licensed/vendor-supplied GLB assets, they can replace the procedural meshes while keeping the same camera, lighting, interaction and fallback system.
+
 ## 4. Homepage section order
 
 1. Hero.
