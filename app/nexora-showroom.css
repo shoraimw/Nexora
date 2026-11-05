@@ -155,7 +155,7 @@ html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mob
  background:linear-gradient(90deg,#0b151f 0%,rgba(11,21,31,.34) 13%,transparent 38%),linear-gradient(0deg,rgba(6,15,23,.62),transparent 22%,transparent 80%,rgba(6,15,23,.18));
 }
 .nexora-hero-visual-grid{display:none}
-.nexora-hero-visual:after{position:absolute;z-index:4;inset:0;content:"";pointer-events:none;background:radial-gradient(ellipse 44% 9% at 52% 88%,rgba(0,0,0,.32),transparent 100%),linear-gradient(90deg,transparent 72%,rgba(7,16,24,.2)),linear-gradient(0deg,rgba(7,16,24,.16),transparent 28%)}
+.nexora-hero-visual:after{position:absolute;z-index:4;inset:0;content:"";pointer-events:none;background:radial-gradient(ellipse 45% 11% at 52% 85%,rgba(0,0,0,.2),transparent 100%),linear-gradient(90deg,transparent 72%,rgba(7,16,24,.2)),linear-gradient(0deg,rgba(7,16,24,.16),transparent 28%)}
 .nexora-webgl-stage{position:absolute;z-index:2;inset:0;overflow:hidden;cursor:grab;touch-action:pan-y;background:transparent}
 .nexora-webgl-stage:active{cursor:grabbing}
 .nexora-webgl-stage:focus-visible{outline:2px solid var(--hero-accent);outline-offset:-6px}
@@ -465,3 +465,7 @@ html[data-theme="dark"] .retail-breadcrumb a,html[data-theme="dark"] .retail-sho
  .nexora-cookie-banner>p{font-size:8.5px;line-height:1.35;margin:4px 0 7px;max-width:340px}
  .nexora-cookie-banner>div button{min-height:28px;padding:0 10px;font-size:8px}
 }
+
+
+/* The chatbot is the single floating support affordance; contact remains in navigation/footer. */
+.nexora-floating-contact{display:none!important}
