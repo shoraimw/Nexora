@@ -350,3 +350,30 @@ test("all 13 category destinations remain visible in the featured category grid"
   assert.ok(taxonomy.includes('name:"'+name+'"'),name);
  }
 });
+
+
+test("MotionSites visual review is repeatable in CI and scroll reveals remain progressive enhancement",()=>{
+ const shoot=read("scripts/shoot.py");
+ const workflow=read(".github/workflows/ci.yml");
+ const experience=read("components/SiteExperience.tsx");
+ const css=read("app/nexora-showroom.css");
+ assert.match(shoot,/desktop-early\.png/);
+ assert.match(shoot,/horizontalOverflow/);
+ assert.match(shoot,/brokenImages/);
+ assert.match(workflow,/Install Playwright for visual QA/);
+ assert.match(workflow,/nexora-visual-review/);
+ assert.match(workflow,/python scripts\/shoot\.py/);
+ assert.match(experience,/new IntersectionObserver/);
+ assert.match(experience,/new MutationObserver/);
+ assert.match(experience,/prefers-reduced-motion/);
+ assert.match(css,/\.nexora-reveal\.is-visible/);
+ assert.match(css,/@keyframes nexora-copy-rise/);
+});
+test("3D studio protects low-data devices and WebGL lifecycle",()=>{
+ const scene=read("components/Nexora3DScene.tsx");
+ assert.match(scene,/connection\?\.saveData/);
+ assert.match(scene,/webglcontextlost/);
+ assert.match(scene,/compileAsync\(activeScene,camera\)/);
+ assert.match(scene,/webglLost/);
+ assert.match(scene,/removeEventListener\("webglcontextlost"/);
+});
