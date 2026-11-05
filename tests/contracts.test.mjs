@@ -186,20 +186,27 @@ test("review rating control uses an accessible fieldset and keyboard-operable bu
  assert.match(detail,/role="img"/);
 });
 
-test("Nexora homepage uses a custom animated CSS 3D hero and category-first merchandising",()=>{
+test("Nexora homepage uses a real-time WebGL gadget studio and category-first merchandising",()=>{
  const live=read("components/CommerceHome.tsx");
  const demo=read("components/Storefront.tsx");
  const hero=read("components/Nexora3DHero.tsx");
+ const scene=read("components/Nexora3DScene.tsx");
  const css=read("app/hero-3d.css");
+ const pkg=read("package.json");
  assert.match(live,/Nexora3DHero/);
  assert.match(demo,/Nexora3DHero/);
- assert.match(hero,/nexora-device-phone/);
- assert.match(hero,/nexora-device-watch/);
- assert.match(hero,/nexora-device-headphones/);
+ assert.match(hero,/Nexora3DScene/);
  assert.match(hero,/window\.setInterval/);
- assert.match(css,/perspective:/);
- assert.match(css,/rotateY/);
- assert.match(css,/@keyframes nexora-float-phone/);
+ assert.match(scene,/new THREE\.WebGLRenderer/);
+ assert.match(scene,/RoundedBoxGeometry/);
+ assert.match(scene,/MeshPhysicalMaterial/);
+ assert.match(scene,/RoomEnvironment/);
+ assert.match(scene,/IntersectionObserver/);
+ assert.match(scene,/prefers-reduced-motion/);
+ assert.match(scene,/data-webgl="fallback"/);
+ assert.match(pkg,/"three": "\^0\.180\.0"/);
+ assert.match(css,/nexora-webgl-stage/);
+ assert.match(css,/nexora-hero-visual/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(read("app/layout.tsx"),/hero-3d\.css/);
  assert.match(read("app/layout.tsx"),/retail-category-nav-link/);
