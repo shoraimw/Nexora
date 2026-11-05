@@ -395,3 +395,15 @@ test("3D hero avoids an oversized podium and the floating support affordance is 
  assert.match(shoot,/\.nexora-theme-toggle/);
  assert.match(shoot,/nexora-cookie-close/);
 });
+
+
+test("homepage preview imagery is valid and visual QA fails on broken assets or overflow",()=>{
+ const catalog=read("lib/catalog.ts");
+ const shoot=read("scripts/shoot.py");
+ assert.doesNotMatch(catalog,/photo-1609592806596-b43badaf3b26/);
+ assert.match(catalog,/photo-1601898532138-9f145a2ad69e/);
+ assert.match(shoot,/if qa\.get\("horizontalOverflow"\):/);
+ assert.match(shoot,/if qa\.get\("brokenImages"\):/);
+ assert.match(shoot,/if qa\.get\("consoleErrors"\):/);
+ assert.match(shoot,/document\.querySelector\('\.nexora-theme-toggle'\)\?\.click\(\)/);
+});
