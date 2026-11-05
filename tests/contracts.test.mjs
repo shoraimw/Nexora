@@ -405,5 +405,9 @@ test("homepage preview imagery is valid and visual QA fails on broken assets or 
  assert.match(shoot,/if qa\.get\("horizontalOverflow"\):/);
  assert.match(shoot,/if qa\.get\("brokenImages"\):/);
  assert.match(shoot,/if qa\.get\("consoleErrors"\):/);
+ assert.match(shoot,/actionContrast/);
+ assert.match(shoot,/action\["contrast"\] < 4\.5/);
+ assert.match(shoot,/\.nexora-card-shop-link\{/);
+ assert.match(shoot,/background:var\(--nx-ink\);color:var\(--nx-bg\)/);
  assert.match(shoot,/document\.querySelector\('\.nexora-theme-toggle'\)\?\.click\(\)/);
 });
