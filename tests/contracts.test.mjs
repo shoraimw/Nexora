@@ -83,6 +83,13 @@ test("hero is automatic, has no manual carousel controls and respects reduced mo
  assert.match(hero,/pausedByFocus/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow/);
 });
+test("category navigation keeps readable contrast in light mode and a light label in dark mode",()=>{
+ const categories=read("app/category-experience.css");
+ const theme=read("app/site-experience.css");
+ assert.match(categories,/\.retail-nav-inner>a\.retail-category-nav-link\{[^}]*color:#273849/);
+ assert.doesNotMatch(categories,/\.retail-nav-inner>a\.retail-category-nav-link\{[^}]*color:#f4f6f8/);
+ assert.match(theme,/html\[data-theme="dark"\] \.retail-nav-inner>a,html\[data-theme="dark"\] \.retail-header-actions>a\{color:#c8d2d9\}/);
+});
 test("desktop category tabs and mobile category drawer expose the complete hierarchy",()=>{
  const layout=read("app/layout.tsx");
  const menu=read("components/MobileMenu.tsx");
