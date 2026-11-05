@@ -100,7 +100,7 @@ html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mob
 .nexora-3d-hero{
  --hero-accent:#e99a75;
  position:relative;isolation:isolate;
- display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
  min-height:660px;margin:18px auto 0;overflow:hidden;
  border:1px solid rgba(255,255,255,.09);border-radius:26px;
  background:var(--nx-studio);color:#f5f4ef;
@@ -110,7 +110,7 @@ html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mob
 .nexora-3d-hero[data-scene="violet"]{--hero-accent:#c4b2df}
 .nexora-hero-copy{
  position:relative;z-index:5;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
- min-width:0;padding:clamp(38px,5.2vw,78px);
+ min-width:0;padding:clamp(36px,4.4vw,58px);
 }
 .nexora-hero-overline{
  display:flex;align-items:center;gap:11px;margin:0 0 30px;
@@ -119,7 +119,7 @@ html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mob
 .nexora-hero-live-dot{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:var(--hero-accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--hero-accent) 15%,transparent);animation:none}
 .nexora-hero-copy h1{
  max-width:620px;margin:0;color:#f6f5f1;
- font-size:clamp(49px,6.1vw,88px);font-weight:500;
+ font-size:clamp(48px,4.8vw,64px);font-weight:500;
  letter-spacing:-.052em;line-height:.94;
 }
 .nexora-hero-copy h1 span{color:var(--hero-accent);font-weight:450}
@@ -155,7 +155,7 @@ html[data-theme="dark"] .nexora-theme-toggle,html[data-theme="dark"] .nexora-mob
  background:linear-gradient(90deg,#0b151f 0%,rgba(11,21,31,.34) 13%,transparent 38%),linear-gradient(0deg,rgba(6,15,23,.62),transparent 22%,transparent 80%,rgba(6,15,23,.18));
 }
 .nexora-hero-visual-grid{display:none}
-.nexora-hero-visual:after{position:absolute;z-index:4;inset:0;content:"";pointer-events:none;background:linear-gradient(90deg,transparent 72%,rgba(7,16,24,.2)),linear-gradient(0deg,rgba(7,16,24,.16),transparent 28%)}
+.nexora-hero-visual:after{position:absolute;z-index:4;inset:0;content:"";pointer-events:none;background:radial-gradient(ellipse 44% 9% at 52% 88%,rgba(0,0,0,.32),transparent 100%),linear-gradient(90deg,transparent 72%,rgba(7,16,24,.2)),linear-gradient(0deg,rgba(7,16,24,.16),transparent 28%)}
 .nexora-webgl-stage{position:absolute;z-index:2;inset:0;overflow:hidden;cursor:grab;touch-action:pan-y;background:transparent}
 .nexora-webgl-stage:active{cursor:grabbing}
 .nexora-webgl-stage:focus-visible{outline:2px solid var(--hero-accent);outline-offset:-6px}
@@ -300,9 +300,9 @@ html[data-theme="dark"] .retail-breadcrumb a,html[data-theme="dark"] .retail-sho
  .retail-container{width:calc(100% - 48px)}
  .retail-header-main{grid-template-columns:165px minmax(180px,1fr) auto;gap:16px}
  .retail-nav-inner{gap:14px;justify-content:flex-start}
- .nexora-3d-hero{min-height:620px;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
- .nexora-hero-copy{padding:40px}
- .nexora-hero-copy h1{font-size:clamp(46px,5.4vw,68px)}
+ .nexora-3d-hero{min-height:620px;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)}
+ .nexora-hero-copy{padding:34px}
+ .nexora-hero-copy h1{font-size:clamp(44px,5vw,62px)}
  .nexora-hero-visual{min-height:620px}
  .retail-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
  .retail-product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
