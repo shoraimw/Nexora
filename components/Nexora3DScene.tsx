@@ -142,6 +142,9 @@ export function Nexora3DScene({label}:{label:string}){
   let animationFrame=0;
   let renderer:import("three").WebGLRenderer|null=null;
   let scene:import("three").Scene|null=null;
+  let contextCanvas:HTMLCanvasElement|null=null;
+  let contextLostHandler:((event:Event)=>void)|null=null;
+  let webglLost=false;
   let environmentTarget:import("three").WebGLRenderTarget|null=null;
   let resizeObserver:ResizeObserver|null=null;
   let intersectionObserver:IntersectionObserver|null=null;
@@ -164,6 +167,8 @@ export function Nexora3DScene({label}:{label:string}){
 
   const boot=async()=>{
    try{
+    const connection=(navigator as Navigator & {connection?:{saveData?:boolean}}).connection;
+    if(connection?.saveData){host.dataset.webgl="fallback";return;}
     const [THREE,{RoundedBoxGeometry},{RoomEnvironment}]=await Promise.all([
      import("three"),
      import("three/addons/geometries/RoundedBoxGeometry.js"),
@@ -200,6 +205,18 @@ export function Nexora3DScene({label}:{label:string}){
     activeRenderer.domElement.className="nexora-webgl-canvas";
     activeRenderer.domElement.setAttribute("aria-hidden","true");
     host.appendChild(activeRenderer.domElement);
+    contextCanvas=activeRenderer.domElement;
+    contextLostHandler=(event:Event)=>{
+     event.preventDefault();
+     webglLost=true;
+     host.dataset.webgl="fallback";
+     window.cancelAnimationFrame(animationFrame);
+     animationFrame=0;
+     activeRenderer.dispose();
+     activeRenderer.domElement.remove();
+     renderer=null;
+    };
+    contextCanvas.addEventListener("webglcontextlost",contextLostHandler,false);
 
     const pmrem=new THREE.PMREMGenerator(activeRenderer);
     const activeEnvironment=pmrem.fromScene(new RoomEnvironment(),.04);
@@ -459,7 +476,7 @@ export function Nexora3DScene({label}:{label:string}){
     const frameInterval=compactDevice?1000/30:1000/45;
     const animate=(time:number)=>{
      animationFrame=0;
-     if(disposed||!pageVisible||!inViewport)return;
+     if(disposed||webglLost||!pageVisible||!inViewport)return;
      if(time-lastRenderTime<frameInterval){
       animationFrame=window.requestAnimationFrame(animate);
       return;
@@ -499,12 +516,14 @@ export function Nexora3DScene({label}:{label:string}){
      }
     };
     const wake=()=>{
-     if(!animationFrame&&!disposed&&pageVisible&&inViewport){
+     if(!animationFrame&&!disposed&&!webglLost&&pageVisible&&inViewport){
       lastFrameTime=performance.now();
       animationFrame=window.requestAnimationFrame(animate);
      }
     };
     wakeRef.current=wake;
+    await activeRenderer.compileAsync(activeScene,camera);
+    if(disposed||webglLost)return;
     host.dataset.webgl="ready";
     wake();
    }catch{
@@ -522,6 +541,7 @@ export function Nexora3DScene({label}:{label:string}){
    disposed=true;
    wakeRef.current=()=>{};
    window.cancelAnimationFrame(animationFrame);
+   if(contextCanvas&&contextLostHandler)contextCanvas.removeEventListener("webglcontextlost",contextLostHandler);
    resizeObserver?.disconnect();
    intersectionObserver?.disconnect();
    motionQuery?.removeEventListener("change",onMotionChange);
