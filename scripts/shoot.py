@@ -78,6 +78,12 @@ def with_playwright():
             except Exception:
                 pass
             page.wait_for_timeout(int(wait * 1000))
+            page.screenshot(path=str(out / f"{name}-first-visit.png"), full_page=full)
+            try:
+                page.get_by_role("button", name="Essential only").click(timeout=1200)
+                page.wait_for_timeout(250)
+            except Exception:
+                pass
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
             qa = page.evaluate(QA_JS)
             if engine != "chrome" and any(v["error"] == 4 for v in qa["videos"]):
