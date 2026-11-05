@@ -387,8 +387,8 @@ test("3D hero avoids an oversized podium and the floating support affordance is 
  assert.doesNotMatch(scene,/ShadowMaterial/);
  assert.match(scene,/root\.rotation\.y=-\.9/);
  assert.match(css,/nexora-floating-contact\{display:none!important\}/);
- assert.match(shoot,/desktop-first-visit\.png/);
- assert.match(shoot,/mobile-first-visit\.png/);
+ assert.match(shoot,/first-visit\.png/);
+ assert.match(shoot,/f"{name}-dark\.png"/);
  assert.match(shoot,/Switch to dark mode/);
  assert.match(shoot,/nexora-cookie-close/);
 });
