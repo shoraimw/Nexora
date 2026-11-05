@@ -94,6 +94,11 @@ def with_playwright():
                 page.wait_for_timeout(120)
             except Exception:
                 pass
+            if full:
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                page.wait_for_timeout(900)
+                page.evaluate("window.scrollTo(0, 0)")
+                page.wait_for_timeout(250)
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
             qa = page.evaluate(QA_JS)
             try:
