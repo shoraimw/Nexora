@@ -102,11 +102,12 @@ def with_playwright():
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
             qa = page.evaluate(QA_JS)
             try:
-                page.get_by_role("button", name="Switch to dark mode").click(timeout=1200)
-                page.wait_for_timeout(350)
+                page.locator(".nexora-theme-toggle").click(force=True, timeout=1200)
+                page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=2000)
+                page.wait_for_timeout(250)
                 page.screenshot(path=str(out / f"{name}-dark.png"), full_page=full)
-            except Exception:
-                pass
+            except Exception as error:
+                print(f"[visual QA] dark theme capture: {error}")
             if engine != "chrome" and any(v["error"] == 4 for v in qa["videos"]):
                 qa["videoNote"] = "This browser cannot decode the MP4; judge the video area from the poster/source, not as a bug."
             qa["consoleErrors"], qa["failedRequests"] = errors[:10], [f for f in failed if "ERR_ABORTED" not in f][:10]
