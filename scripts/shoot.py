@@ -78,10 +78,20 @@ def with_playwright():
             except Exception:
                 pass
             page.wait_for_timeout(int(wait * 1000))
+            try:
+                page.get_by_role("button", name="Show promotion 01").click(timeout=1200)
+                page.wait_for_timeout(120)
+            except Exception:
+                pass
             page.screenshot(path=str(out / f"{name}-first-visit.png"), full_page=full)
             try:
-                page.get_by_role("button", name="Essential only").click(timeout=1200)
-                page.wait_for_timeout(250)
+                page.locator(".nexora-cookie-banner .nexora-cookie-close").click(force=True, timeout=1200)
+                page.wait_for_selector(".nexora-cookie-banner", state="hidden", timeout=2000)
+            except Exception as error:
+                print(f"[visual QA] cookie notice dismissal: {error}")
+            try:
+                page.get_by_role("button", name="Show promotion 01").click(timeout=1200)
+                page.wait_for_timeout(120)
             except Exception:
                 pass
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
