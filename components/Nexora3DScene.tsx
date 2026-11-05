@@ -155,7 +155,7 @@ export function Nexora3DScene({label}:{label:string}){
     pmrem.dispose();
 
     activeScene.add(new THREE.HemisphereLight(0xc8e4ff,0x17202c,2.1));
-    scene.add(new THREE.AmbientLight(0xffffff,.34));
+    activeScene.add(new THREE.AmbientLight(0xffffff,.34));
     const keyLight=new THREE.DirectionalLight(0xffe1ce,4.3);
     keyLight.position.set(-3.8,5.2,5.5);
     keyLight.castShadow=true;
@@ -166,19 +166,19 @@ export function Nexora3DScene({label}:{label:string}){
     keyLight.shadow.camera.right=5;
     keyLight.shadow.camera.top=5;
     keyLight.shadow.camera.bottom=-5;
-    scene.add(keyLight);
+    activeScene.add(keyLight);
     const coolLight=new THREE.DirectionalLight(0x72c9ff,3.1);
     coolLight.position.set(4,2.5,-3);
-    scene.add(coolLight);
+    activeScene.add(coolLight);
     const warmRim=new THREE.PointLight(0xff895f,34,8);
     warmRim.position.set(-2,-.2,3.2);
-    scene.add(warmRim);
+    activeScene.add(warmRim);
     const blueRim=new THREE.PointLight(0x5c9eff,28,8);
     blueRim.position.set(2.8,1.3,-2);
-    scene.add(blueRim);
+    activeScene.add(blueRim);
 
     const root=new THREE.Group();
-    scene.add(root);
+    activeScene.add(root);
     const addMesh=(parent:import("three").Object3D,geometry:import("three").BufferGeometry,material:import("three").Material)=>{
      const object=new THREE.Mesh(geometry,material);
      object.castShadow=true;
