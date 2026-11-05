@@ -427,13 +427,6 @@ export function Nexora3DScene({label}:{label:string}){
     earbuds.scale.setScalar(.76);
     root.add(earbuds);
 
-    // A transparent shadow receiver keeps the devices grounded without a bulky display platform.
-    const ground=addMesh(activeScene,new THREE.PlaneGeometry(200,200),new THREE.ShadowMaterial({color:0x050d16,opacity:.24}));
-    ground.rotation.x=-Math.PI/2;
-    ground.position.y=-1.72;
-    ground.receiveShadow=true;
-    ground.castShadow=false;
-
     const resize=()=>{
      const rect=host.getBoundingClientRect();
      const nextWidth=Math.max(1,rect.width);
