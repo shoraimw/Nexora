@@ -103,8 +103,8 @@ def with_playwright():
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
             qa = page.evaluate(QA_JS)
             try:
-                page.locator(".nexora-theme-toggle:visible").first.click(force=True, timeout=1200)
-                page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=2000)
+                page.evaluate("document.querySelector('.nexora-theme-toggle')?.click()")
+                page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=2500)
                 page.wait_for_timeout(250)
                 page.screenshot(path=str(out / f"{name}-dark.png"), full_page=full)
             except Exception as error:
@@ -115,6 +115,18 @@ def with_playwright():
             report[name] = qa
             ctx.close()
         browser.close()
+    failures = []
+    for name, qa in report.items():
+        if not isinstance(qa, dict):
+            continue
+        if qa.get("horizontalOverflow"):
+            failures.append(f"{name}: horizontal overflow ({qa.get('scrollWidth')}px > {qa.get('viewport')}px)")
+        if qa.get("brokenImages"):
+            failures.append(f"{name}: broken images: {', '.join(qa['brokenImages'])}")
+        if qa.get("consoleErrors"):
+            failures.append(f"{name}: browser console errors: {', '.join(qa['consoleErrors'])}")
+    if failures:
+        raise RuntimeError("Visual QA failed:\\n" + "\\n".join(failures))
     return report
 
 
