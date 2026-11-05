@@ -420,3 +420,27 @@ html[data-theme="dark"] .retail-breadcrumb a,html[data-theme="dark"] .retail-sho
  body{padding-bottom:76px}
  .chat-wrap{bottom:86px}
 }
+
+
+/* Short, ordered hero entrance; the 3D stage remains the single visual signature. */
+@keyframes nexora-copy-rise{
+ from{opacity:0;transform:translateY(22px);filter:blur(6px)}
+ to{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+.nexora-hero-overline{animation:nexora-copy-rise .72s cubic-bezier(.22,1,.36,1) .06s both}
+.nexora-hero-copy h1{animation:nexora-copy-rise .82s cubic-bezier(.22,1,.36,1) .18s both}
+.nexora-hero-description{animation:nexora-copy-rise .76s cubic-bezier(.22,1,.36,1) .32s both}
+.nexora-hero-actions{animation:nexora-copy-rise .72s cubic-bezier(.22,1,.36,1) .46s both}
+.nexora-hero-controls{animation:nexora-copy-rise .68s cubic-bezier(.22,1,.36,1) .58s both}
+
+/* In-view reveals are progressive enhancement: without JS, all content stays visible. */
+.nexora-reveal{
+ opacity:0;transform:translateY(18px);filter:blur(4px);
+ transition:opacity .68s cubic-bezier(.22,1,.36,1),transform .68s cubic-bezier(.22,1,.36,1),filter .68s cubic-bezier(.22,1,.36,1);
+ transition-delay:var(--reveal-delay,0ms);
+}
+.nexora-reveal.is-visible{opacity:1;transform:translateY(0);filter:blur(0)}
+@media(prefers-reduced-motion:reduce){
+ .nexora-hero-overline,.nexora-hero-copy h1,.nexora-hero-description,.nexora-hero-actions,.nexora-hero-controls{animation:none}
+ .nexora-reveal,.nexora-reveal.is-visible{opacity:1;transform:none;filter:none;transition:none}
+}
