@@ -219,7 +219,9 @@ export function Nexora3DScene({label}:{label:string}){
     contextCanvas.addEventListener("webglcontextlost",contextLostHandler,false);
 
     const pmrem=new THREE.PMREMGenerator(activeRenderer);
-    const activeEnvironment=pmrem.fromScene(new RoomEnvironment(),.04);
+    const room=new RoomEnvironment();
+    const activeEnvironment=pmrem.fromScene(room,.04);
+    room.dispose();
     environmentTarget=activeEnvironment;
     activeScene.environment=activeEnvironment.texture;
     pmrem.dispose();
@@ -552,9 +554,13 @@ export function Nexora3DScene({label}:{label:string}){
      if(mesh.geometry)mesh.geometry.dispose();
      if(mesh.material){
       const materials=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+      const disposedTextures=new Set<import("three").Texture>();
       materials.forEach(material=>{
-       const mapped=material as import("three").Material & {map?:import("three").Texture};
-       mapped.map?.dispose();
+       const mapped=material as import("three").Material & Record<string,unknown>;
+       for(const key of ["map","roughnessMap","bumpMap","normalMap","metalnessMap","aoMap","emissiveMap","envMap","alphaMap","displacementMap"]){
+        const texture=mapped[key] as import("three").Texture|undefined;
+        if(texture&&!disposedTextures.has(texture)){texture.dispose();disposedTextures.add(texture);}
+       }
        material.dispose();
       });
      }
