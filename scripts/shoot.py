@@ -285,7 +285,8 @@ def with_playwright():
             page.goto(base + "/product/aero-buds", wait_until="domcontentloaded", timeout=60000)
             page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
             page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
-            page.wait_for_timeout(100)
+            # Let the 180ms theme/button transitions finish before measuring final-state contrast.
+            page.wait_for_timeout(300)
             contrast = page.evaluate(PRODUCT_CONTRAST_JS)
             if contrast["missing"]:
                 raise RuntimeError(f"{name}: product dark-mode QA could not find expected content: {contrast['missing']}")
@@ -308,6 +309,7 @@ def with_playwright():
                     page.goto(base + product_path, wait_until="domcontentloaded", timeout=60000)
                     page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
                     page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
+                    page.wait_for_timeout(300)
                     result = page.evaluate(PRODUCT_CONTRAST_JS)
                     if result["missing"] or result["failures"]:
                         raise RuntimeError(f"Product dark-mode QA failed for {product_path}: missing={result['missing']}, contrast={result['failures']}")
