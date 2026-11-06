@@ -515,6 +515,7 @@ test("every Nexora product detail route has theme-aware dark-mode text, controls
  assert.match(shoot,/contrast < 4\.5/);
  assert.match(shoot,/theme\/button transitions finish/);
  assert.match(shoot,/page\.wait_for_timeout\(300\)/);
+ assert.match(shoot,/page\.mouse\.move\(0, 0\)/);
  assert.match(shoot,/productPagesDarkModeChecked/);
  assert.match(shoot,/product detail contrast failed|product dark-mode contrast failed/i);
 });
