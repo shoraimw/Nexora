@@ -190,3 +190,15 @@ html[data-theme="dark"] .retail-brand-header .nexora-logo-light-theme{display:no
  .nexora-confirm-actions button{width:100%}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* Preview-safe newsletter and account privacy states. */
+.nexora-newsletter-unavailable{margin:0;max-width:34rem;color:var(--muted,#667085);font-size:.9rem;line-height:1.55}
+.account-privacy-card{grid-column:1/-1;border:1px solid rgba(197,82,58,.24)}
+.account-privacy-card form{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+.account-privacy-card form label{flex:1 1 260px}
+.account-privacy-card form .outline-btn{border-color:rgba(197,82,58,.42);color:var(--danger,#b54735)}
+.admin-category-editor{margin:10px 0 14px;padding:14px;border:1px solid var(--line,#dfe4ea);border-radius:12px}
+.admin-category-tree>.row-actions>p,.admin-category-child>p{margin:0;flex:1}
+.admin-category-child{padding-left:16px}
+@media(max-width:680px){.account-privacy-card form{align-items:stretch}.account-privacy-card form .outline-btn{width:100%;justify-content:center}}

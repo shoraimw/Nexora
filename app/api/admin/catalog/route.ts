@@ -18,6 +18,11 @@ export async function POST(req:Request){
    const x=z.object({name:z.string().trim().min(2).max(90),slug:z.string().trim().regex(/^[a-z0-9-]+$/),description:z.string().max(250).optional(),sort_order:z.number().int().optional(),parent_id:uuid.nullable().optional()}).parse(payload);
    if(x.parent_id){const {data:parent,error:parentError}=await s.from("categories").select("id,parent_id").eq("id",x.parent_id).eq("active",true).maybeSingle();if(parentError)throw parentError;if(!parent||parent.parent_id)throw Error("Choose an active top-level parent category.");}
    const {data,error}=await s.from("categories").insert(x).select().single();if(error)throw error;response=data;
+  }else if(action==="category.update"){
+   const x=z.object({id:uuid,description:z.string().max(250).optional(),sort_order:z.number().int().min(0).max(10000).optional(),active:z.boolean().optional()}).strict().refine(v=>Object.keys(v).length>1,"Provide at least one category field to update").parse(payload);
+   const {id,...patch}=x;const {data:current,error:readError}=await s.from("categories").select("parent_id").eq("id",id).maybeSingle();if(readError)throw readError;if(!current)throw Error("Category not found.");
+   if(patch.active===false&&current.parent_id===null){const {error:childError}=await s.from("categories").update({active:false}).eq("parent_id",id);if(childError)throw childError;}
+   const {data,error}=await s.from("categories").update(patch).eq("id",id).select().single();if(error)throw error;response=data;
   }else if(action==="product.create"){
    const x=productInput.parse(payload);
    const {data,error}=await s.from("products").insert(x).select().single();if(error)throw error;response=data;
@@ -30,7 +35,7 @@ export async function POST(req:Request){
   }else if(action==="variant.create"){
    const x=variantInput.parse(payload),{on_hand,...variant}=x;
    const {data,error}=await s.from("variants").insert(variant).select().single();if(error)throw error;
-   const inv=await s.from("inventory").insert({variant_id:data.id,on_hand,reserved:0});if(inv.error)throw inv.error;
+   const inv=await s.from("inventory").insert({variant_id:data.id,on_hand,reserved:0});if(inv.error){await s.from("variants").delete().eq("id",data.id);throw inv.error;}
    response=data;
   }else if(action==="variant.update"){
    const x=variantInput.omit({on_hand:true}).partial().extend({id:uuid}).parse(payload);
@@ -43,6 +48,9 @@ export async function POST(req:Request){
    const x=z.object({code:z.string().trim().min(3).max(25),type:z.enum(["flat","percent"]),amount:z.number().int().positive(),min_subtotal_paisa:z.number().int().nonnegative().default(0),max_uses:z.number().int().positive().nullable().optional(),active:z.boolean().default(true)}).parse(payload);
    if(x.type==="percent"&&x.amount>100)throw Error("Percentage exceeds 100");
    const {data,error}=await s.from("coupons").insert({...x,code:x.code.toUpperCase()}).select().single();if(error)throw error;response=data;
+  }else if(action==="coupon.update"){
+   const x=z.object({code:z.string().trim().min(3).max(25).transform(v=>v.toUpperCase()),active:z.boolean()}).parse(payload);
+   const {data,error}=await s.from("coupons").update({active:x.active}).eq("code",x.code).select("code,active").single();if(error)throw error;response=data;
   }else if(action==="offer.create"){
    const x=offerFields.parse(payload);
    if(x.coupon_code){const {data:coupon,error}=await s.from("coupons").select("code,active").eq("code",x.coupon_code).maybeSingle();if(error)throw error;if(!coupon?.active)throw Error("Create and activate this coupon before attaching it to an offer.");}
