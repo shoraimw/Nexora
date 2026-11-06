@@ -2,7 +2,8 @@
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import {ArrowRight,Smartphone,Laptop,BatteryCharging,Tablet,ShieldCheck,Watch,Headphones,Keyboard,Camera,Lightbulb,Gamepad2,Plane,Truck,PackageCheck,MessageCircle,Grid2X2,Router} from "lucide-react";
-import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
+import {categoryHref} from "@/lib/store-taxonomy";
+import {useStoreCategories} from "@/components/useStoreCategories";
 
 const slides=[
  {kicker:"THE NEXORA COLLECTION",title:"Small upgrades.\nBetter everyday.",description:"Discover useful gadgets, clever accessories and everyday essentials selected for modern life.",cta:"Shop all gadgets",href:"/shop",image:"https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1800&q=90",alt:"Wireless earbuds on a clean studio background"},
@@ -59,9 +60,10 @@ export function RetailTrustBar(){
  return <section className="retail-trustbar" aria-label="Shopping information">{items.map(({Icon,title,copy})=><div key={title}><span className="retail-trust-icon"><Icon size={21}/></span><span><strong>{title}</strong><small>{copy}</small></span></div>)}</section>;
 }
 export function RetailCategoryGrid(){
+ const categories=useStoreCategories();
  return <section className="retail-category-section">
   <div className="retail-section-heading"><div><span className="retail-eyebrow">BROWSE THE COLLECTION</span><h2>Featured Categories</h2><p>Jump straight to the gear you are looking for.</p></div><Link href="/shop" className="retail-section-link">All categories <ArrowRight size={16}/></Link></div>
-  <div className="retail-category-grid">{storeCategories.map(category=>{const Icon=categoryIcons[category.name]||Grid2X2;return <Link key={category.slug} href={categoryHref(category)} className="retail-category-card"><span className="retail-category-icon"><Icon size={25} strokeWidth={1.65}/></span><strong>{category.name}</strong><small>{category.hint}</small><ArrowRight className="retail-category-arrow" size={15}/></Link>;})}</div>
+  <div className="retail-category-grid">{categories.map(category=>{const Icon=categoryIcons[category.name]||Grid2X2;return <Link key={category.slug} href={categoryHref(category)} className="retail-category-card"><span className="retail-category-icon"><Icon size={25} strokeWidth={1.65}/></span><strong>{category.name}</strong><small>{category.hint}</small><ArrowRight className="retail-category-arrow" size={15}/></Link>;})}</div>
  </section>;
 }
 export function RetailPromoBanners(){

@@ -2,13 +2,15 @@
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {ArrowRight,ChevronDown} from "lucide-react";
-import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
+import {categoryHref} from "@/lib/store-taxonomy";
+import {useStoreCategories} from "@/components/useStoreCategories";
 
 export function RetailCategoryNav(){
  const navRef=useRef<HTMLElement|null>(null);
+ const categories=useStoreCategories();
  const [activeSlug,setActiveSlug]=useState<string|null>(null);
  const [locked,setLocked]=useState(false);
- const activeCategory=storeCategories.find(category=>category.slug===activeSlug);
+ const activeCategory=categories.find(category=>category.slug===activeSlug);
 
  useEffect(()=>{
   const closeOnOutside=(event:PointerEvent)=>{
@@ -30,6 +32,8 @@ export function RetailCategoryNav(){
    document.removeEventListener("keydown",closeOnEscape);
   };
  },[]);
+
+ useEffect(()=>{if(activeSlug&&!categories.some(category=>category.slug===activeSlug)){setActiveSlug(null);setLocked(false);}},[categories,activeSlug]);
 
  const preview=(slug:string)=>{
   if(!locked)setActiveSlug(slug);
@@ -62,7 +66,7 @@ export function RetailCategoryNav(){
  >
   <div className="retail-container retail-nav-inner">
    <Link className="nexora-nav-all" href="/shop" onClick={dismiss}>All products</Link>
-   {storeCategories.map(category=><button
+   {categories.map(category=><button
     key={category.slug}
     type="button"
     className="nexora-nav-category-trigger"
