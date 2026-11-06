@@ -503,7 +503,8 @@ test("every Nexora product detail route has theme-aware dark-mode text, controls
   /html\[data-theme="dark"\] \.detail-page \.spec-table th/,
   /html\[data-theme="dark"\] \.detail-page \.detail-no-reviews/,
   /html\[data-theme="dark"\] \.detail-page \.detail-review-form input/,
-  /html\[data-theme="dark"\] \.detail-page \.primary-button/,
+  /html\[data-theme="dark"\] main\.detail-page \.detail-copy \.buy-actions \.primary-button/,
+  /html\[data-theme="dark"\] main\.detail-page \.detail-copy \.detail-add-button/,
   /html\[data-theme="dark"\] \.detail-page \.outline-btn/
  ]) assert.match(theme,selector);
  assert.match(theme,/body:has\(\.detail-page\) \.nexora-floating-contact/);
