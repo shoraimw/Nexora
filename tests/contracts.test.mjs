@@ -74,14 +74,16 @@ test("development indicator and redundant storefront banners are disabled",()=>{
  assert.ok(!read("components/CommerceHome.tsx").includes('className="retail-announcement"'));
  assert.ok(!read("components/Storefront.tsx").includes('className="retail-announcement"'));
 });
-test("hero is automatic, has no manual carousel controls and respects reduced motion",()=>{
+test("hero rotates every 6.5 seconds with accessible manual slide selection and reduced-motion support",()=>{
  const hero=read("components/RetailChrome.tsx");
  assert.match(hero,/window\.setInterval/);
- assert.doesNotMatch(hero,/retail-slider-progress|retail-slider-footer/);
+ assert.match(hero,/6500/);
+ assert.match(hero,/retail-slider-footer/);
+ assert.match(hero,/aria-pressed/);
+ assert.doesNotMatch(hero,/retail-slider-progress/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow|Pause size|Play size/);
  assert.match(hero,/prefers-reduced-motion/);
  assert.match(hero,/pausedByFocus/);
- assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow/);
 });
 test("category navigation keeps readable contrast in light mode and a light label in dark mode",()=>{
  const categories=read("app/category-experience.css");
@@ -283,10 +285,11 @@ test("hero carousel rotates automatically without a visible countdown bar or hov
  const hero=read("components/RetailChrome.tsx");
  const css=read("app/filter-ui.css");
  assert.match(hero,/window\.setInterval\(\(\)=>setActive/);
- assert.match(hero,/5000/);
+ assert.match(hero,/6500/);
+ assert.match(hero,/retail-slider-footer/);
+ assert.match(hero,/aria-pressed/);
  assert.match(hero,/onFocusCapture/);
  assert.doesNotMatch(hero,/onMouseEnter/);
- assert.doesNotMatch(hero,/retail-slider-footer/);
  assert.doesNotMatch(hero,/retail-slider-progress/);
  assert.doesNotMatch(css,/nexora-hero-progress/);
 });
@@ -344,9 +347,41 @@ test("desktop and mobile visual QA runs in CI and catches broken images, overflo
  assert.ok(shoot.includes("horizontalOverflow"));
  assert.ok(shoot.includes("brokenImages"));
  assert.ok(shoot.includes("consoleErrors"));
+ assert.ok(shoot.includes('("desktop-compact", 1280, 800)'));
+ assert.ok(shoot.includes('("tablet", 768, 1024)'));
+ assert.ok(shoot.includes('("mobile-small", 360, 800)'));
  assert.ok(workflow.includes("Install Playwright for visual QA"));
  assert.ok(workflow.includes("nexora-visual-review"));
+ assert.ok(workflow.includes("Capture five responsive viewports"));
  assert.ok(workflow.includes("python scripts/shoot.py"));
+});
+
+test("cart clears after an accepted order and configured mode never renders preview catalogue items",()=>{
+ const cart=read("components/CartProvider.tsx"),page=read("app/cart/page.tsx"),checkout=read("app/checkout/page.tsx");
+ assert.match(cart,/clear:\(\)=>void/);assert.match(cart,/const clear=useCallback\(\(\)=>setItems\(\[\]\)/);
+ assert.match(page,/health\?\.mode!=="preview"/);assert.match(page,/if\(mode\)return null/);assert.match(page,/Saved preview or unavailable items were removed/);
+ assert.match(checkout,/const \{items,clear\}=useCart\(\)/);assert.match(checkout,/clear\(\)/);
+});
+test("search only shows demo products when the catalogue API explicitly reports preview mode",()=>{
+ const search=read("components/SiteSearch.tsx");assert.match(search,/data\.live===false/);assert.match(search,/setCatalogError\(true\)/);assert.doesNotMatch(search,/useState<SearchProduct\[]>\(demo\)/);
+});
+test("mobile navigation traps focus and restores the previous focus target",()=>{
+ const menu=read("components/MobileMenu.tsx");assert.match(menu,/panelRef/);assert.match(menu,/event\.key!=="Tab"/);assert.match(menu,/event\.shiftKey\?last:first/);assert.match(menu,/previous\?\.focus/);
+});
+test("customer account deletion requires re-authentication, blocks owners and anonymizes retained orders",()=>{
+ const api=read("app/api/account/delete/route.ts"),sql=read("database/010_account_privacy.sql"),page=read("app/account/page.tsx");
+ assert.match(api,/signInWithPassword/);assert.match(api,/confirmEmail/);assert.match(api,/admin_memberships/);assert.match(api,/nexora_delete_customer_account/);
+ assert.match(sql,/security definer/);assert.match(sql,/role=.owner./);assert.match(sql,/Deleted customer/);assert.match(sql,/privacy\.nexora\.invalid/);assert.match(sql,/revoke all on function/);
+ assert.match(page,/deleteAccount/);assert.match(page,/Current password/);assert.match(page,/account\/delete/);
+});
+test("owner controls can hide categories and toggle variants, coupons, FAQs and delivery zones",()=>{
+ const api=read("app/api/admin/catalog/route.ts"),dashboard=read("app/api/admin/dashboard/route.ts"),admin=read("app/admin/page.tsx");
+ assert.match(api,/action==="category\.update"/);assert.match(api,/action==="coupon\.update"/);assert.match(api,/inventory/);
+ assert.match(admin,/mutation\("category\.update"/);assert.match(admin,/mutation\("variant\.update"/);assert.match(admin,/mutation\("coupon\.update"/);assert.match(admin,/mutation\("faq\.update"/);assert.match(admin,/mutation\("delivery\.set"/);
+ assert.match(dashboard,/audit_logs/);assert.match(admin,/data\.auditLogs/);
+});
+test("newsletter collection is unavailable until the private subscriber table exists",()=>{
+ const api=read("app/api/newsletter/route.ts"),ui=read("components/NewsletterSignup.tsx");assert.match(api,/export async function GET/);assert.match(api,/available:!error/);assert.match(ui,/availability==="unavailable"/);assert.match(ui,/No email is collected/);
 });
 
 test("homepage preview imagery is valid and visual QA fails on broken assets or overflow",()=>{
