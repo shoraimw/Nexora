@@ -111,7 +111,7 @@ test("desktop category menu uses one controlled overlay and supports click-to-pi
  assert.match(categoryNav,/activeCategory\.subcategories\.map/);
  assert.doesNotMatch(categoryNav,/<details/);
  assert.doesNotMatch(categoryNav,/<summary/);
- assert.match(menu,/storeCategories\.map/);
+ assert.match(menu,/categories\.map/);assert.match(menu,/useStoreCategories/);
  assert.match(menu,/nexora-mobile-categories/);
  assert.match(taxonomy,/name:"Networking"/);
  assert.match(taxonomy,/name:"Camera"/);
@@ -237,7 +237,7 @@ test("StarTech-inspired storefront adds a utility strip and taxonomy-driven sing
  const css=read("app/startech-inspired.css");
  assert.match(layout,/nexora-utility-bar/);
  assert.match(layout,/RetailCategoryNav/);
- assert.match(nav,/storeCategories\.map/);
+ assert.match(nav,/categories\.map/);assert.match(nav,/useStoreCategories/);
  assert.match(nav,/activeCategory\.subcategories\.map/);
  assert.match(nav,/categoryHref\(activeCategory,subcategory\)/);
  assert.match(nav,/aria-expanded/);
