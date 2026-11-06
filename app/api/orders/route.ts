@@ -24,7 +24,7 @@ export async function POST(request:Request){
    p_details:customerDetails,p_lines:x.items,p_method:x.paymentMethod,p_transaction:x.transactionId||null,p_sender:x.senderNumber||null,p_coupon:x.coupon||null});
   if(error)return bad(/duplicate|stock|cart|coupon|transaction|invalid/i.test(error.message)?error.message:"Checkout could not complete",409);
   const {data:confirmed}=await db().from("orders").select("total_paisa,delivery_paisa").eq("id",data.id).maybeSingle();
-  try{await deliverPendingEmails(1);}catch{}
+  try{await deliverPendingEmails(1,data.id);}catch{}
   const {data:invoiceMessage}=await db().from("outbound_emails").select("status").eq("order_id",data.id).eq("kind","order_received").maybeSingle();
   return ok({orderNo:data.order_no,orderId:data.id,trackingToken:token,invoiceEmail:customerDetails.email,invoiceEmailStatus:invoiceMessage?.status||"queued",totalPaisa:confirmed?.total_paisa??null,deliveryPaisa:confirmed?.delivery_paisa??null,duplicate:data.duplicate??false},201);
  }catch{return bad("Checkout temporarily unavailable",503);}
