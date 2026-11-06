@@ -5,6 +5,15 @@
  --retail-accent:#ed7047;
  --retail-bg:#f3f6f8;
  --retail-line:#e2e8ed;
+ --product-detail-ink:#192833;
+ --product-detail-muted:#53636e;
+ --product-detail-subtle:#657783;
+ --product-detail-border:#e3e8eb;
+ --product-detail-panel:#fff;
+ --product-detail-soft:#f5f7f8;
+ --product-detail-control:#fff;
+ --product-detail-control-ink:#344956;
+ --product-detail-accent:#d85f38;
 }
 body{background:var(--retail-bg);color:#1b2b38}
 .retail-container{width:min(1400px,calc(100% - 48px))}
@@ -203,3 +212,230 @@ html[data-theme="dark"] .retail-header-actions .retail-offers-nav{background:#17
 html[data-theme="dark"] .nexora-nav-category-trigger{color:#e3eaf0!important}
 html[data-theme="dark"] .nexora-nav-category-trigger:hover,html[data-theme="dark"] .nexora-nav-category-trigger[aria-expanded="true"]{color:#ffb08f!important}
 html[data-theme="dark"] .nexora-category-mega-inner .nexora-category-mega-intro{border-color:#2b3c49}
+
+
+/* Product detail pages share one accessible colour system in every catalogue mode. */
+html[data-theme="dark"]{
+ --product-detail-ink:#f1f5f8;
+ --product-detail-muted:#c1cdd6;
+ --product-detail-subtle:#a9bac6;
+ --product-detail-border:#354b5a;
+ --product-detail-panel:#14232f;
+ --product-detail-soft:#172a39;
+ --product-detail-control:#1b3040;
+ --product-detail-control-ink:#e9f0f5;
+ --product-detail-accent:#ff9f78;
+}
+
+html[data-theme="dark"] .detail-page{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .retail-breadcrumb,
+html[data-theme="dark"] .detail-page .retail-breadcrumb a,
+html[data-theme="dark"] .detail-page .back-link{
+ color:var(--product-detail-muted);
+}
+html[data-theme="dark"] .detail-page .retail-breadcrumb a:hover,
+html[data-theme="dark"] .detail-page .back-link:hover{
+ color:var(--product-detail-accent);
+}
+html[data-theme="dark"] .detail-page .detail-copy,
+html[data-theme="dark"] .detail-page .detail-info-section{
+ background:var(--product-detail-panel);
+ color:var(--product-detail-ink);
+ border-color:var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .detail-copy h1,
+html[data-theme="dark"] .detail-page .detail-copy h2,
+html[data-theme="dark"] .detail-page .detail-copy h3,
+html[data-theme="dark"] .detail-page .detail-copy h4,
+html[data-theme="dark"] .detail-page .detail-label,
+html[data-theme="dark"] .detail-page .detail-price,
+html[data-theme="dark"] .detail-page .detail-info-section h2,
+html[data-theme="dark"] .detail-page .detail-review-form-wrap h3,
+html[data-theme="dark"] .detail-page .detail-review-score strong{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .detail-copy .eyebrow,
+html[data-theme="dark"] .detail-page .detail-info-section .retail-eyebrow{
+ color:var(--product-detail-accent);
+}
+html[data-theme="dark"] .detail-page .detail-description,
+html[data-theme="dark"] .detail-page .detail-price span,
+html[data-theme="dark"] .detail-page .detail-copy li,
+html[data-theme="dark"] .detail-page .detail-long-description,
+html[data-theme="dark"] .detail-page .detail-muted,
+html[data-theme="dark"] .detail-page .detail-info-section p,
+html[data-theme="dark"] .detail-page .detail-review-heading p,
+html[data-theme="dark"] .detail-page .detail-review-score small,
+html[data-theme="dark"] .detail-page .detail-review-card time,
+html[data-theme="dark"] .detail-page .detail-review-card p,
+html[data-theme="dark"] .detail-page .detail-review-form small{
+ color:var(--product-detail-muted);
+}
+html[data-theme="dark"] .detail-page .detail-rating-line,
+html[data-theme="dark"] .detail-page .detail-rating-line strong{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .detail-rating-line a,
+html[data-theme="dark"] .detail-page .detail-review-form a{
+ color:var(--product-detail-accent);
+}
+html[data-theme="dark"] .detail-page .detail-stars,
+html[data-theme="dark"] .detail-page .detail-rating-picker{
+ color:#ffc477;
+}
+html[data-theme="dark"] .detail-page .detail-price{
+ border-top-color:var(--product-detail-border);
+ border-bottom-color:var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .detail-price .old-price{
+ color:var(--product-detail-subtle);
+}
+html[data-theme="dark"] .detail-page .detail-availability.in-stock{
+ color:#83e0b5;
+}
+html[data-theme="dark"] .detail-page .detail-availability.out-stock{
+ color:#ffaaa2;
+}
+html[data-theme="dark"] .detail-page .variant-row span,
+html[data-theme="dark"] .detail-page .variant-button{
+ background:var(--product-detail-control);
+ color:var(--product-detail-control-ink);
+ border-color:var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .variant-button.active{
+ background:#4a352c;
+ color:#fff3ec;
+ border-color:#e98963;
+}
+html[data-theme="dark"] .detail-page .detail-notice{
+ background:var(--product-detail-soft);
+ color:var(--product-detail-muted);
+ border-color:var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .detail-notice p{
+ color:var(--product-detail-muted);
+}
+html[data-theme="dark"] .detail-page .detail-notice strong{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .detail-notice svg{
+ color:var(--product-detail-accent);
+}
+html[data-theme="dark"] .detail-page .detail-info-tabs{
+ display:flex;
+ flex-wrap:wrap;
+ gap:0;
+ background:var(--product-detail-panel);
+ border:1px solid var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .detail-info-tabs a{
+ display:inline-flex;
+ align-items:center;
+ min-height:44px;
+ padding:11px 16px;
+ color:var(--product-detail-muted);
+ background:transparent;
+ border-right:1px solid var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .detail-info-tabs a:hover,
+html[data-theme="dark"] .detail-page .detail-info-tabs a:focus-visible{
+ color:var(--product-detail-ink);
+ background:#203746;
+}
+html[data-theme="dark"] .detail-page .detail-info-section{
+ border-bottom:1px solid var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .spec-table th,
+html[data-theme="dark"] .detail-page .spec-table td{
+ color:var(--product-detail-muted);
+ border-color:var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .spec-table th{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .detail-no-reviews,
+html[data-theme="dark"] .detail-page .detail-review-card,
+html[data-theme="dark"] .detail-page .detail-review-form-wrap{
+ background:var(--product-detail-soft);
+ color:var(--product-detail-ink);
+ border-color:var(--product-detail-border);
+}
+html[data-theme="dark"] .detail-page .detail-no-reviews strong,
+html[data-theme="dark"] .detail-page .detail-review-card h3{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .detail-no-reviews p{
+ color:var(--product-detail-muted);
+}
+html[data-theme="dark"] .detail-page .detail-review-notice{
+ background:#1c3443;
+ color:#dce8ef;
+ border-color:#3b586a;
+}
+html[data-theme="dark"] .detail-page .detail-verified-buyer{
+ color:#83e0b5;
+}
+html[data-theme="dark"] .detail-page .detail-review-form label,
+html[data-theme="dark"] .detail-page .detail-rating-field legend{
+ color:var(--product-detail-ink);
+}
+html[data-theme="dark"] .detail-page .detail-review-form input,
+html[data-theme="dark"] .detail-page .detail-review-form textarea{
+ background:#0f1b25;
+ color:#f1f5f8;
+ border:1px solid #3b5362;
+}
+html[data-theme="dark"] .detail-page .detail-review-form input::placeholder,
+html[data-theme="dark"] .detail-page .detail-review-form textarea::placeholder{
+ color:#91a5b3;
+ opacity:1;
+}
+html[data-theme="dark"] .detail-page .detail-rating-picker button{
+ color:#ffc477;
+}
+html[data-theme="dark"] .detail-page .demo-detail-photo small{
+ color:#53636e;
+}
+
+
+/* On small screens the fixed contact shortcut must not cover the product price or variants. */
+@media(max-width:790px){
+ body:has(.detail-page) .nexora-floating-contact{
+  display:none;
+ }
+}
+
+
+/* Product actions retain clear primary/secondary hierarchy on dark surfaces. */
+html[data-theme="dark"] main.detail-page .detail-copy .buy-actions .primary-button,
+html[data-theme="dark"] main.detail-page .detail-copy .detail-add-button,
+html[data-theme="dark"] main.detail-page .detail-copy form .primary-button{
+ background:#ffb08e!important;
+ color:#102437!important;
+ border:1px solid #ffb08e!important;
+}
+html[data-theme="dark"] main.detail-page .detail-copy .buy-actions .primary-button:hover:not(:disabled),
+html[data-theme="dark"] main.detail-page .detail-copy .detail-add-button:hover:not(:disabled),
+html[data-theme="dark"] main.detail-page .detail-copy form .primary-button:hover:not(:disabled){
+ background:#ffc3a7!important;
+ color:#102437!important;
+ border-color:#ffc3a7!important;
+}
+html[data-theme="dark"] main.detail-page .detail-copy .primary-button:disabled{
+ background:#314654!important;
+ color:#d8e2e9!important;
+ border-color:#526979!important;
+ opacity:1;
+}
+html[data-theme="dark"] .detail-page .outline-btn{
+ background:var(--product-detail-control);
+ color:var(--product-detail-control-ink);
+ border-color:#526a79;
+}
+html[data-theme="dark"] .detail-page .outline-btn:hover{
+ background:#294253;
+ color:#f1f5f8;
+ border-color:#71899a;
+}

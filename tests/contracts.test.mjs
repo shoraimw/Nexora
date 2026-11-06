@@ -481,3 +481,41 @@ test("new order invoice is prioritized and atomically claimed before older queue
  assert.match(email,/status:"sending"/);
  assert.match(orders,/deliverPendingEmails\(1,data\.id\)/);
 });
+
+
+test("every Nexora product detail route has theme-aware dark-mode text, controls, tabs, specs and reviews",()=>{
+ const retail=read("app/retail-store.css");
+ const theme=read("app/startech-inspired.css");
+ const page=read("app/product/[slug]/page.tsx");
+ const live=read("components/CommerceDetail.tsx");
+ const shoot=read("scripts/shoot.py");
+ assert.match(retail,/\.detail-page \.detail-copy h1\{[^}]*color:var\(--product-detail-ink\)/);
+ assert.match(retail,/\.detail-page \.detail-description\{[^}]*color:var\(--product-detail-muted\)/);
+ assert.match(retail,/\.detail-page \.detail-price\{[^}]*border-color:var\(--product-detail-border\)/);
+ assert.match(theme,/--product-detail-ink:#f1f5f8/);
+ assert.match(theme,/--product-detail-muted:#c1cdd6/);
+ for(const selector of [
+  /html\[data-theme="dark"\] \.detail-page \.detail-copy h1/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-description/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-notice/,
+  /html\[data-theme="dark"\] \.detail-page \.variant-button/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-info-tabs/,
+  /html\[data-theme="dark"\] \.detail-page \.spec-table th/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-no-reviews/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-review-form input/,
+  /html\[data-theme="dark"\] main\.detail-page \.detail-copy \.buy-actions \.primary-button/,
+  /html\[data-theme="dark"\] main\.detail-page \.detail-copy \.detail-add-button/,
+  /html\[data-theme="dark"\] \.detail-page \.outline-btn/
+ ]) assert.match(theme,selector);
+ assert.match(theme,/body:has\(\.detail-page\) \.nexora-floating-contact/);
+ assert.match(shoot,/mobile contact shortcut must not cover product information/);
+ assert.match(page,/className="container detail-page"/);
+ assert.match(live,/className="container detail-page"/);
+ assert.match(shoot,/PRODUCT_CONTRAST_JS/);
+ assert.match(shoot,/contrast < 4\.5/);
+ assert.match(shoot,/theme\/button transitions finish/);
+ assert.match(shoot,/page\.wait_for_timeout\(300\)/);
+ assert.match(shoot,/page\.mouse\.move\(0, 0\)/);
+ assert.match(shoot,/productPagesDarkModeChecked/);
+ assert.match(shoot,/product detail contrast failed|product dark-mode contrast failed/i);
+});
