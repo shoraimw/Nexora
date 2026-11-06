@@ -49,6 +49,67 @@ QA_JS = """() => {
   };
 }"""
 
+PRODUCT_CONTRAST_JS = """() => {
+  const targets = [
+    ["back link", ".detail-page .back-link"],
+    ["product title", ".detail-page .detail-copy h1"],
+    ["product description", ".detail-page .detail-description"],
+    ["product price", ".detail-page .detail-price"],
+    ["price availability note", ".detail-page .detail-price span"],
+    ["variation label", ".detail-page .detail-label"],
+    ["variation option", ".detail-page .variant-row span, .detail-page .variant-row button"],
+    ["product information notice", ".detail-page .detail-notice p"],
+    ["concept feature list", ".detail-page .detail-copy li"],
+    ["product information tab", ".detail-page .detail-info-tabs a"],
+    ["information section heading", ".detail-page .detail-info-section h2"],
+    ["long description", ".detail-page .detail-long-description"],
+    ["specification label", ".detail-page .spec-table th"],
+    ["specification value", ".detail-page .spec-table td"],
+    ["supplementary product note", ".detail-page .detail-muted"],
+    ["empty review title", ".detail-page .detail-no-reviews strong"],
+    ["empty review description", ".detail-page .detail-no-reviews p"]
+  ];
+  const parse = value => {
+    const match = value.match(/rgba?\\(([^)]+)\\)/);
+    if (!match) return null;
+    const parts = match[1].split(",").map(v => Number.parseFloat(v.trim()));
+    return [parts[0], parts[1], parts[2], parts.length > 3 ? parts[3] : 1];
+  };
+  const luminance = rgb => {
+    const channels = rgb.map(value => {
+      const v = value / 255;
+      return v <= .04045 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4);
+    });
+    return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+  };
+  const ratio = (foreground, background) => {
+    const a = luminance(foreground), b = luminance(background);
+    return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+  };
+  const failures = [], missing = [], checks = [];
+  for (const [label, selector] of targets) {
+    const element = document.querySelector(selector);
+    if (!element) { missing.push(label); continue; }
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    if (!rect.width || !rect.height || style.display === "none" || style.visibility === "hidden") {
+      missing.push(label + " (not visible)");
+      continue;
+    }
+    const foreground = parse(style.color);
+    let background = null;
+    for (let node = element; node && !background; node = node.parentElement) {
+      const candidate = parse(getComputedStyle(node).backgroundColor);
+      if (candidate && candidate[3] >= .98) background = candidate.slice(0, 3);
+    }
+    if (!foreground || !background) { missing.push(label + " (colour unavailable)"); continue; }
+    const contrast = ratio(foreground.slice(0, 3), background);
+    checks.push({label, contrast: Number(contrast.toFixed(2)), color: style.color});
+    if (contrast < 4.5) failures.push({label, contrast: Number(contrast.toFixed(2)), color: style.color, selector});
+  }
+  return {checked: checks.length, checks, missing, failures};
+}"""
+
 
 def with_playwright():
     from playwright.sync_api import sync_playwright
@@ -209,7 +270,45 @@ def with_playwright():
                 page.wait_for_timeout(250)
                 page.screenshot(path=str(out / f"{name}-dark.png"), full_page=full)
             except Exception as error:
-                print(f"[visual QA] dark theme capture: {error}")
+                raise RuntimeError(f"{name}: dark theme could not be enabled for visual QA: {error}") from error
+
+            # The theme must persist across navigation, not only on the homepage.
+            base = url.rstrip("/")
+            page.goto(base + "/product/aero-buds", wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
+            page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
+            page.wait_for_timeout(100)
+            contrast = page.evaluate(PRODUCT_CONTRAST_JS)
+            if contrast["missing"]:
+                raise RuntimeError(f"{name}: product dark-mode QA could not find expected content: {contrast['missing']}")
+            if contrast["failures"]:
+                raise RuntimeError(f"{name}: product dark-mode contrast failed: {contrast['failures']}")
+            page.screenshot(path=str(out / f"{name}-product-detail-dark.png"), full_page=full)
+            qa["productDetailDarkMode"] = {"slug": "aero-buds", "checked": contrast["checked"], "failures": contrast["failures"]}
+
+            if name == "desktop":
+                # Discover every product route from the actual shop, then verify the shared
+                # product template on every item rather than assuming one screenshot is enough.
+                page.goto(base + "/shop", wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_selector("a.retail-product-name[href^='/product/']", state="visible", timeout=8000)
+                product_paths = page.locator("a.retail-product-name[href^='/product/']").evaluate_all(
+                    "(nodes) => Array.from(new Set(nodes.map(node => new URL(node.href).pathname)))"
+                )
+                if len(product_paths) < 30:
+                    raise RuntimeError(f"Desktop product dark-mode QA found only {len(product_paths)} product routes; expected the full preview catalogue")
+                for product_path in product_paths:
+                    page.goto(base + product_path, wait_until="domcontentloaded", timeout=60000)
+                    page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
+                    page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
+                    result = page.evaluate(PRODUCT_CONTRAST_JS)
+                    if result["missing"] or result["failures"]:
+                        raise RuntimeError(f"Product dark-mode QA failed for {product_path}: missing={result['missing']}, contrast={result['failures']}")
+                qa["productPagesDarkModeChecked"] = len(product_paths)
+                page.goto(base + "/product/aero-buds", wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
+                page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
+                page.screenshot(path=str(out / "desktop-all-products-dark-mode.png"), full_page=True)
+
             if engine != "chrome" and any(v["error"] == 4 for v in qa["videos"]):
                 qa["videoNote"] = "This browser cannot decode the MP4; judge the video area from the poster/source, not as a bug."
             qa["consoleErrors"], qa["failedRequests"] = errors[:10], [f for f in failed if "ERR_ABORTED" not in f][:10]
