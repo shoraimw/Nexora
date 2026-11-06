@@ -107,7 +107,7 @@ PRODUCT_CONTRAST_JS = """() => {
     if (!foreground || !background) { missing.push(label + " (colour unavailable)"); continue; }
     const contrast = ratio(foreground.slice(0, 3), background);
     checks.push({label, contrast: Number(contrast.toFixed(2)), color: style.color});
-    if (contrast < 4.5) failures.push({label, contrast: Number(contrast.toFixed(2)), color: style.color, background: style.backgroundColor, tag: element.tagName.toLowerCase(), className: typeof element.className === "string" ? element.className : "", selector});
+    if (contrast < 4.5) failures.push({label, contrast: Number(contrast.toFixed(2)), color: style.color, background: style.backgroundColor, tag: element.tagName.toLowerCase(), className: typeof element.className === "string" ? element.className : "", disabled: "disabled" in element ? element.disabled : null, hovered: element.matches(":hover"), focused: element.matches(":focus"), selector});
   }
   if (window.innerWidth <= 790) {
     const contact = document.querySelector(".nexora-floating-contact");
@@ -285,7 +285,8 @@ def with_playwright():
             page.goto(base + "/product/aero-buds", wait_until="domcontentloaded", timeout=60000)
             page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
             page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
-            # Let the 180ms theme/button transitions finish before measuring final-state contrast.
+            page.mouse.move(0, 0)
+            # Let the 180ms theme/button transitions finish before measuring the resting state.
             page.wait_for_timeout(300)
             contrast = page.evaluate(PRODUCT_CONTRAST_JS)
             if contrast["missing"]:
@@ -309,6 +310,7 @@ def with_playwright():
                     page.goto(base + product_path, wait_until="domcontentloaded", timeout=60000)
                     page.wait_for_selector(".detail-page .detail-copy h1", state="visible", timeout=5000)
                     page.wait_for_function("document.documentElement.dataset.theme === 'dark'", timeout=5000)
+                    page.mouse.move(0, 0)
                     page.wait_for_timeout(300)
                     result = page.evaluate(PRODUCT_CONTRAST_JS)
                     if result["missing"] or result["failures"]:
