@@ -65,7 +65,7 @@ def with_playwright():
                                       is_mobile=name in ("mobile", "mobile-small"), has_touch=name in ("tablet", "mobile", "mobile-small"))
             page = ctx.new_page()
             errors, failed = [], []
-            page.on("console", lambda m: errors.append(m.text[:200]) if m.type == "error" else None)
+            page.on("console", lambda m: errors.append(f"{m.text[:200]} [at {m.location}]") if m.type == "error" else None)
             page.on("pageerror", lambda e: errors.append(str(e)[:200]))
             page.on("requestfailed", lambda r: failed.append(f"{r.url[:100]} ({r.failure})"))
             page.on("response", lambda r: failed.append(f"{r.url[:100]} (HTTP {r.status})") if r.status >= 400 else None)
@@ -216,6 +216,7 @@ def with_playwright():
             report[name] = qa
             ctx.close()
         browser.close()
+    print(json.dumps(report, indent=1))
     failures = []
     for name, qa in report.items():
         if not isinstance(qa, dict):
@@ -225,7 +226,7 @@ def with_playwright():
         if qa.get("brokenImages"):
             failures.append(f"{name}: broken images: {', '.join(qa['brokenImages'])}")
         if qa.get("consoleErrors"):
-            failures.append(f"{name}: browser console errors: {', '.join(qa['consoleErrors'])}")
+            failures.append(f"{name}: browser console errors: {', '.join(qa['consoleErrors'])}; failed requests: {', '.join(qa.get('failedRequests', []))}")
     if failures:
         raise RuntimeError("Visual QA failed:\\n" + "\\n".join(failures))
     return report
