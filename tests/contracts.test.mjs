@@ -271,7 +271,7 @@ test("Nexora taxonomy has separate Camera and Networking categories with custome
  assert.match(route,/CommerceShop initialCategory/);
  assert.match(route,/DemoShop initialCategory/);
  assert.match(admin,/categoryParentId/);
- assert.match(api,/parent_id:uuid/);assert.match(admin,/Choose a top-level category/);
+ assert.match(api,/parent_id:uuid/);assert.match(api,/Choose an active top-level parent category/);assert.match(admin,/Choose a top-level category/);assert.match(admin,/c\.active/);
  assert.match(dashboard,/categories/);
 });
 test("price/product card links remain bound to Nexora products, without fake claims",()=>{
