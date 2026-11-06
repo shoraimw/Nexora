@@ -101,6 +101,8 @@ test("desktop category menu uses one controlled overlay and supports click-to-pi
  assert.match(categoryNav,/aria-expanded/);
  assert.match(categoryNav,/aria-controls/);
  assert.match(categoryNav,/closeOnOutside/);
+ assert.match(categoryNav,/const dismiss=\(\)=>\{/);
+ assert.match(categoryNav,/onClick=\{dismiss\}/);
  assert.match(categoryNav,/closeOnEscape/);
  assert.match(categoryNav,/event\.key==="Escape"/);
  assert.match(categoryNav,/id="nexora-category-mega-menu"/);

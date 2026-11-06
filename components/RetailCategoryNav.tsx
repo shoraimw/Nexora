@@ -37,6 +37,10 @@ export function RetailCategoryNav(){
  const closePreview=()=>{
   if(!locked)setActiveSlug(null);
  };
+ const dismiss=()=>{
+  setActiveSlug(null);
+  setLocked(false);
+ };
  const toggle=(slug:string)=>{
   if(locked&&activeSlug===slug){
    setActiveSlug(null);
@@ -57,7 +61,7 @@ export function RetailCategoryNav(){
   }}
  >
   <div className="retail-container retail-nav-inner">
-   <Link className="nexora-nav-all" href="/shop">All products</Link>
+   <Link className="nexora-nav-all" href="/shop" onClick={dismiss}>All products</Link>
    {storeCategories.map(category=><button
     key={category.slug}
     type="button"
@@ -83,13 +87,13 @@ export function RetailCategoryNav(){
      <span>SHOP CATEGORY</span>
      <strong>{activeCategory.name}</strong>
      <p>{activeCategory.description||activeCategory.hint}</p>
-     <Link href={categoryHref(activeCategory)} onClick={closePreview}>View all {activeCategory.name}<ArrowRight size={14}/></Link>
+     <Link href={categoryHref(activeCategory)} onClick={dismiss}>View all {activeCategory.name}<ArrowRight size={14}/></Link>
     </div>
     <div className="nexora-category-mega-links">
      {activeCategory.subcategories.map(subcategory=><Link
       key={subcategory.slug}
       href={categoryHref(activeCategory,subcategory)}
-      onClick={closePreview}
+      onClick={dismiss}
      >
       <span>{subcategory.name}</span><small>{subcategory.hint}</small>
      </Link>)}
