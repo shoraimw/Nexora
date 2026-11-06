@@ -13,7 +13,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 ## What exists in the repository
 
 ### Customer storefront
-- Responsive homepage with a lightweight CSS-animated gadget showcase for phones, watches, headphones and earbuds, with carousel controls and reduced-motion support.
+- Responsive premium storefront with an image-led promotion carousel, curated electronics categories, catalogue search, filters and a mobile-first shopping experience.
 - 13 top-level gadget categories with nested subcategory landing pages, category-first homepage merchandising and mobile-friendly category browsing
 - Real Supabase catalog API (owner-approved products only); demo listings shown when backend is not configured
 - Shop filters: category, dynamic brand suggestions, explicit wired/wireless connectivity, BDT min/max price, in-stock only, sale only and sorting

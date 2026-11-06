@@ -45,6 +45,8 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/account/delete)" = "503"
           curl -fsS http://127.0.0.1:3077/api/newsletter >/tmp/newsletter.json
           node -e 'const n=require("/tmp/newsletter.json");if(n.available!==false)process.exit(1)'
+          curl -fsS http://127.0.0.1:3077/api/categories >/tmp/categories.json
+          node -e 'const c=require("/tmp/categories.json");if(c.live!==false)process.exit(1)'
           echo "Customer routes are readable; account deletion, newsletter collection and payment submission remain safely disabled in preview."
       - name: Install Playwright for visual QA
         run: |

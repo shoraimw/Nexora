@@ -66,7 +66,7 @@ export default function Admin(){
  }
  async function mutation(action:string,payload:unknown){
   setBusy(true);setMessage("");
-  try{const r=await fetch("/api/admin/catalog",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({action,payload})});const body=await r.json();if(!r.ok)throw Error(body.error||"Update failed");setMessage("Saved successfully.");await reload();return true;}catch(e){setMessage(e instanceof Error?e.message:"Update failed");return false;}finally{setBusy(false);}
+  try{const r=await fetch("/api/admin/catalog",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({action,payload})});const body=await r.json();if(!r.ok)throw Error(body.error||"Update failed");if(action.startsWith("category."))window.dispatchEvent(new Event("nexora:categories-updated"));setMessage("Saved successfully.");await reload();return true;}catch(e){setMessage(e instanceof Error?e.message:"Update failed");return false;}finally{setBusy(false);}
  }
  function editCategory(category:Category){setEditingCategoryId(category.id);setCategoryEdit({description:category.description||"",sort_order:String(category.sort_order??0)});}
  async function saveCategory(){const saved=await mutation("category.update",{id:editingCategoryId,description:categoryEdit.description,sort_order:Number(categoryEdit.sort_order)});if(saved)setEditingCategoryId("");}
