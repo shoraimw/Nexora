@@ -107,6 +107,12 @@ PRODUCT_CONTRAST_JS = """() => {
     checks.push({label, contrast: Number(contrast.toFixed(2)), color: style.color});
     if (contrast < 4.5) failures.push({label, contrast: Number(contrast.toFixed(2)), color: style.color, selector});
   }
+  if (window.innerWidth <= 790) {
+    const contact = document.querySelector(".nexora-floating-contact");
+    if (contact && getComputedStyle(contact).display !== "none") {
+      failures.push({label: "mobile contact shortcut must not cover product information", contrast: 0, selector: ".nexora-floating-contact"});
+    }
+  }
   return {checked: checks.length, checks, missing, failures};
 }"""
 
