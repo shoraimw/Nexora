@@ -483,6 +483,14 @@ test("new order invoice is prioritized and atomically claimed before older queue
 });
 
 
+test("responsive shop filter QA targets only the visible filter trigger",()=>{
+ const shoot=read("scripts/shoot.py");
+ assert.match(shoot,/\.retail-filter-trigger:visible/);
+ assert.match(shoot,/Expected exactly one visible shop filter trigger/);
+ assert.match(shoot,/filter_triggers\.click\(timeout=2500\)/);
+ assert.doesNotMatch(shoot,/page\.locator\("\.retail-filter-trigger"\)\.click/);
+});
+
 test("every Nexora product detail route has theme-aware dark-mode text, controls, tabs, specs and reviews",()=>{
  const retail=read("app/retail-store.css");
  const theme=read("app/startech-inspired.css");
@@ -508,7 +516,11 @@ test("every Nexora product detail route has theme-aware dark-mode text, controls
   /html\[data-theme="dark"\] \.detail-page \.outline-btn/
  ]) assert.match(theme,selector);
  assert.match(theme,/body:has\(\.detail-page\) \.nexora-floating-contact/);
+ assert.match(theme,/body:has\(\.detail-page\) \.retail-mobile-nav/);
+ assert.match(theme,/body:has\(\.detail-page\)\{\s*padding-bottom:0!important/);
  assert.match(shoot,/mobile contact shortcut must not cover product information/);
+ assert.match(shoot,/mobile bottom navigation must not cover product detail controls/);
+ assert.match(shoot,/product detail must not reserve space for hidden mobile bottom navigation/);
  assert.match(page,/className="container detail-page"/);
  assert.match(live,/className="container detail-page"/);
  assert.match(shoot,/PRODUCT_CONTRAST_JS/);

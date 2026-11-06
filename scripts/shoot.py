@@ -114,6 +114,13 @@ PRODUCT_CONTRAST_JS = """() => {
     if (contact && getComputedStyle(contact).display !== "none") {
       failures.push({label: "mobile contact shortcut must not cover product information", contrast: 0, selector: ".nexora-floating-contact"});
     }
+    const mobileNav = document.querySelector(".retail-mobile-nav");
+    if (mobileNav && getComputedStyle(mobileNav).display !== "none") {
+      failures.push({label: "mobile bottom navigation must not cover product detail controls", contrast: 0, selector: ".retail-mobile-nav"});
+    }
+    if (Number.parseFloat(getComputedStyle(document.body).paddingBottom) > 0) {
+      failures.push({label: "product detail must not reserve space for hidden mobile bottom navigation", contrast: 0, selector: "body"});
+    }
   }
   return {checked: checks.length, checks, missing, failures};
 }"""
@@ -227,7 +234,10 @@ def with_playwright():
 
                 # Product filters must open as a keyboard-dismissible dialog.
                 page.goto(base + "/shop", wait_until="domcontentloaded", timeout=60000)
-                page.locator(".retail-filter-trigger").click(timeout=2500)
+                filter_triggers = page.locator(".retail-filter-trigger:visible")
+                if filter_triggers.count() != 1:
+                    raise RuntimeError(f"Expected exactly one visible shop filter trigger, found {filter_triggers.count()}")
+                filter_triggers.click(timeout=2500)
                 page.wait_for_selector("#nexora-filter-drawer", state="visible", timeout=1500)
                 page.screenshot(path=str(out / "desktop-shop-filters.png"), full_page=False)
                 page.keyboard.press("Escape")
