@@ -134,3 +134,7 @@
 .order-card-heading small{color:#927d70;background:#f3ebe5;padding:7px 10px;border-radius:50px}
 @media(max-width:960px){.metrics{grid-template-columns:repeat(2,1fr)}.admin-columns{grid-template-columns:1fr}.account-grid{grid-template-columns:1fr}.admin-product{grid-template-columns:1fr}.detail-product-image{height:440px}}
 @media(max-width:600px){.commerce-toolbar .sort-control{width:100%}.metrics{gap:8px}.metrics>div{padding:18px;min-height:132px}.metrics strong{font-size:20px}.admin-title{align-items:flex-start;flex-direction:column}.admin-tabs button{padding:10px;font-size:11px}.account-card,.admin-panel,.checkout-large,.tracking-result{padding:18px}.tracking-form{align-items:stretch;flex-direction:column}.tracking-form label{min-width:0}.status-grid{grid-template-columns:repeat(2,1fr)}.track-head{flex-wrap:wrap}.customer-page{padding-top:47px}.detail-product-image{height:340px}.admin-product .variants-list{max-width:100%}.account-head{align-items:flex-start}.admin-order .row-actions{flex-direction:column;align-items:stretch}}
+
+.checkout-invoice-notice{width:100%;max-width:560px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--paper);text-align:left}
+.checkout-invoice-notice>b{display:block;font-size:13px;color:var(--ink);margin-bottom:6px}
+.checkout-invoice-notice p{margin:0;font-size:12px;line-height:1.7;color:var(--muted)}
