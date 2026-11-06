@@ -458,3 +458,15 @@ test("accepted orders email a PDF invoice to the verified account email or guest
  assert.match(pdf,/TOTAL DUE \(BDT\)/);
  assert.match(download,/buildInvoicePdf\(order,items\)/);
 });
+
+
+test("checkout confirmation tells the customer which email received the invoice and whether delivery succeeded",()=>{
+ const api=read("app/api/orders/route.ts"),page=read("app/checkout/page.tsx"),css=read("app/commerce.css");
+ assert.match(api,/invoiceEmail:customerDetails\.email/);
+ assert.match(api,/invoiceEmailStatus:invoiceMessage\?\.status\|\|"queued"/);
+ assert.match(page,/invoiceEmailStatus==="sent"/);
+ assert.match(page,/invoiceEmailStatus==="failed"/);
+ assert.match(page,/order\.invoiceEmail/);
+ assert.match(page,/PDF invoice sent/);
+ assert.match(css,/\.checkout-invoice-notice/);
+});
