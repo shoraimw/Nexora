@@ -32,7 +32,7 @@ function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eye
 export function Storefront(){
  const demoBrands=Array.from(new Set(products.map(p=>p.brand).filter((b):b is string=>!!b)));
  return <main className="retail-home">
-  <div className="retail-container"><RetailHero/><RetailTrustBar/><RetailCategoryGrid/>
+  <div className="retail-container"><RetailHero/><RetailTrustBar/><RetailCategoryGrid/><RetailPromoBanners/>
    <div className="retail-home-catalog">
     <RetailBrandDirectory brands={demoBrands} preview/>
     <DemoProductSection eyebrow="CURATED DEMO PREVIEW" title="Featured Products" items={products.slice(0,5)}/>
@@ -40,7 +40,7 @@ export function Storefront(){
     <DemoProductSection eyebrow="LATEST CONCEPTS" title="New Arrivals" items={products.slice(-5).reverse()}/>
     <DemoProductSection eyebrow="MADE FOR STUDY DAYS" title="Student Picks" items={products.filter(p=>p.collections?.includes("Student Picks"))} href="/shop?category=Student%20Picks"/>
     {["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Gaming"].map(name=>{const category=storeCategories.find(c=>c.name===name);const items=products.filter(p=>p.category===name);return category&&items.length?<DemoProductSection key={name} eyebrow="EXPLORE THE CATEGORY" title={name} items={items} href={categoryHref(category)}/>:null;})}
-   </div><RetailPromoBanners/>
+   </div>
   </div><ChatWidget/>
  </main>;
 }

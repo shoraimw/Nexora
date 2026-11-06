@@ -91,11 +91,12 @@ test("category navigation keeps readable contrast in light mode and a light labe
  assert.match(theme,/html\[data-theme="dark"\] \.retail-nav-inner>a,html\[data-theme="dark"\] \.retail-header-actions>a\{color:#c8d2d9\}/);
 });
 test("desktop category tabs and mobile category drawer expose the complete hierarchy",()=>{
- const layout=read("app/layout.tsx");
+ const categoryNav=read("components/RetailCategoryNav.tsx");
  const menu=read("components/MobileMenu.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
- assert.match(layout,/storeCategories\.map/);
- assert.match(layout,/retail-category-nav-link/);
+ assert.match(categoryNav,/storeCategories\.map/);
+ assert.match(categoryNav,/nexora-nav-category/);
+ assert.match(categoryNav,/categoryHref\(category,subcategory\)/);
  assert.match(menu,/storeCategories\.map/);
  assert.match(menu,/nexora-mobile-categories/);
  assert.match(taxonomy,/name:"Networking"/);
@@ -207,6 +208,28 @@ test("homepage uses the original rotating retail promo hero instead of a 3D gadg
  assert.equal(existsSync(new URL("../components/Nexora3DHero.tsx",import.meta.url)),false);
  assert.equal(existsSync(new URL("../app/hero-3d.css",import.meta.url)),false);
  assert.ok(!layout.includes("hero-3d.css"));
+});
+
+test("StarTech-inspired storefront adds a utility strip and taxonomy-driven mega category navigation",()=>{
+ const layout=read("app/layout.tsx");
+ const nav=read("components/RetailCategoryNav.tsx");
+ const css=read("app/startech-inspired.css");
+ assert.match(layout,/nexora-utility-bar/);
+ assert.match(layout,/RetailCategoryNav/);
+ assert.match(nav,/storeCategories\.map/);
+ assert.match(nav,/category\.subcategories\.map/);
+ assert.match(nav,/categoryHref\(category,subcategory\)/);
+ assert.match(nav,/details/);
+ assert.match(nav,/summary/);
+ assert.match(css,/nexora-category-mega/);
+ assert.match(css,/retail-hero-side/);
+ assert.match(css,/nexora-utility-bar/);
+});
+test("homepage places promotional cards before the product-first catalog",()=>{
+ const home=read("components/CommerceHome.tsx");
+ const demo=read("components/Storefront.tsx");
+ assert.ok(home.indexOf("<RetailPromoBanners/>")<home.indexOf("<CommerceShop homepage/>"));
+ assert.ok(demo.indexOf("<RetailPromoBanners/>")<demo.indexOf("<div className=\"retail-home-catalog\">"));
 });
 test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
