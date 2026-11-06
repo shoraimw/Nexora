@@ -90,17 +90,36 @@ test("category navigation keeps readable contrast in light mode and a light labe
  assert.doesNotMatch(categories,/\.retail-nav-inner>a\.retail-category-nav-link\{[^}]*color:#f4f6f8/);
  assert.match(theme,/html\[data-theme="dark"\] \.retail-nav-inner>a,html\[data-theme="dark"\] \.retail-header-actions>a\{color:#c8d2d9\}/);
 });
-test("desktop category tabs and mobile category drawer expose the complete hierarchy",()=>{
+test("desktop category menu uses one controlled overlay and supports click-to-pin, toggle, outside click and Escape",()=>{
  const categoryNav=read("components/RetailCategoryNav.tsx");
  const menu=read("components/MobileMenu.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
- assert.match(categoryNav,/storeCategories\.map/);
- assert.match(categoryNav,/nexora-nav-category/);
- assert.match(categoryNav,/categoryHref\(category,subcategory\)/);
+ assert.match(categoryNav,/useState/);
+ assert.match(categoryNav,/activeSlug/);
+ assert.match(categoryNav,/setLocked\(true\)/);
+ assert.match(categoryNav,/setLocked\(false\)/);
+ assert.match(categoryNav,/aria-expanded/);
+ assert.match(categoryNav,/aria-controls/);
+ assert.match(categoryNav,/closeOnOutside/);
+ assert.match(categoryNav,/const dismiss=\(\)=>\{/);
+ assert.match(categoryNav,/onClick=\{dismiss\}/);
+ assert.match(categoryNav,/closeOnEscape/);
+ assert.match(categoryNav,/event\.key==="Escape"/);
+ assert.match(categoryNav,/id="nexora-category-mega-menu"/);
+ assert.match(categoryNav,/activeCategory\.subcategories\.map/);
+ assert.doesNotMatch(categoryNav,/<details/);
+ assert.doesNotMatch(categoryNav,/<summary/);
  assert.match(menu,/storeCategories\.map/);
  assert.match(menu,/nexora-mobile-categories/);
  assert.match(taxonomy,/name:"Networking"/);
  assert.match(taxonomy,/name:"Camera"/);
+});
+test("desktop mega menu is a single full-width panel and cannot stack per hovered category",()=>{
+ const css=read("app/startech-inspired.css");
+ assert.match(css,/\.nexora-category-mega\{position:absolute;[^}]*left:0;right:0/);
+ assert.match(css,/\.nexora-category-mega-links\{display:grid/);
+ assert.doesNotMatch(css,/\.nexora-nav-category:hover/);
+ assert.doesNotMatch(css,/\.nexora-nav-category\[open\]/);
 });
 
 test("offers are scheduled, owner-managed and publicly time-filtered",()=>{
@@ -210,17 +229,19 @@ test("homepage uses the original rotating retail promo hero instead of a 3D gadg
  assert.ok(!layout.includes("hero-3d.css"));
 });
 
-test("StarTech-inspired storefront adds a utility strip and taxonomy-driven mega category navigation",()=>{
+test("StarTech-inspired storefront adds a utility strip and taxonomy-driven single mega category menu",()=>{
  const layout=read("app/layout.tsx");
  const nav=read("components/RetailCategoryNav.tsx");
  const css=read("app/startech-inspired.css");
  assert.match(layout,/nexora-utility-bar/);
  assert.match(layout,/RetailCategoryNav/);
  assert.match(nav,/storeCategories\.map/);
- assert.match(nav,/category\.subcategories\.map/);
- assert.match(nav,/categoryHref\(category,subcategory\)/);
- assert.match(nav,/details/);
- assert.match(nav,/summary/);
+ assert.match(nav,/activeCategory\.subcategories\.map/);
+ assert.match(nav,/categoryHref\(activeCategory,subcategory\)/);
+ assert.match(nav,/aria-expanded/);
+ assert.match(nav,/onPointerLeave/);
+ assert.doesNotMatch(nav,/<details/);
+ assert.doesNotMatch(nav,/<summary/);
  assert.match(css,/nexora-category-mega/);
  assert.match(css,/retail-hero-side/);
  assert.match(css,/nexora-utility-bar/);
@@ -337,4 +358,8 @@ test("homepage preview imagery is valid and visual QA fails on broken assets or 
  assert.ok(shoot.includes('if qa.get("brokenImages"):'));
  assert.ok(shoot.includes('if qa.get("consoleErrors"):'));
  assert.ok(shoot.includes("document.querySelector('.nexora-theme-toggle')?.click()"));
+ assert.ok(shoot.includes('page.get_by_role("button", name="Phones", exact=True)'));
+ assert.ok(shoot.includes('page.screenshot(path=str(out / "desktop-category-menu.png"))'));
+ assert.ok(shoot.includes('page.keyboard.press("Escape")'));
+ assert.ok(shoot.includes('Category mega-menu interaction QA failed'));
 });

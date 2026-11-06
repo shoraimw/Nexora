@@ -101,6 +101,34 @@ def with_playwright():
                 page.evaluate("window.scrollTo(0, 0)")
                 page.wait_for_timeout(250)
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
+            if name == "desktop":
+                # Exercise the category menu, not just the closed homepage.
+                try:
+                    menu = page.locator("#nexora-category-mega-menu")
+                    phones = page.get_by_role("button", name="Phones", exact=True)
+                    mac = page.get_by_role("button", name="Mac", exact=True)
+                    phones.click(timeout=2500)
+                    page.wait_for_selector("#nexora-category-mega-menu", state="visible", timeout=1500)
+                    mac.click(timeout=2500)
+                    page.wait_for_function(
+                        "() => document.querySelector('#nexora-category-mega-menu')?.getAttribute('aria-label') === 'Mac category menu'",
+                        timeout=1500,
+                    )
+                    if page.locator(".nexora-category-mega").count() != 1:
+                        raise RuntimeError("More than one category panel is open")
+                    page.screenshot(path=str(out / "desktop-category-menu.png"))
+                    page.keyboard.press("Escape")
+                    page.wait_for_selector("#nexora-category-mega-menu", state="detached", timeout=1500)
+                    phones.click(timeout=2500)
+                    page.wait_for_selector("#nexora-category-mega-menu", state="visible", timeout=1500)
+                    phones.click(timeout=2500)
+                    page.wait_for_selector("#nexora-category-mega-menu", state="detached", timeout=1500)
+                    phones.click(timeout=2500)
+                    page.wait_for_selector("#nexora-category-mega-menu", state="visible", timeout=1500)
+                    page.locator("body").click(position={"x": 5, "y": 650})
+                    page.wait_for_selector("#nexora-category-mega-menu", state="detached", timeout=1500)
+                except Exception as error:
+                    raise RuntimeError(f"Category mega-menu interaction QA failed: {error}") from error
             qa = page.evaluate(QA_JS)
             try:
                 page.evaluate("document.querySelector('.nexora-theme-toggle')?.click()")
