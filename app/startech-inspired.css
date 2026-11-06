@@ -106,7 +106,7 @@ body{background:var(--retail-bg);color:#1b2b38}
 }
 @media(max-width:790px){
  .nexora-utility-bar{display:none}
- .retail-header-main{height:68px;grid-template-columns:1fr auto;gap:10px}
+ .retail-header-main{height:auto;min-height:65px;padding-top:10px;padding-bottom:10px;grid-template-columns:38px minmax(0,1fr) auto;gap:9px}
  .retail-header-actions{gap:9px}
  .retail-header-actions .retail-offers-nav{display:none}
  .retail-header-actions>a{font-size:9px}
@@ -126,7 +126,7 @@ body{background:var(--retail-bg);color:#1b2b38}
 }
 @media(max-width:540px){
  .retail-container{width:calc(100% - 24px)}
- .retail-header-main{height:63px}
+ .retail-header-main{height:auto;min-height:65px;padding-top:10px;padding-bottom:10px}
  .retail-brand-header{width:88px;height:51px}
  .retail-search{height:39px;padding:0 8px;gap:6px}
  .retail-search button{height:29px;padding:0 9px;font-size:9px}
