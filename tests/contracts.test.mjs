@@ -438,3 +438,23 @@ test("customer and owner price displays use a readable BDT fallback instead of a
   assert.match(source,/BDT/,path+" should label monetary values in BDT");
  }
 });
+
+
+test("accepted orders email a PDF invoice to the verified account email or guest checkout email",()=>{
+ const orders=read("app/api/orders/route.ts"),account=read("app/api/account/route.ts"),checkout=read("app/checkout/page.tsx");
+ const email=read("lib/email.ts"),pdf=read("lib/invoice-pdf.ts"),download=read("app/api/orders/invoice/route.ts");
+ assert.match(orders,/user\?\.email_confirmed_at&&user\.email/);
+ assert.match(orders,/p_details:customerDetails/);
+ assert.match(account,/emailVerified:!!user\.email_confirmed_at/);
+ assert.match(checkout,/setAccountEmail\(data\.email\)/);
+ assert.match(checkout,/readOnly=\{label==="Email address"&&!!accountEmail\}/);
+ assert.match(checkout,/Your invoice will be sent to this verified account email/);
+ assert.match(email,/buildInvoicePdf\(order,items\)/);
+ assert.match(email,/outbox\.kind==="order_received"/);
+ assert.match(email,/attachment:\{name:string;content:string\}/);
+ assert.match(email,/payload\.attachment=\[attachment\]/);
+ assert.match(email,/order_items/);
+ assert.match(email,/outbox\.recipient\|\|order\.email/);
+ assert.match(pdf,/TOTAL DUE \(BDT\)/);
+ assert.match(download,/buildInvoicePdf\(order,items\)/);
+});
