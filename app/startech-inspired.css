@@ -402,8 +402,12 @@ html[data-theme="dark"] .detail-page .demo-detail-photo small{
 
 /* On small screens the fixed contact shortcut must not cover the product price or variants. */
 @media(max-width:790px){
- body:has(.detail-page) .nexora-floating-contact{
-  display:none;
+ body:has(.detail-page) .nexora-floating-contact,
+ body:has(.detail-page) .retail-mobile-nav{
+  display:none!important;
+ }
+ body:has(.detail-page){
+  padding-bottom:0!important;
  }
 }
 
