@@ -400,6 +400,12 @@ test("newsletter collection is unavailable until the private subscriber table ex
  const api=read("app/api/newsletter/route.ts"),ui=read("components/NewsletterSignup.tsx");assert.match(api,/export async function GET/);assert.match(api,/available:!error/);assert.match(ui,/availability==="unavailable"/);assert.match(ui,/No email is collected/);
 });
 
+test("same-origin protection respects the forwarded host while rejecting cross-origin chat requests",()=>{
+ const server=read("lib/server.ts"),workflow=read(".github/workflows/ci.yml");
+ assert.match(server,/x-forwarded-host/);assert.match(server,/x-forwarded-proto/);assert.match(server,/source\.host\.toLowerCase\(\)===host/);
+ assert.match(workflow,/attacker\.example/);assert.match(workflow,/api\/chat/);
+});
+
 test("homepage preview imagery is valid and visual QA fails on broken assets or overflow",()=>{
  const catalog=read("lib/catalog.ts");
  const shoot=read("scripts/shoot.py");
