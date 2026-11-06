@@ -52,5 +52,5 @@ export const products:Product[]=[
 
 ];
 export const categories=["All",...storeCategories.map(category=>category.name),"Student Picks","Mystery Box"];
-export function currency(value:number){return "৳"+value.toLocaleString("en-BD");}
+export function currency(value:number){return "BDT "+value.toLocaleString("en-BD");}
 export function bySlug(slug:string){return products.find(product=>product.slug===slug);}
