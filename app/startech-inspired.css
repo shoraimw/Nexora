@@ -406,3 +406,26 @@ html[data-theme="dark"] .detail-page .demo-detail-photo small{
   display:none;
  }
 }
+
+
+/* Product actions retain clear primary/secondary hierarchy on dark surfaces. */
+html[data-theme="dark"] .detail-page .primary-button{
+ background:#e66c43;
+ color:#102437;
+ border:1px solid #e66c43;
+}
+html[data-theme="dark"] .detail-page .primary-button:hover:not(:disabled){
+ background:#f07b51;
+ color:#102437;
+ border-color:#f07b51;
+}
+html[data-theme="dark"] .detail-page .outline-btn{
+ background:var(--product-detail-control);
+ color:var(--product-detail-control-ink);
+ border-color:#526a79;
+}
+html[data-theme="dark"] .detail-page .outline-btn:hover{
+ background:#294253;
+ color:#f1f5f8;
+ border-color:#71899a;
+}
