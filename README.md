@@ -20,7 +20,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 - Filter engine has functional regression tests (`tests/shop-filters.test.mjs`); demo brands are fictional sample values, not real inventory
 - Product page with images, description, technical specifications, variants, live stock, customer ratings and verified-purchase reviews (owner-moderated)
 - Browser shopping cart, guest checkout, coupons, bKash / Nagad manual claims, Cash on Delivery
-- Customer sign-in/sign-up, optional profile photo, delivery details and order list
+- Customer sign-in/sign-up, optional profile photo, delivery details, order list, and password-confirmed account deletion with anonymized order retention
 - Private guest order tracking, customer order timeline and downloadable PDF invoice
 - Consent-based browser chat history; account-synced chat history after sign-in and opt-in
 - Database-grounded shopping assistant (text for guests, product images for signed-in customers)
@@ -63,7 +63,7 @@ Open http://localhost:3000. Preview catalog data is illustrative, and checkout i
 ## Full backend setup (later, when owners are ready)
 
 Read **[docs/SETUP.md](docs/SETUP.md)** and **[docs/GO_LIVE_CHECKLIST.md](docs/GO_LIVE_CHECKLIST.md)**.
-Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`, `007_product_reviews.sql`, and `008_newsletter_subscribers.sql`, and `009_hierarchical_categories.sql`.
+Apply SQL migrations in numbered order: `database/001_commerce.sql`, `002_queues_and_limits.sql`, `003_stock_and_avatar.sql`, `004_payment_reconciliation.sql`, `005_delivery_zones.sql`, `006_store_offers.sql`, `007_product_reviews.sql`, and `008_newsletter_subscribers.sql`, and `009_hierarchical_categories.sql`, then `010_account_privacy.sql`.
 
 Never commit `.env.local`, API keys, password reset tokens, email recipient lists or real transactions.
 

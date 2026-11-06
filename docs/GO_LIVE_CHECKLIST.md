@@ -45,7 +45,7 @@
 - [ ] Sender domain/email verified; order received/verified/shipped/delivered emails tested
 - [ ] Email failure retry and duplicate-delivery protections tested
 - [ ] Guest tracking token cannot be guessed; another person's invoice inaccessible
-- [ ] Chat opt-in, browser retention and account deletion tested
+- [ ] Chat opt-in, browser retention and password-confirmed account deletion tested after applying migration 010; verify order and payment records are anonymized while accounting rows remain
 - [ ] Gemini free-tier eligibility/age/privacy terms reviewed before enabling
 - [ ] Customer address/phone never sent to the LLM
 - [ ] Delivery and warranty answers never invented by chatbot
