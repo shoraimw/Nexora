@@ -32,7 +32,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 
 ### Two-owner admin
 - Role-verified owner dashboard (no default password)
-- Categories, product publishing, variants, images, stock adjustments and SKU data
+- Categories, product publishing, variants, images, stock adjustments and SKU data; active category visibility is shared across desktop navigation, mobile navigation, filters and direct category routes
 - Orders, individual payment-claim review and overpayment alerts
 - Manual refund records (does not send/refund money automatically)
 - Consignment ID / tracking URL for Steadfast dispatch managed by owners

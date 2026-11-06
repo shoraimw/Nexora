@@ -271,7 +271,7 @@ test("Nexora taxonomy has separate Camera and Networking categories with custome
  assert.match(route,/CommerceShop initialCategory/);
  assert.match(route,/DemoShop initialCategory/);
  assert.match(admin,/categoryParentId/);
- assert.match(api,/parent_id:uuid\.nullable\(\)\.optional\(\)/);
+ assert.match(api,/parent_id:uuid/);assert.match(admin,/Choose a top-level category/);
  assert.match(dashboard,/categories/);
 });
 test("price/product card links remain bound to Nexora products, without fake claims",()=>{
@@ -329,11 +329,15 @@ test("custom 404 and print stylesheet are installed",()=>{
 
 
 
+test("live category visibility is shared by navigation, mobile menu, category grid, filters and direct routes",()=>{
+ const api=read("app/api/categories/route.ts"),hook=read("components/useStoreCategories.ts"),nav=read("components/RetailCategoryNav.tsx"),mobile=read("components/MobileMenu.tsx"),chrome=read("components/RetailChrome.tsx"),shop=read("components/CommerceShop.tsx"),page=read("app/category/[slug]/[[...subcategory]]/page.tsx");
+ assert.match(api,/\.eq\("active",true\)/);assert.match(hook,/data\.live===true/);assert.match(nav,/useStoreCategories/);assert.match(mobile,/useStoreCategories/);assert.match(chrome,/useStoreCategories/);assert.match(shop,/useStoreCategories/);assert.match(page,/activeCategories/);
+});
 test("all 13 category destinations remain visible in the featured category grid",()=>{
  const chrome=read("components/RetailChrome.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
  assert.match(chrome,/retail-category-grid/);
- assert.match(chrome,/storeCategories\.map/);
+ assert.match(chrome,/categories\.map/);
  for(const name of ["Phones","Mac","Phone Accessories","Tablets","Cases & Protectors","Watches","Headphones & Speakers","PC Accessories","Camera","Gadgets","Networking","Gaming","Drone"]){
   assert.ok(taxonomy.includes('name:"'+name+'"'),name);
  }

@@ -8,6 +8,7 @@ import {DemoShop} from "@/components/Storefront";
 type Params={slug:string;subcategory?:string[]};
 export async function generateMetadata({params}:{params:Promise<Params>}):Promise<Metadata>{
  const {slug,subcategory=[]}=await params;
+ if(configured){const {data:activeCategories,error}=await db().from("categories").select("id,slug,parent_id").eq("active",true);if(error)notFound();const root=activeCategories?.find(item=>item.slug===slug&&!item.parent_id);if(!root)notFound();if(subcategory.length&&!activeCategories?.some(item=>item.slug===subcategory[0]&&item.parent_id===root.id))notFound();}
  const category=categoryBySlug(slug);
  if(!category)return {title:"Category not found",robots:{index:false,follow:false}};
  const sub= subcategory.length===1?subcategoryBySlug(category,subcategory[0]):undefined;

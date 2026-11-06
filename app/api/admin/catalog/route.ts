@@ -15,7 +15,7 @@ export async function POST(req:Request){
  let response:unknown;
  try{
   if(action==="category.create"){
-   const x=z.object({name:z.string().trim().min(2).max(90),slug:z.string().trim().regex(/^[a-z0-9-]+$/),description:z.string().max(250).optional(),sort_order:z.number().int().optional(),parent_id:uuid.nullable().optional()}).parse(payload);
+   const x=z.object({name:z.string().trim().min(2).max(90),slug:z.string().trim().regex(/^[a-z0-9-]+$/),description:z.string().max(250).optional(),sort_order:z.number().int().optional(),parent_id:uuid}).parse(payload);
    if(x.parent_id){const {data:parent,error:parentError}=await s.from("categories").select("id,parent_id").eq("id",x.parent_id).eq("active",true).maybeSingle();if(parentError)throw parentError;if(!parent||parent.parent_id)throw Error("Choose an active top-level parent category.");}
    const {data,error}=await s.from("categories").insert(x).select().single();if(error)throw error;response=data;
   }else if(action==="category.update"){
