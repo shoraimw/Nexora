@@ -90,17 +90,34 @@ test("category navigation keeps readable contrast in light mode and a light labe
  assert.doesNotMatch(categories,/\.retail-nav-inner>a\.retail-category-nav-link\{[^}]*color:#f4f6f8/);
  assert.match(theme,/html\[data-theme="dark"\] \.retail-nav-inner>a,html\[data-theme="dark"\] \.retail-header-actions>a\{color:#c8d2d9\}/);
 });
-test("desktop category tabs and mobile category drawer expose the complete hierarchy",()=>{
+test("desktop category menu uses one controlled overlay and supports click-to-pin, toggle, outside click and Escape",()=>{
  const categoryNav=read("components/RetailCategoryNav.tsx");
  const menu=read("components/MobileMenu.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
- assert.match(categoryNav,/storeCategories\.map/);
- assert.match(categoryNav,/nexora-nav-category/);
- assert.match(categoryNav,/categoryHref\(category,subcategory\)/);
+ assert.match(categoryNav,/useState/);
+ assert.match(categoryNav,/activeSlug/);
+ assert.match(categoryNav,/setLocked\(true\)/);
+ assert.match(categoryNav,/setLocked\(false\)/);
+ assert.match(categoryNav,/aria-expanded/);
+ assert.match(categoryNav,/aria-controls/);
+ assert.match(categoryNav,/closeOnOutside/);
+ assert.match(categoryNav,/closeOnEscape/);
+ assert.match(categoryNav,/event\.key==="Escape"/);
+ assert.match(categoryNav,/id="nexora-category-mega-menu"/);
+ assert.match(categoryNav,/activeCategory\.subcategories\.map/);
+ assert.doesNotMatch(categoryNav,/<details/);
+ assert.doesNotMatch(categoryNav,/<summary/);
  assert.match(menu,/storeCategories\.map/);
  assert.match(menu,/nexora-mobile-categories/);
  assert.match(taxonomy,/name:"Networking"/);
  assert.match(taxonomy,/name:"Camera"/);
+});
+test("desktop mega menu is a single full-width panel and cannot stack per hovered category",()=>{
+ const css=read("app/startech-inspired.css");
+ assert.match(css,/\.nexora-category-mega\{position:absolute;[^}]*left:0;right:0/);
+ assert.match(css,/\.nexora-category-mega-links\{display:grid/);
+ assert.doesNotMatch(css,/\.nexora-nav-category:hover/);
+ assert.doesNotMatch(css,/\.nexora-nav-category\[open\]/);
 });
 
 test("offers are scheduled, owner-managed and publicly time-filtered",()=>{
