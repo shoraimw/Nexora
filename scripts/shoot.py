@@ -227,7 +227,10 @@ def with_playwright():
 
                 # Product filters must open as a keyboard-dismissible dialog.
                 page.goto(base + "/shop", wait_until="domcontentloaded", timeout=60000)
-                page.locator(".retail-filter-trigger").click(timeout=2500)
+                filter_triggers = page.locator(".retail-filter-trigger:visible")
+                if filter_triggers.count() != 1:
+                    raise RuntimeError(f"Expected exactly one visible shop filter trigger, found {filter_triggers.count()}")
+                filter_triggers.click(timeout=2500)
                 page.wait_for_selector("#nexora-filter-drawer", state="visible", timeout=1500)
                 page.screenshot(path=str(out / "desktop-shop-filters.png"), full_page=False)
                 page.keyboard.press("Escape")
