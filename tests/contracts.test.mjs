@@ -227,17 +227,19 @@ test("homepage uses the original rotating retail promo hero instead of a 3D gadg
  assert.ok(!layout.includes("hero-3d.css"));
 });
 
-test("StarTech-inspired storefront adds a utility strip and taxonomy-driven mega category navigation",()=>{
+test("StarTech-inspired storefront adds a utility strip and taxonomy-driven single mega category menu",()=>{
  const layout=read("app/layout.tsx");
  const nav=read("components/RetailCategoryNav.tsx");
  const css=read("app/startech-inspired.css");
  assert.match(layout,/nexora-utility-bar/);
  assert.match(layout,/RetailCategoryNav/);
  assert.match(nav,/storeCategories\.map/);
- assert.match(nav,/category\.subcategories\.map/);
- assert.match(nav,/categoryHref\(category,subcategory\)/);
- assert.match(nav,/details/);
- assert.match(nav,/summary/);
+ assert.match(nav,/activeCategory\.subcategories\.map/);
+ assert.match(nav,/categoryHref\(activeCategory,subcategory\)/);
+ assert.match(nav,/aria-expanded/);
+ assert.match(nav,/onPointerLeave/);
+ assert.doesNotMatch(nav,/<details/);
+ assert.doesNotMatch(nav,/<summary/);
  assert.match(css,/nexora-category-mega/);
  assert.match(css,/retail-hero-side/);
  assert.match(css,/nexora-utility-bar/);
