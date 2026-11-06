@@ -483,6 +483,14 @@ test("new order invoice is prioritized and atomically claimed before older queue
 });
 
 
+test("responsive shop filter QA targets only the visible filter trigger",()=>{
+ const shoot=read("scripts/shoot.py");
+ assert.match(shoot,/\.retail-filter-trigger:visible/);
+ assert.match(shoot,/Expected exactly one visible shop filter trigger/);
+ assert.match(shoot,/filter_triggers\.click\(timeout=2500\)/);
+ assert.doesNotMatch(shoot,/page\.locator\("\.retail-filter-trigger"\)\.click/);
+});
+
 test("every Nexora product detail route has theme-aware dark-mode text, controls, tabs, specs and reviews",()=>{
  const retail=read("app/retail-store.css");
  const theme=read("app/startech-inspired.css");
