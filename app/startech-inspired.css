@@ -181,3 +181,8 @@ html[data-theme="dark"] .retail-footer{background:#0b1721;border-color:#293946}
 html[data-theme="dark"] .retail-search{background:#172632;border-color:#344653}
 html[data-theme="dark"] .retail-search input{color:#e4ebf0}
 html[data-theme="dark"] .retail-header-actions .retail-offers-nav{background:#172632;border-color:#344653;color:#d3dee5}
+
+@media(max-width:790px){
+ /* Keep the floating contact shortcut clear of the first category row. */
+ .nexora-floating-contact{bottom:96px}
+}
