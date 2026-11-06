@@ -107,7 +107,7 @@ PRODUCT_CONTRAST_JS = """() => {
     if (!foreground || !background) { missing.push(label + " (colour unavailable)"); continue; }
     const contrast = ratio(foreground.slice(0, 3), background);
     checks.push({label, contrast: Number(contrast.toFixed(2)), color: style.color});
-    if (contrast < 4.5) failures.push({label, contrast: Number(contrast.toFixed(2)), color: style.color, selector});
+    if (contrast < 4.5) failures.push({label, contrast: Number(contrast.toFixed(2)), color: style.color, background: style.backgroundColor, tag: element.tagName.toLowerCase(), className: typeof element.className === "string" ? element.className : "", selector});
   }
   if (window.innerWidth <= 790) {
     const contact = document.querySelector(".nexora-floating-contact");
