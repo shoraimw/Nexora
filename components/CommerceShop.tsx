@@ -9,7 +9,7 @@ import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterStat
 import type {LiveProduct,LiveVariant} from "@/lib/catalog-live";
 import {categoryHref} from "@/lib/store-taxonomy";
 import {useStoreCategories} from "@/components/useStoreCategories";
-const money=(value:number)=>"৳"+(value/100).toLocaleString("en-BD",{maximumFractionDigits:2});
+const money=(value:number)=>"BDT "+(value/100).toLocaleString("en-BD",{maximumFractionDigits:2});
 function displayVariant(product:LiveProduct):LiveVariant|undefined{
  const variants=[...product.variants].sort((a,b)=>a.price_paisa-b.price_paisa);
  return variants.find(v=>v.available>0)||variants[0];
