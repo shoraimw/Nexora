@@ -58,6 +58,8 @@ PRODUCT_CONTRAST_JS = """() => {
     ["price availability note", ".detail-page .detail-price span"],
     ["variation label", ".detail-page .detail-label"],
     ["variation option", ".detail-page .variant-row span, .detail-page .variant-row button"],
+    ["primary add-to-bag action", ".detail-page .buy-actions .primary-button, .detail-page .detail-add-button"],
+    ["secondary view-bag action", ".detail-page .buy-actions .outline-btn"],
     ["product information notice", ".detail-page .detail-notice p"],
     ["concept feature list", ".detail-page .detail-copy li"],
     ["product information tab", ".detail-page .detail-info-tabs a"],
