@@ -208,6 +208,26 @@ test("homepage uses the original rotating retail promo hero instead of a 3D gadg
  assert.equal(existsSync(new URL("../app/hero-3d.css",import.meta.url)),false);
  assert.ok(!layout.includes("hero-3d.css"));
 });
+
+test("StarTech-inspired storefront adds a utility strip and taxonomy-driven mega category navigation",()=>{
+ const layout=read("app/layout.tsx");
+ const nav=read("components/RetailCategoryNav.tsx");
+ const css=read("app/startech-inspired.css");
+ assert.match(layout,/nexora-utility-bar/);
+ assert.match(layout,/RetailCategoryNav/);
+ assert.match(nav,/storeCategories\.map/);
+ assert.match(nav,/category\.subcategories\.map/);
+ assert.match(nav,/categoryHref\(category,subcategory\)/);
+ assert.match(nav,/details/);
+ assert.match(nav,/summary/);
+ assert.match(css,/nexora-category-mega/);
+ assert.match(css,/retail-hero-side/);
+ assert.match(css,/nexora-utility-bar/);
+});
+test("homepage places promotional cards before the product-first catalog",()=>{
+ const home=read("components/CommerceHome.tsx");
+ assert.ok(home.indexOf("<RetailPromoBanners/>")<home.indexOf("<CommerceShop homepage/>"));
+});
 test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
  const migration=read("database/009_hierarchical_categories.sql");

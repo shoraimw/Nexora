@@ -6,6 +6,7 @@ import {HeaderCart} from "@/components/HeaderCart";
 import {OffersNavLink} from "@/components/OffersNavLink";
 import {ConfirmProvider} from "@/components/ConfirmProvider";
 import {MobileMenu} from "@/components/MobileMenu";
+import {RetailCategoryNav} from "@/components/RetailCategoryNav";
 import {SiteSearch} from "@/components/SiteSearch";
 import {NewsletterSignup} from "@/components/NewsletterSignup";
 import {storeCategories,categoryHref,collectionLinks} from "@/lib/store-taxonomy";
@@ -23,6 +24,7 @@ import "./gadget-layout.css";
 import "./category-experience.css";
 import "./site-experience.css";
 import "./print.css";
+import "./startech-inspired.css";
 export const metadata:Metadata={
  title:{default:"Nexora | Connect with Modern World",template:"%s | Nexora"},
  description:"Discover gadgets, tech accessories and unique everyday finds with Nexora.",
@@ -31,6 +33,7 @@ export const metadata:Metadata={
 };
 export default function RootLayout({children}:{children:React.ReactNode}){
  return <html lang="en"><body><a className="skip-link" href="#main-content">Skip to content</a><ConfirmProvider><CartProvider>
+  <div className="nexora-utility-bar"><div className="retail-container nexora-utility-inner"><span>Everyday technology, made easier.</span><div><Link href="/track"><PackageSearch size={13}/>Track order</Link><Link href="/contact"><LifeBuoy size={13}/>Help & support</Link><Link href="/policies">Delivery & returns</Link></div></div></div>
   <header className="retail-site-header">
    <div className="retail-container retail-header-main">
     <MobileMenu/>
@@ -38,9 +41,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
     <SiteSearch/>
     <div className="retail-header-actions"><ThemeToggle/><OffersNavLink/><Link href="/account"><UserRound size={19}/><span>Account</span></Link><HeaderCart/></div>
    </div>
-   <nav className="retail-nav" aria-label="Shop categories"><div className="retail-container retail-nav-inner">
-    {storeCategories.map(category=><Link className="retail-category-nav-link" key={category.slug} href={categoryHref(category)}>{category.name}</Link>)}
-   </div></nav>
+   <RetailCategoryNav/>
   </header>
   <nav className="retail-mobile-nav" aria-label="Mobile navigation"><Link href="/shop"><Store size={19}/>Shop</Link><Link href="/track"><PackageSearch size={19}/>Orders</Link><OffersNavLink compact/><Link href="/account"><UserRound size={19}/>Account</Link><Link href="/contact"><LifeBuoy size={19}/>Help</Link></nav>
   <div id="main-content" tabIndex={-1}>{children}</div>
