@@ -91,11 +91,12 @@ test("category navigation keeps readable contrast in light mode and a light labe
  assert.match(theme,/html\[data-theme="dark"\] \.retail-nav-inner>a,html\[data-theme="dark"\] \.retail-header-actions>a\{color:#c8d2d9\}/);
 });
 test("desktop category tabs and mobile category drawer expose the complete hierarchy",()=>{
- const layout=read("app/layout.tsx");
+ const categoryNav=read("components/RetailCategoryNav.tsx");
  const menu=read("components/MobileMenu.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
- assert.match(layout,/storeCategories\.map/);
- assert.match(layout,/retail-category-nav-link/);
+ assert.match(categoryNav,/storeCategories\.map/);
+ assert.match(categoryNav,/nexora-nav-category/);
+ assert.match(categoryNav,/categoryHref\(category,subcategory\)/);
  assert.match(menu,/storeCategories\.map/);
  assert.match(menu,/nexora-mobile-categories/);
  assert.match(taxonomy,/name:"Networking"/);

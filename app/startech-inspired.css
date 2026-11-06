@@ -156,3 +156,28 @@ body{background:var(--retail-bg);color:#1b2b38}
 @media(prefers-reduced-motion:reduce){
  .retail-category-card,.retail-product-card,.nexora-category-mega-links>a{transition:none}
 }
+
+/* Preserve the same retail hierarchy when customers switch to dark mode. */
+html[data-theme="dark"] .retail-site-header{background:#111e29;border-color:#293946}
+html[data-theme="dark"] .retail-header-actions>a{color:#d3dee5}
+html[data-theme="dark"] .retail-nav{background:#101f2b}
+html[data-theme="dark"] .nexora-category-mega{background:#14232f;border-color:#2c3d49;box-shadow:0 18px 44px #0008}
+html[data-theme="dark"] .nexora-category-mega-intro{border-color:#2b3c49}
+html[data-theme="dark"] .nexora-category-mega-intro>strong,html[data-theme="dark"] .nexora-category-mega-links>a span{color:#e3eaf0}
+html[data-theme="dark"] .nexora-category-mega-intro>p,html[data-theme="dark"] .nexora-category-mega-links>a small{color:#aab8c1}
+html[data-theme="dark"] .nexora-category-mega-links>a{background:#172632;border-color:#344653}
+html[data-theme="dark"] .nexora-category-mega-links>a:hover{background:#223746;border-color:#6d594e}
+html[data-theme="dark"] .retail-category-card,html[data-theme="dark"] .nexora-brand-directory,html[data-theme="dark"] .retail-product-card{background:#14232f;border-color:#2c3d49}
+html[data-theme="dark"] .retail-category-card strong,html[data-theme="dark"] .retail-product-name{color:#e3eaf0}
+html[data-theme="dark"] .retail-category-card small,html[data-theme="dark"] .retail-product-brand{color:#aab8c1}
+html[data-theme="dark"] .retail-product-image{background:#172632}
+html[data-theme="dark"] .nexora-brand-tile{background:#172632;border-color:#2c3d49}
+html[data-theme="dark"] .nexora-brand-tile strong{color:#e3eaf0}
+html[data-theme="dark"] .retail-trustbar{background:#14232f;border-color:#2c3d49}
+html[data-theme="dark"] .retail-trustbar>div{border-color:#2b3c49}
+html[data-theme="dark"] .retail-trustbar strong{color:#e3eaf0}
+html[data-theme="dark"] .retail-trustbar small{color:#aab8c1}
+html[data-theme="dark"] .retail-footer{background:#0b1721;border-color:#293946}
+html[data-theme="dark"] .retail-search{background:#172632;border-color:#344653}
+html[data-theme="dark"] .retail-search input{color:#e4ebf0}
+html[data-theme="dark"] .retail-header-actions .retail-offers-nav{background:#172632;border-color:#344653;color:#d3dee5}
