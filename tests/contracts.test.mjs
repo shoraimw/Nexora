@@ -420,3 +420,21 @@ test("homepage preview imagery is valid and visual QA fails on broken assets or 
  assert.ok(shoot.includes('page.keyboard.press("Escape")'));
  assert.ok(shoot.includes('Category mega-menu interaction QA failed'));
 });
+
+
+test("customer and owner price displays use a readable BDT fallback instead of a missing Taka glyph",()=>{
+ const files=[
+  "components/CommerceDetail.tsx",
+  "components/CommerceShop.tsx",
+  "lib/catalog.ts",
+  "app/cart/page.tsx",
+  "app/checkout/page.tsx",
+  "app/admin/page.tsx",
+  "app/track/page.tsx"
+ ];
+ for(const path of files){
+  const source=read(path);
+  assert.doesNotMatch(source,/৳/,path+" should not render an unsupported currency glyph");
+  assert.match(source,/BDT/,path+" should label monetary values in BDT");
+ }
+});
