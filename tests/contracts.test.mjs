@@ -193,25 +193,20 @@ test("review rating control uses an accessible fieldset and keyboard-operable bu
  assert.match(detail,/role="img"/);
 });
 
-test("Nexora homepage uses the previous lightweight CSS gadget showcase without WebGL",()=>{
+test("homepage uses the original rotating retail promo hero instead of a 3D gadget showroom",()=>{
  const live=read("components/CommerceHome.tsx");
  const demo=read("components/Storefront.tsx");
- const hero=read("components/Nexora3DHero.tsx");
- const css=read("app/hero-3d.css");
- const pkg=read("package.json");
- assert.match(live,/Nexora3DHero/);
- assert.match(demo,/Nexora3DHero/);
- assert.match(hero,/nexora-stage-parallax/);
- assert.match(hero,/nexora-device-phone/);
- assert.match(hero,/nexora-device-watch/);
- assert.ok(hero.includes("window.setInterval"));
- assert.ok(!hero.includes("Nexora3DScene"));
- assert.ok(css.includes("nexora-stage-parallax"));
- assert.ok(!css.includes("nexora-webgl-stage"));
- assert.ok(!pkg.includes('"three"'));
- assert.ok(!pkg.includes('"@types/three"'));
- assert.equal(existsSync(new URL("../components/Nexora3DScene.tsx",import.meta.url)),false);
- assert.ok(read("app/layout.tsx").includes('import "./hero-3d.css"'));
+ const chrome=read("components/RetailChrome.tsx");
+ const layout=read("app/layout.tsx");
+ assert.ok(live.includes("<RetailHero/>"));
+ assert.ok(demo.includes("<RetailHero/>"));
+ assert.ok(!live.includes("Nexora3DHero"));
+ assert.ok(!demo.includes("Nexora3DHero"));
+ assert.ok(chrome.includes("export function RetailHero()"));
+ assert.ok(chrome.includes("window.setInterval"));
+ assert.equal(existsSync(new URL("../components/Nexora3DHero.tsx",import.meta.url)),false);
+ assert.equal(existsSync(new URL("../app/hero-3d.css",import.meta.url)),false);
+ assert.ok(!layout.includes("hero-3d.css"));
 });
 test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
