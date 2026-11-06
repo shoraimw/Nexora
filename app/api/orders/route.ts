@@ -17,8 +17,11 @@ export async function POST(request:Request){
  if(x.paymentMethod==="cod"&&!settings.codEnabled)return bad("Cash on delivery unavailable",422);
  try{
   const token=tokenFor(x.idempotencyKey),user=await userFromRequest(request);
+  // A verified signed-in customer's account email is the canonical invoice destination.
+  // Guests receive the invoice at the email address entered during checkout.
+  const customerDetails=user?.email_confirmed_at&&user.email?{...x.customer,email:user.email.toLowerCase()}:x.customer;
   const {data,error}=await db().rpc("place_nexora_order",{p_key:x.idempotencyKey,p_track_hash:tokenHash(token),p_customer_id:user?.id||null,
-   p_details:x.customer,p_lines:x.items,p_method:x.paymentMethod,p_transaction:x.transactionId||null,p_sender:x.senderNumber||null,p_coupon:x.coupon||null});
+   p_details:customerDetails,p_lines:x.items,p_method:x.paymentMethod,p_transaction:x.transactionId||null,p_sender:x.senderNumber||null,p_coupon:x.coupon||null});
   if(error)return bad(/duplicate|stock|cart|coupon|transaction|invalid/i.test(error.message)?error.message:"Checkout could not complete",409);
   const {data:confirmed}=await db().from("orders").select("total_paisa,delivery_paisa").eq("id",data.id).maybeSingle();
   try{await deliverPendingEmails(1);}catch{}
