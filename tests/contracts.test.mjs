@@ -481,3 +481,33 @@ test("new order invoice is prioritized and atomically claimed before older queue
  assert.match(email,/status:"sending"/);
  assert.match(orders,/deliverPendingEmails\(1,data\.id\)/);
 });
+
+
+test("every Nexora product detail route has theme-aware dark-mode text, controls, tabs, specs and reviews",()=>{
+ const retail=read("app/retail-store.css");
+ const theme=read("app/startech-inspired.css");
+ const page=read("app/product/[slug]/page.tsx");
+ const live=read("components/CommerceDetail.tsx");
+ const shoot=read("scripts/shoot.py");
+ assert.match(retail,/\.detail-page \.detail-copy h1\{[^}]*color:var\(--product-detail-ink\)/);
+ assert.match(retail,/\.detail-page \.detail-description\{[^}]*color:var\(--product-detail-muted\)/);
+ assert.match(retail,/\.detail-page \.detail-price\{[^}]*border-color:var\(--product-detail-border\)/);
+ assert.match(theme,/--product-detail-ink:#f1f5f8/);
+ assert.match(theme,/--product-detail-muted:#c1cdd6/);
+ for(const selector of [
+  /html\[data-theme="dark"\] \.detail-page \.detail-copy h1/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-description/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-notice/,
+  /html\[data-theme="dark"\] \.detail-page \.variant-button/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-info-tabs/,
+  /html\[data-theme="dark"\] \.detail-page \.spec-table th/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-no-reviews/,
+  /html\[data-theme="dark"\] \.detail-page \.detail-review-form input/
+ ]) assert.match(theme,selector);
+ assert.match(page,/className="detail-page"/);
+ assert.match(live,/className="detail-page"/);
+ assert.match(shoot,/PRODUCT_CONTRAST_JS/);
+ assert.match(shoot,/contrast < 4\.5/);
+ assert.match(shoot,/productPathsDarkModeChecked/);
+ assert.match(shoot,/product detail contrast failed|product dark-mode contrast failed/i);
+});
