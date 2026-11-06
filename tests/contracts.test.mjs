@@ -331,7 +331,7 @@ test("custom 404 and print stylesheet are installed",()=>{
 
 test("live category visibility is shared by navigation, mobile menu, category grid, filters and direct routes",()=>{
  const api=read("app/api/categories/route.ts"),hook=read("components/useStoreCategories.ts"),nav=read("components/RetailCategoryNav.tsx"),mobile=read("components/MobileMenu.tsx"),chrome=read("components/RetailChrome.tsx"),shop=read("components/CommerceShop.tsx"),page=read("app/category/[slug]/[[...subcategory]]/page.tsx");
- assert.match(api,/\.eq\("active",true\)/);assert.match(hook,/data\.live===true/);assert.match(nav,/useStoreCategories/);assert.match(mobile,/useStoreCategories/);assert.match(chrome,/useStoreCategories/);assert.match(shop,/useStoreCategories/);assert.match(page,/activeCategories/);
+ assert.match(api,/\.eq\("active",true\)/);assert.match(hook,/data\.live===true/);assert.match(nav,/useStoreCategories/);assert.match(mobile,/useStoreCategories/);assert.match(chrome,/useStoreCategories/);assert.match(shop,/useStoreCategories/);assert.match(page,/resolveCategory/);assert.match(page,/\.eq\("active",true\)/);
 });
 test("all 13 category destinations remain visible in the featured category grid",()=>{
  const chrome=read("components/RetailChrome.tsx");
