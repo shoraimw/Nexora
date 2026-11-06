@@ -39,12 +39,14 @@ function ProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow
 type IndexedProduct=ShopFilterProduct&{product:LiveProduct};
 export function CommerceShop({homepage=false,initialCategory="All",initialSubcategory="",categoryDescription=""}:{homepage?:boolean;initialCategory?:string;initialSubcategory?:string;categoryDescription?:string}){
  const categoryTree=useStoreCategories();
- const [items,setItems]=useState<LiveProduct[]>([]),[ready,setReady]=useState(false),[filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
- useEffect(()=>{let active=true;const params=new URLSearchParams(window.location.search);
+ const [items,setItems]=useState<LiveProduct[]>([]),[ready,setReady]=useState(false),[catalogError,setCatalogError]=useState(false),[reloadCount,setReloadCount]=useState(0),[filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
+ useEffect(()=>{const params=new URLSearchParams(window.location.search);
   setFilters(f=>({...f,query:params.get("q")||"",category:params.get("category")||initialCategory||"All",subcategory:params.get("subcategory")||initialSubcategory||"",brand:params.get("brand")||"",connection:params.get("connection")==="wireless"?"wireless":params.get("connection")==="wired"?"wired":"all"}));
-  fetch("/api/catalog",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Catalog request failed");return r.json();}).then(x=>{if(active){setItems(x.products||[]);setReady(true);}}).catch(()=>{if(active)setReady(true);});
-  return()=>{active=false;};
  },[]);
+ useEffect(()=>{let active=true;setReady(false);setCatalogError(false);
+  fetch("/api/catalog",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Catalog request failed");return r.json();}).then(x=>{if(!active)return;if(x.live!==true||!Array.isArray(x.products))throw Error("Live catalogue is unavailable");setItems(x.products);setCatalogError(false);setReady(true);}).catch(()=>{if(active){setItems([]);setCatalogError(true);setReady(true);}});
+  return()=>{active=false;};
+ },[reloadCount]);
  const indexed=useMemo<IndexedProduct[]>(()=>items.map(p=>{const v=displayVariant(p);return{
   id:p.id,name:p.title,category:p.category,subcategory:p.subcategory,brand:p.brand,collections:p.collections,searchText:[p.description,p.warranty,...Object.values(p.specs||{}).map(String),...p.variants.flatMap(v=>[v.name,v.color||""])].join(" "),connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
   pricePaisa:v?.price_paisa||0,compareAtPaisa:v?.compare_at_paisa,available:p.variants.some(v=>v.available>0),
@@ -61,7 +63,7 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
  const homeGroups=useMemo(()=>["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Networking","Gaming"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5),category:categoryTree.find(c=>c.name===name)})).filter(g=>g.items.length),[items,categoryTree]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
   <RetailBrandDirectory brands={brands}/>
-  {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
+  {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:catalogError?<div className="retail-empty" role="alert"><h3>The catalogue is temporarily unavailable</h3><p>We couldn't verify the live product collection. Please try again in a moment.</p><button type="button" onClick={()=>setReloadCount(value=>value+1)}>Try again</button></div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
    <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured Products" items={featured}/>
    <ProductSection eyebrow="CUSTOMER FAVOURITES" title="Trending Products" items={trending}/>
    <ProductSection eyebrow="LATEST ADDITIONS" title="New Arrival" items={newest}/>
@@ -74,8 +76,8 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
   <div className="retail-shop-heading"><div><span className="retail-eyebrow">{initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES"}</span><h1>{filters.subcategory||filters.category!=="All"?filters.subcategory||filters.category:"Shop all gadgets"}</h1><p>{categoryDescription||"Search by brand, connection, availability and price."}</p></div><span>{shown.length} products</span></div>
   {categoryTree.find(category=>category.name===filters.category)?.subcategories.length?<nav className="nexora-subcategory-nav" aria-label={filters.category+" subcategories"}><Link href={categoryHref(categoryTree.find(category=>category.name===filters.category)!)} className={!filters.subcategory?"is-active":""}>All {filters.category}</Link>{categoryTree.find(category=>category.name===filters.category)!.subcategories.map(subcategory=><Link key={subcategory.slug} href={categoryHref(categoryTree.find(category=>category.name===filters.category)!,subcategory)} className={filters.subcategory===subcategory.name?"is-active":""}>{subcategory.name}</Link>)}</nav>:null}
   <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={shown.length} categories={categories} subcategories={subcategories}/>
-  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.subcategory||(filters.category==="All"?"All products":filters.category)}</strong><span>{ready?"Verified catalog listings":"Loading catalog"}</span></div>
-   {!ready?<div className="retail-loading">Loading products…</div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>{items.length?"No matching products":"No products published yet"}</h3><p>Adjust your search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,category:filters.category,query:filters.query})}>Clear filters in this category</button></div>}
+  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.subcategory||(filters.category==="All"?"All products":filters.category)}</strong><span>{!ready?"Loading catalog":catalogError?"Catalogue unavailable":"Verified catalog listings"}</span></div>
+   {!ready?<div className="retail-loading">Loading products…</div>:catalogError?<div className="retail-empty" role="alert"><h3>We couldn't load the catalogue</h3><p>Your filters are unchanged. Retry when the connection is available.</p><button type="button" onClick={()=>setReloadCount(value=>value+1)}>Try again</button></div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>{items.length?"No matching products":"No products published yet"}</h3><p>Adjust your search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,category:filters.category,query:filters.query})}>Clear filters in this category</button></div>}
   </section>
  </main>;
 }
