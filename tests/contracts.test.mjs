@@ -504,8 +504,8 @@ test("every Nexora product detail route has theme-aware dark-mode text, controls
   /html\[data-theme="dark"\] \.detail-page \.detail-no-reviews/,
   /html\[data-theme="dark"\] \.detail-page \.detail-review-form input/
  ]) assert.match(theme,selector);
- assert.match(page,/className="detail-page"/);
- assert.match(live,/className="detail-page"/);
+ assert.match(page,/className="container detail-page"/);
+ assert.match(live,/className="container detail-page"/);
  assert.match(shoot,/PRODUCT_CONTRAST_JS/);
  assert.match(shoot,/contrast < 4\.5/);
  assert.match(shoot,/productPagesDarkModeChecked/);
