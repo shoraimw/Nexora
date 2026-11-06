@@ -125,7 +125,7 @@ def with_playwright():
                     page.wait_for_selector("#nexora-category-mega-menu", state="detached", timeout=1500)
                     phones.click(timeout=2500)
                     page.wait_for_selector("#nexora-category-mega-menu", state="visible", timeout=1500)
-                    page.locator("body").click(position={"x": 5, "y": 220})
+                    page.locator("body").click(position={"x": 5, "y": 650})
                     page.wait_for_selector("#nexora-category-mega-menu", state="detached", timeout=1500)
                 except Exception as error:
                     raise RuntimeError(f"Category mega-menu interaction QA failed: {error}") from error
