@@ -43,6 +43,10 @@ jobs:
           done
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/orders)" = "503"
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/account/delete)" = "503"
+          curl -fsS -X POST -H 'Origin: http://127.0.0.1:3077' -H 'Content-Type: application/json' --data '{"message":"earbuds"}' http://127.0.0.1:3077/api/chat >/tmp/chat-same-origin.json
+          node -e 'const c=require("/tmp/chat-same-origin.json");if(c.live!==false||!c.answer)process.exit(1)'
+          status="$(curl -s -o /tmp/chat-cross-origin.json -w '%{http_code}' -X POST -H 'Origin: https://attacker.example' -H 'Content-Type: application/json' --data '{"message":"earbuds"}' http://127.0.0.1:3077/api/chat)"
+          test "$status" = "403"
           curl -fsS http://127.0.0.1:3077/api/newsletter >/tmp/newsletter.json
           node -e 'const n=require("/tmp/newsletter.json");if(n.available!==false)process.exit(1)'
           curl -fsS http://127.0.0.1:3077/api/categories >/tmp/categories.json
