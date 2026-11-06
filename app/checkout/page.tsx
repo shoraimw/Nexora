@@ -5,7 +5,7 @@ import {ArrowLeft,AlertTriangle,ShieldCheck} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 import {authHeaders} from "@/lib/browser";
 export default function Checkout(){
- const {items}=useCart();
+ const {items,clear}=useCart();
  const [enabled,setEnabled]=useState(false),[configured,setConfigured]=useState(false),[settings,setSettings]=useState({bkashEnabled:false,bkashNumber:"",nagadEnabled:false,nagadNumber:"",codEnabled:false,deliveryNotice:"Delivery fee confirmed separately.",deliveryEstimate:"ETA confirmed by support."}),[method,setMethod]=useState<"bkash"|"nagad"|"cod">("cod"),[loading,setLoading]=useState(false),[message,setMessage]=useState(""),[order,setOrder]=useState<{orderNo:string;trackingToken:string}|null>(null),[key,setKey]=useState("");
  const [quote,setQuote]=useState<{subtotalPaisa:number;deliveryPaisa:number;discountPaisa:number;totalPaisa:number;deliveryEta:string}|null>(null),[quoteError,setQuoteError]=useState("");
  const [name,setName]=useState(""),[email,setEmail]=useState(""),[phone,setPhone]=useState(""),[district,setDistrict]=useState(""),[area,setArea]=useState(""),[address,setAddress]=useState(""),[notes,setNotes]=useState(""),[coupon,setCoupon]=useState(""),[transactionId,setTransactionId]=useState(""),[sender,setSender]=useState("");
@@ -24,6 +24,7 @@ export default function Checkout(){
     idempotencyKey:key,customer:{name,email,phone,district,area,address,notes},items:items.map(x=>({variant_id:x.id,quantity:x.quantity})),paymentMethod:method,transactionId:transactionId||undefined,senderNumber:sender||undefined,coupon:coupon||undefined
    })});const data=await r.json();if(!r.ok)throw Error(data.error||"Checkout failed");
    setOrder({orderNo:data.orderNo,trackingToken:data.trackingToken});
+   clear();
    try{localStorage.setItem("nexora_order_"+data.orderNo,data.trackingToken);}catch{}
   }catch(error){setMessage(error instanceof Error?error.message:"Could not place order");}finally{setLoading(false);}
  }
