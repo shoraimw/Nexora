@@ -150,6 +150,7 @@ def with_playwright():
                 search = page.get_by_role("searchbox", name="Search the entire Nexora store")
                 search.fill("aero")
                 page.wait_for_timeout(450)
+                page.wait_for_selector(".nexora-search-product", state="visible", timeout=5000)
                 if page.locator(".nexora-search-product").count() < 1:
                     raise RuntimeError("Header product search did not return the preview catalogue match")
                 page.screenshot(path=str(out / "desktop-search-results.png"), full_page=False)
@@ -171,8 +172,12 @@ def with_playwright():
                 page.wait_for_selector(".cart-item", state="visible", timeout=3000)
                 page.screenshot(path=str(out / "desktop-cart.png"), full_page=True)
                 page.goto(base + "/checkout", wait_until="domcontentloaded", timeout=60000)
-                if not page.get_by_role("button", name="Place order").is_disabled():
-                    raise RuntimeError("Preview checkout unexpectedly allows order submission")
+                if page.locator(".preview-banner").count() != 1:
+                    raise RuntimeError("Preview checkout banner is missing")
+                if page.get_by_role("button", name="Place order").count() != 0:
+                    raise RuntimeError("Preview checkout unexpectedly renders a live order button")
+                if page.get_by_label("Full name").count() != 0:
+                    raise RuntimeError("Preview checkout unexpectedly collects personal details")
                 page.screenshot(path=str(out / "desktop-checkout-preview.png"), full_page=True)
 
                 # Capture the remaining customer and owner routes.

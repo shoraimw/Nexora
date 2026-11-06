@@ -362,6 +362,9 @@ test("cart clears after an accepted order and configured mode never renders prev
  assert.match(page,/health\?\.mode!=="preview"/);assert.match(page,/if\(mode\)return null/);assert.match(page,/Saved preview or unavailable items were removed/);
  assert.match(checkout,/const \{items,clear\}=useCart\(\)/);assert.match(checkout,/clear\(\)/);
 });
+test("preview checkout collects no personal or payment details and shows an explicit safe state",()=>{
+ const checkout=read("app/checkout/page.tsx");assert.match(checkout,/Checkout is in preview mode/);assert.match(checkout,/No personal or payment information is collected/);assert.match(checkout,/!enabled\?/);assert.match(checkout,/items\.length===0\?/);
+});
 test("search only shows demo products when the catalogue API explicitly reports preview mode",()=>{
  const search=read("components/SiteSearch.tsx");assert.match(search,/data\.live===false/);assert.match(search,/setCatalogError\(true\)/);assert.doesNotMatch(search,/useState<SearchProduct\[]>\(demo\)/);
 });

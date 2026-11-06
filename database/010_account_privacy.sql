@@ -40,6 +40,10 @@ begin
  from public.orders o
  where e.order_id=o.id and (o.customer_id=p_user_id or lower(o.email)=lower(v_original_email));
 
+ update public.newsletter_subscribers
+ set email=v_private_email,status='unsubscribed',unsubscribed_at=now()
+ where lower(email)=lower(v_original_email);
+
  update public.orders
  set customer_id=null,
      full_name='Deleted customer',
