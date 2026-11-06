@@ -287,14 +287,14 @@ body{background:var(--retail-bg);color:var(--retail-ink);font-family:Inter,"Sego
 .retail-header-actions .retail-cart:hover{background:#27485e;color:#fff}
 .retail-detail-photo{height:550px}
 .detail-page{padding-top:28px;padding-bottom:80px}
-.detail-page .back-link{margin-bottom:25px;color:#65737d}
+.detail-page .back-link{margin-bottom:25px;color:var(--product-detail-muted)}
 .detail-page .detail-grid{gap:clamp(30px,5vw,72px)}
-.detail-page .detail-copy h1{font-size:clamp(32px,3.6vw,48px);letter-spacing:-1.8px;color:#192833}
-.detail-page .detail-description{font-size:13px;color:#6d7a83;line-height:1.8}
-.detail-page .detail-price{border-color:#e3e8eb;color:#192833}
+.detail-page .detail-copy h1{font-size:clamp(32px,3.6vw,48px);letter-spacing:-1.8px;color:var(--product-detail-ink)}
+.detail-page .detail-description{font-size:13px;color:var(--product-detail-muted);line-height:1.8}
+.detail-page .detail-price{border-color:var(--product-detail-border);color:var(--product-detail-ink)}
 .detail-page .detail-art,.detail-page .demo-detail-photo,.detail-page .detail-product-image{background:#fff;border:1px solid #e5e9ec;border-radius:5px}
 .detail-page .demo-detail-photo img,.detail-page .detail-product-image img{object-fit:contain}
-.detail-page .detail-notice{border-radius:4px;background:#f5f7f8;border-color:#e4e9ec}
+.detail-page .detail-notice{border-radius:4px;background:var(--product-detail-soft);border-color:var(--product-detail-border);color:var(--product-detail-muted)}
 .detail-page .variant-button,.detail-page .variant-row span{border-radius:4px}
 .detail-page .primary-button{border-radius:4px}
 .retail-shop-page .retail-product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
