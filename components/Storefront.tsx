@@ -8,8 +8,7 @@ import {useCart} from "@/components/CartProvider";
 import {ChatWidget} from "@/components/ChatWidget";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
-import {RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
-import {Nexora3DHero} from "@/components/Nexora3DHero";
+import {RetailHero,RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
 import {RetailBrandDirectory} from "@/components/RetailBrandDirectory";
 function DemoProductCard({product}:{product:Product}){
  const {add}=useCart();
@@ -33,7 +32,7 @@ function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eye
 export function Storefront(){
  const demoBrands=Array.from(new Set(products.map(p=>p.brand).filter((b):b is string=>!!b)));
  return <main className="retail-home">
-  <div className="retail-container"><Nexora3DHero/><RetailTrustBar/><RetailCategoryGrid/>
+  <div className="retail-container"><RetailHero/><RetailTrustBar/><RetailCategoryGrid/>
    <div className="retail-home-catalog">
     <RetailBrandDirectory brands={demoBrands} preview/>
     <DemoProductSection eyebrow="CURATED DEMO PREVIEW" title="Featured Products" items={products.slice(0,5)}/>

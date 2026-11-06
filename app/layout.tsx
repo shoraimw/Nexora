@@ -21,7 +21,6 @@ import "./retail-interactions.css";
 import "./offers.css";
 import "./gadget-layout.css";
 import "./category-experience.css";
-import "./hero-3d.css";
 import "./site-experience.css";
 import "./print.css";
 export const metadata:Metadata={
