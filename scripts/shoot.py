@@ -105,8 +105,8 @@ def with_playwright():
                 # Exercise the category menu, not just the closed homepage.
                 try:
                     menu = page.locator("#nexora-category-mega-menu")
-                    phones = page.get_by_role("button", name="Phones")
-                    mac = page.get_by_role("button", name="Mac")
+                    phones = page.get_by_role("button", name="Phones", exact=True)
+                    mac = page.get_by_role("button", name="Mac", exact=True)
                     phones.click(timeout=2500)
                     page.wait_for_selector("#nexora-category-mega-menu", state="visible", timeout=1500)
                     mac.click(timeout=2500)

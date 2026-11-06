@@ -358,7 +358,7 @@ test("homepage preview imagery is valid and visual QA fails on broken assets or 
  assert.ok(shoot.includes('if qa.get("brokenImages"):'));
  assert.ok(shoot.includes('if qa.get("consoleErrors"):'));
  assert.ok(shoot.includes("document.querySelector('.nexora-theme-toggle')?.click()"));
- assert.ok(shoot.includes('page.get_by_role("button", name="Phones")'));
+ assert.ok(shoot.includes('page.get_by_role("button", name="Phones", exact=True)'));
  assert.ok(shoot.includes('page.screenshot(path=str(out / "desktop-category-menu.png"))'));
  assert.ok(shoot.includes('page.keyboard.press("Escape")'));
  assert.ok(shoot.includes('Category mega-menu interaction QA failed'));
