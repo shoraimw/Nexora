@@ -42,7 +42,7 @@
 ## Communication and privacy
 - [ ] Newsletter opt-in migration 008 applied; consent records remain private to owners
 - [ ] Newsletter delivery stays disabled until a verified sender and unsubscribe process are ready
-- [ ] Sender domain/email verified; order received/verified/shipped/delivered emails tested
+- [ ] Sender domain/email verified; order received emails include a PDF invoice for verified account emails and guest checkout emails; payment/shipping/delivery updates tested with real inboxes
 - [ ] Email failure retry and duplicate-delivery protections tested
 - [ ] Guest tracking token cannot be guessed; another person's invoice inaccessible
 - [ ] Chat opt-in, browser retention and password-confirmed account deletion tested after applying migration 010; verify order and payment records are anonymized while accounting rows remain

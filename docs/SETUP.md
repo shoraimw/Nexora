@@ -78,12 +78,16 @@ Replace the placeholders with the verified addresses. Check that exactly two int
 - Record overpayments and process refunds **outside the website** through the actual provider first. Only then record refund reference in admin.
 - Steadfast booking is initially manual. Enter the real consignment ID and approved tracking URL before marking shipped.
 
-## 6. Emails
+## 6. Emails and automatic PDF invoices
 
-- Set up and verify a Brevo Free sender and server-side API key.
-- After an order transaction is committed, the database creates an outbox message. The server tries to dispatch it.
-- On failure, email stays failed for manual retry from the admin Marketing area. Email failure must never mark payment verified.
-- Brevo free-tier quotas, sender limits and deliverability can change. Check them before public use.
+- Set up and verify a Brevo sender and server-side API key. Configure `BREVO_API_KEY` and `BREVO_SENDER_EMAIL` only in the hosting provider's encrypted server environment.
+- After an order transaction is committed, the database creates an `order_received` outbox message. The server generates a PDF invoice and sends it as an attachment to the order email.
+- For a signed-in customer with a verified email, the verified Supabase account email is the invoice destination and is prefilled/read-only at checkout. Guests receive the invoice at the email address entered during checkout.
+- The invoice includes the order number/date, customer and delivery details, product names/variants, quantities, unit prices, subtotal, delivery, discount, total due, order status and payment status. bKash/Nagad claims are explicitly marked pending until an owner verifies the payment.
+- The customer email includes an invoice summary in the message body and the downloadable PDF attachment. The customer can also retrieve the same invoice through the existing protected invoice download route.
+- Later payment-confirmed, shipped, delivered and cancelled events continue to use the existing order-update email flow.
+- If the provider rejects an email or invoice generation fails, the order remains committed and the outbox item is marked failed for owner retry from the admin Marketing area. Email failure must never mark payment verified or roll back an accepted order.
+- Test delivery using a verified staging sender and real test inboxes before enabling live checkout. Check Brevo quotas, sender limits, spam placement and deliverability before public use.
 
 ## 7. Chatbot
 

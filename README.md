@@ -21,7 +21,7 @@ Premium, mobile-first gadget commerce system for Nexora. Built with Next.js 15, 
 - Product page with images, description, technical specifications, variants, live stock, customer ratings and verified-purchase reviews (owner-moderated)
 - Browser shopping cart, guest checkout, coupons, bKash / Nagad manual claims, Cash on Delivery
 - Customer sign-in/sign-up, optional profile photo, delivery details, order list, and password-confirmed account deletion with anonymized order retention
-- Private guest order tracking, customer order timeline and downloadable PDF invoice
+- Private guest order tracking, customer order timeline, downloadable PDF invoice and automatic order-confirmation email with the PDF invoice attached (verified account email for signed-in customers; checkout email for guests)
 - Consent-based browser chat history; account-synced chat history after sign-in and opt-in
 - Database-grounded shopping assistant (text for guests, product images for signed-in customers)
 - Optional Gemini Free Tier paraphrasing of **public verified catalog data only**, OFF by default

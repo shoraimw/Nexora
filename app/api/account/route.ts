@@ -10,7 +10,7 @@ export async function GET(req:Request){
  ]);
  let avatarUrl:string|null=null;
  if(profile?.avatar_url){const {data}=await db().storage.from("nexora-avatars").createSignedUrl(profile.avatar_url,3600);avatarUrl=data?.signedUrl||null;}
- return ok({email:user.email,profile,avatarUrl,orders:orders||[]});
+ return ok({email:user.email,emailVerified:!!user.email_confirmed_at,profile,avatarUrl,orders:orders||[]});
 }
 export async function POST(req:Request){
  if(!configured)return bad("Accounts unavailable",503);
