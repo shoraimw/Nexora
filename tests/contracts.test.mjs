@@ -204,14 +204,14 @@ test("Nexora homepage uses the previous lightweight CSS gadget showcase without 
  assert.match(hero,/nexora-stage-parallax/);
  assert.match(hero,/nexora-device-phone/);
  assert.match(hero,/nexora-device-watch/);
- assert.match(hero,/window\\.setInterval/);
- assert.doesNotMatch(hero,/Nexora3DScene/);
- assert.match(css,/nexora-stage-parallax/);
- assert.doesNotMatch(css,/nexora-webgl-stage/);
- assert.doesNotMatch(pkg,/"three"/);
- assert.doesNotMatch(pkg,/@types\\/three/);
+ assert.ok(hero.includes("window.setInterval"));
+ assert.ok(!hero.includes("Nexora3DScene"));
+ assert.ok(css.includes("nexora-stage-parallax"));
+ assert.ok(!css.includes("nexora-webgl-stage"));
+ assert.ok(!pkg.includes('"three"'));
+ assert.ok(!pkg.includes('"@types/three"'));
  assert.equal(existsSync(new URL("../components/Nexora3DScene.tsx",import.meta.url)),false);
- assert.match(read("app/layout.tsx"),/hero-3d\\.css/);
+ assert.ok(read("app/layout.tsx").includes('import "./hero-3d.css"'));
 });
 test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
@@ -301,13 +301,13 @@ test("all 13 category destinations remain visible in the featured category grid"
 test("desktop and mobile visual QA runs in CI and catches broken images, overflow and console errors",()=>{
  const shoot=read("scripts/shoot.py");
  const workflow=read(".github/workflows/ci.yml");
- assert.match(shoot,/desktop-early\\.png/);
- assert.match(shoot,/horizontalOverflow/);
- assert.match(shoot,/brokenImages/);
- assert.match(shoot,/consoleErrors/);
- assert.match(workflow,/Install Playwright for visual QA/);
- assert.match(workflow,/nexora-visual-review/);
- assert.match(workflow,/python scripts\\/shoot\\.py/);
+ assert.ok(shoot.includes("desktop-early.png"));
+ assert.ok(shoot.includes("horizontalOverflow"));
+ assert.ok(shoot.includes("brokenImages"));
+ assert.ok(shoot.includes("consoleErrors"));
+ assert.ok(workflow.includes("Install Playwright for visual QA"));
+ assert.ok(workflow.includes("nexora-visual-review"));
+ assert.ok(workflow.includes("python scripts/shoot.py"));
 });
 
 test("homepage preview imagery is valid and visual QA fails on broken assets or overflow",()=>{
@@ -315,8 +315,8 @@ test("homepage preview imagery is valid and visual QA fails on broken assets or 
  const shoot=read("scripts/shoot.py");
  assert.doesNotMatch(catalog,/photo-1609592806596-b43badaf3b26/);
  assert.match(catalog,/photo-1601898532138-9f145a2ad69e/);
- assert.match(shoot,/if qa\\.get\\("horizontalOverflow"\\):/);
- assert.match(shoot,/if qa\\.get\\("brokenImages"\\):/);
- assert.match(shoot,/if qa\\.get\\("consoleErrors"\\):/);
- assert.match(shoot,/document\\.querySelector\\('\\.nexora-theme-toggle'\\)\\?\\.click\\(\\)/);
+ assert.ok(shoot.includes('if qa.get("horizontalOverflow"):'));
+ assert.ok(shoot.includes('if qa.get("brokenImages"):'));
+ assert.ok(shoot.includes('if qa.get("consoleErrors"):'));
+ assert.ok(shoot.includes("document.querySelector('.nexora-theme-toggle')?.click()"));
 });
