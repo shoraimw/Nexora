@@ -114,6 +114,13 @@ PRODUCT_CONTRAST_JS = """() => {
     if (contact && getComputedStyle(contact).display !== "none") {
       failures.push({label: "mobile contact shortcut must not cover product information", contrast: 0, selector: ".nexora-floating-contact"});
     }
+    const mobileNav = document.querySelector(".retail-mobile-nav");
+    if (mobileNav && getComputedStyle(mobileNav).display !== "none") {
+      failures.push({label: "mobile bottom navigation must not cover product detail controls", contrast: 0, selector: ".retail-mobile-nav"});
+    }
+    if (Number.parseFloat(getComputedStyle(document.body).paddingBottom) > 0) {
+      failures.push({label: "product detail must not reserve space for hidden mobile bottom navigation", contrast: 0, selector: "body"});
+    }
   }
   return {checked: checks.length, checks, missing, failures};
 }"""
