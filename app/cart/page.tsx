@@ -5,7 +5,7 @@ import {ArrowLeft,ArrowRight,Minus,Plus,Trash2} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 import {products as demo,currency} from "@/lib/catalog";
 import type {LiveProduct} from "@/lib/catalog-live";
-const cash=(n:number)=>"৳"+(n/100).toLocaleString("en-BD");
+const cash=(n:number)=>"BDT "+(n/100).toLocaleString("en-BD");
 export default function CartPage(){
  const {items,change,remove}=useCart();const [live,setLive]=useState<LiveProduct[]>([]),[mode,setMode]=useState<boolean|null>(null),[catalogAvailable,setCatalogAvailable]=useState(false),[catalogReady,setCatalogReady]=useState(false),[notice,setNotice]=useState("");
  useEffect(()=>{let active=true;const load=async()=>{const [health,catalog]=await Promise.all([fetch("/api/health",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null),fetch("/api/catalog",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null)]);if(!active)return;const liveMode=health?.mode==="configured"||catalog?.live===true;const previewMode=!liveMode&&(health?.mode==="preview"||catalog?.live===false);const liveCatalogReady=liveMode&&catalog?.live===true&&Array.isArray(catalog?.products);setMode(liveMode?true:previewMode?false:null);setCatalogAvailable(liveCatalogReady||previewMode);setLive(liveCatalogReady?catalog.products:[]);if(liveMode&&!liveCatalogReady)setNotice("The live catalogue could not be checked. Your saved bag is being kept, but checkout is unavailable until the catalogue can be verified.");else if(!liveMode&&!previewMode)setNotice("Store mode could not be verified. Your saved bag is being kept and checkout remains unavailable.");setCatalogReady(true);};void load();return()=>{active=false;};},[]);
