@@ -3,13 +3,25 @@ import {db} from "@/lib/server";
 import {buildInvoicePdf} from "@/lib/invoice-pdf";
 const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]!));
 const bdt=(paisa:number)=>(Number(paisa||0)/100).toLocaleString("en-BD",{minimumFractionDigits:2,maximumFractionDigits:2});
-export async function deliverPendingEmails(max=3){
+export async function deliverPendingEmails(max=3,preferredOrderId?:string){
  const key=process.env.BREVO_API_KEY,from=process.env.BREVO_SENDER_EMAIL;
  if(!key||!from)return {sent:0,disabled:true};
- let sent=0;
+ let sent=0,preferred=preferredOrderId;
  for(let n=0;n<Math.min(max,10);n++){
-  const {data:id,error:claimError}=await db().rpc("nexora_claim_email");
-  if(claimError||!id)break;
+  let id:string|null=null;
+  if(preferred){
+   const {data:pending,error:pendingError}=await db().from("outbound_emails").select("id,attempts").eq("order_id",preferred).eq("kind","order_received").eq("status","queued").maybeSingle();
+   if(!pendingError&&pending){
+    const {data:claimed,error:claimSpecificError}=await db().from("outbound_emails").update({status:"sending",locked_at:new Date().toISOString(),attempts:pending.attempts+1,last_error:null}).eq("id",pending.id).eq("status","queued").eq("attempts",pending.attempts).select("id").maybeSingle();
+    if(!claimSpecificError&&claimed)id=claimed.id;
+   }
+   preferred=undefined;
+  }
+  if(!id){
+   const {data:claimedId,error:claimError}=await db().rpc("nexora_claim_email");
+   if(claimError||!claimedId)break;
+   id=claimedId;
+  }
   try{
    const {data:outbox,error:e1}=await db().from("outbound_emails").select("*").eq("id",id).single();
    if(e1||!outbox)throw new Error("Missing message");
