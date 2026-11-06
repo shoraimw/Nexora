@@ -5,7 +5,7 @@ import {ShoppingBag,ArrowLeft,Truck,ShieldCheck,Star,CheckCircle2,Send} from "lu
 import {useCart} from "@/components/CartProvider";
 import {authHeaders,browserDb} from "@/lib/browser";
 import type {LiveProduct} from "@/lib/catalog-live";
-const money=(v:number)=>"৳"+(v/100).toLocaleString("en-BD",{maximumFractionDigits:2});
+const money=(v:number)=>"BDT "+(v/100).toLocaleString("en-BD",{maximumFractionDigits:2});
 type Review={id:string;rating:number;title:string;body:string;verified_purchase:boolean;created_at:string};
 type ReviewPayload={count:number;average:number;reviews:Review[];canReview:boolean;hasReviewed:boolean;signedIn:boolean;emailVerified:boolean};
 function StarDisplay({value}:{value:number}){

@@ -37,14 +37,26 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/)" = "200"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/shop)" = "200"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/product/aero-buds)" = "200"
-          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3077/checkout)" = "200"
+          for route in /cart /account /track /offers /contact /policies /admin /category/pc-accessories/desk-setup; do
+            status="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:3077$route")"
+            test "$status" = "200" || { echo "Route $route returned $status"; exit 1; }
+          done
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/orders)" = "503"
-          echo "Preview is readable and payment submission is disabled."
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3077/api/account/delete)" = "503"
+          curl -fsS -X POST -H 'Origin: http://127.0.0.1:3077' -H 'Content-Type: application/json' --data '{"message":"earbuds"}' http://127.0.0.1:3077/api/chat >/tmp/chat-same-origin.json
+          node -e 'const c=require("/tmp/chat-same-origin.json");if(c.live!==false||!c.answer)process.exit(1)'
+          status="$(curl -s -o /tmp/chat-cross-origin.json -w '%{http_code}' -X POST -H 'Origin: https://attacker.example' -H 'Content-Type: application/json' --data '{"message":"earbuds"}' http://127.0.0.1:3077/api/chat)"
+          test "$status" = "403"
+          curl -fsS http://127.0.0.1:3077/api/newsletter >/tmp/newsletter.json
+          node -e 'const n=require("/tmp/newsletter.json");if(n.available!==false)process.exit(1)'
+          curl -fsS http://127.0.0.1:3077/api/categories >/tmp/categories.json
+          node -e 'const c=require("/tmp/categories.json");if(c.live!==false)process.exit(1)'
+          echo "Customer routes are readable; account deletion, newsletter collection and payment submission remain safely disabled in preview."
       - name: Install Playwright for visual QA
         run: |
           python -m pip install --disable-pip-version-check playwright
-          python -m playwright install --with-deps chromium
-      - name: Capture desktop and mobile screenshots
+          python -m playwright install chromium
+      - name: Capture five responsive viewports and shopping journeys
         shell: bash
         run: |
           set -euo pipefail

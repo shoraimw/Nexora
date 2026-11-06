@@ -4,7 +4,7 @@ export async function GET(req:Request){
  if(!configured)return bad("Backend not configured",503);
  if(!await requireOwner(req))return bad("Owner access required",403);
  const s=db();
- const [products,variants,inventory,categories,images,orders,claims,coupons,faqs,emails,zones,offers,reviews,newsletter]=await Promise.all([
+ const [products,variants,inventory,categories,images,orders,claims,coupons,faqs,emails,zones,offers,reviews,newsletter,auditLogs]=await Promise.all([
   s.from("products").select("*").is("deleted_at",null).order("created_at",{ascending:false}).limit(300),
   s.from("variants").select("*").limit(1500),
   s.from("inventory").select("*").limit(1500),
@@ -18,8 +18,9 @@ export async function GET(req:Request){
   s.from("delivery_zones").select("*").order("district"),
   s.from("store_offers").select("*").order("sort_order").order("created_at",{ascending:false}).limit(100),
   s.from("product_reviews").select("id,product_id,rating,title,body,status,verified_purchase,created_at").order("created_at",{ascending:false}).limit(150),
-  s.from("newsletter_subscribers").select("id,email,created_at,status").order("created_at",{ascending:false}).limit(200)
+  s.from("newsletter_subscribers").select("id,email,created_at,status").order("created_at",{ascending:false}).limit(200),
+  s.from("audit_logs").select("id,action,object_type,object_id,created_at").order("created_at",{ascending:false}).limit(50)
  ]);
- if([products,variants,inventory,categories,images,orders,claims,coupons,faqs,emails,zones,offers,reviews].some(x=>x.error))return bad("Dashboard data unavailable",503);
- return ok({products:products.data,variants:variants.data,inventory:inventory.data,categories:categories.data,images:images.data,orders:orders.data,claims:claims.data,coupons:coupons.data,faqs:faqs.data,emails:emails.data,zones:zones.data,offers:offers.data,reviews:reviews.data,newsletterSubscribers:newsletter.error?[]:newsletter.data,newsletterEnabled:!newsletter.error});
+ if([products,variants,inventory,categories,images,orders,claims,coupons,faqs,emails,zones,offers,reviews,auditLogs].some(x=>x.error))return bad("Dashboard data unavailable",503);
+ return ok({products:products.data,variants:variants.data,inventory:inventory.data,categories:categories.data,images:images.data,orders:orders.data,claims:claims.data,coupons:coupons.data,faqs:faqs.data,emails:emails.data,zones:zones.data,offers:offers.data,reviews:reviews.data,newsletterSubscribers:newsletter.error?[]:newsletter.data,newsletterEnabled:!newsletter.error,auditLogs:auditLogs.data});
 }

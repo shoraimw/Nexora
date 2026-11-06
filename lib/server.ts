@@ -17,5 +17,5 @@ export function tokenMatches(token:string,storedHash:string){
  return candidate.length===expected.length&&timingSafeEqual(candidate,expected);
 }
 export const price=(paisa:number)=>"৳"+(paisa/100).toLocaleString("en-BD",{maximumFractionDigits:2});
-export function sameOrigin(req:Request){const origin=req.headers.get("origin");if(!origin)return true;try{return new URL(origin).origin===new URL(req.url).origin;}catch{return false;}}
+export function sameOrigin(req:Request){const origin=req.headers.get("origin");if(!origin)return true;try{const source=new URL(origin),target=new URL(req.url);const host=(req.headers.get("x-forwarded-host")||req.headers.get("host")||target.host).split(",")[0].trim().toLowerCase();const protocol=(req.headers.get("x-forwarded-proto")||target.protocol.replace(/:$/,"")).split(",")[0].trim().toLowerCase();return source.host.toLowerCase()===host&&source.protocol.toLowerCase()===protocol+":";}catch{return false;}}
 export function safeError(error:unknown){const message=error instanceof Error?error.message:String(error);return /stock|cart|coupon|payment method|transaction id|already used|duplicate|invalid customer/i.test(message)?message:"Could not process your request";}

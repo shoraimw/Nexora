@@ -3,6 +3,7 @@ import {configured,db,readBody,bad,ok,sameOrigin} from "@/lib/server";
 import {rateAllow} from "@/lib/rate";
 export const dynamic="force-dynamic";
 const inputSchema=z.object({email:z.string().trim().email().max(254),consent:z.literal(true),company:z.string().max(0).optional()});
+export async function GET(){if(!configured)return ok({available:false});try{const {error}=await db().from("newsletter_subscribers").select("id").limit(1);return ok({available:!error});}catch{return ok({available:false});}}
 export async function POST(req:Request){
  if(!sameOrigin(req))return bad("Origin rejected",403);
  if(!configured)return bad("Newsletter signup is unavailable until the Nexora database is configured.",503);

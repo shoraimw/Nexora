@@ -6,10 +6,10 @@ Usage:
   python scripts/shoot.py path/to/index.html [out_dir] [--wait 2.5] [--full]
   python scripts/shoot.py http://localhost:5173 [out_dir]
 
-Writes desktop (1440x900) and mobile (390x844) screenshots after entrance
-animations settle, plus an "early" desktop frame (0.35s) to check the first
-paint, then prints a QA report: console errors, failed requests (broken asset
-URLs), horizontal overflow, fonts, videos and images that did not load.
+Writes five responsive viewport captures (1440, 1280, 768, 390 and 360px),
+plus route and interaction screenshots for search, filters, category navigation,
+product detail, cart, checkout, account, tracking, help, policies and the mobile
+drawer. It reports console errors, horizontal overflow, fonts, videos and broken images.
 
 Needs Playwright:  pip install playwright && python -m playwright install chromium
 Falls back to headless Chrome (screenshots only, no QA) if Playwright is missing.
@@ -28,7 +28,7 @@ wait = float(flags[flags.index("--wait") + 1]) if "--wait" in flags else 2.5
 full = "--full" in flags
 url = target if "://" in target else Path(target).resolve().as_uri()
 
-VIEWS = [("desktop", 1440, 900), ("mobile", 390, 844)]
+VIEWS = [("desktop", 1440, 900), ("desktop-compact", 1280, 800), ("tablet", 768, 1024), ("mobile", 390, 844), ("mobile-small", 360, 800)]
 
 QA_JS = """() => {
   const vw = document.documentElement.clientWidth;
@@ -62,10 +62,10 @@ def with_playwright():
         report["browser"] = engine
         for name, w, h in VIEWS:
             ctx = browser.new_context(viewport={"width": w, "height": h}, device_scale_factor=1,
-                                      is_mobile=name == "mobile", has_touch=name == "mobile")
+                                      is_mobile=name in ("mobile", "mobile-small"), has_touch=name in ("tablet", "mobile", "mobile-small"))
             page = ctx.new_page()
             errors, failed = [], []
-            page.on("console", lambda m: errors.append(m.text[:200]) if m.type == "error" else None)
+            page.on("console", lambda m: errors.append(f"{m.text[:200]} [at {m.location}]") if m.type == "error" else None)
             page.on("pageerror", lambda e: errors.append(str(e)[:200]))
             page.on("requestfailed", lambda r: failed.append(f"{r.url[:100]} ({r.failure})"))
             page.on("response", lambda r: failed.append(f"{r.url[:100]} (HTTP {r.status})") if r.status >= 400 else None)
@@ -79,7 +79,7 @@ def with_playwright():
                 pass
             page.wait_for_timeout(int(wait * 1000))
             try:
-                page.get_by_role("button", name="Show promotion 01").click(timeout=1200)
+                page.locator(".retail-slider-dots button").first.click(timeout=1200)
                 page.wait_for_timeout(120)
             except Exception:
                 pass
@@ -90,7 +90,7 @@ def with_playwright():
             except Exception:
                 print("[visual QA] cookie notice remained visible after the consent click")
             try:
-                page.locator(".nexora-hero-dots button").first.click(force=True, timeout=1200)
+                page.locator(".retail-slider-dots button").first.click(force=True, timeout=1200)
                 page.wait_for_timeout(120)
             except Exception:
                 pass
@@ -101,6 +101,20 @@ def with_playwright():
                 page.evaluate("window.scrollTo(0, 0)")
                 page.wait_for_timeout(250)
             page.screenshot(path=str(out / f"{name}.png"), full_page=full)
+            if name == "mobile":
+                try:
+                    page.get_by_role("button", name="Open navigation menu").click(timeout=2500)
+                    panel = page.locator("#nexora-mobile-menu")
+                    page.wait_for_selector("#nexora-mobile-menu", state="visible", timeout=1500)
+                    page.screenshot(path=str(out / "mobile-menu.png"), full_page=False)
+                    page.get_by_role("button", name="Close navigation menu").focus()
+                    page.keyboard.press("Shift+Tab")
+                    if not panel.evaluate("(el) => el.contains(document.activeElement)"):
+                        raise RuntimeError("Keyboard focus escaped the mobile navigation dialog")
+                    page.keyboard.press("Escape")
+                    page.wait_for_selector("#nexora-mobile-menu", state="detached", timeout=1500)
+                except Exception as error:
+                    raise RuntimeError(f"Mobile navigation keyboard QA failed: {error}") from error
             if name == "desktop":
                 # Exercise the category menu, not just the closed homepage.
                 try:
@@ -129,6 +143,65 @@ def with_playwright():
                     page.wait_for_selector("#nexora-category-mega-menu", state="detached", timeout=1500)
                 except Exception as error:
                     raise RuntimeError(f"Category mega-menu interaction QA failed: {error}") from error
+            if name == "desktop":
+                base = url.rstrip("/")
+                # Header search must return catalogue-backed preview matches.
+                page.goto(base, wait_until="domcontentloaded", timeout=60000)
+                search = page.get_by_role("searchbox", name="Search the entire Nexora store")
+                search.fill("aero")
+                page.wait_for_timeout(450)
+                page.wait_for_selector(".nexora-search-product", state="visible", timeout=5000)
+                if page.locator(".nexora-search-product").count() < 1:
+                    raise RuntimeError("Header product search did not return the preview catalogue match")
+                page.screenshot(path=str(out / "desktop-search-results.png"), full_page=False)
+                search.press("Escape")
+
+                # Product filters must open as a keyboard-dismissible dialog.
+                page.goto(base + "/shop", wait_until="domcontentloaded", timeout=60000)
+                page.locator(".retail-filter-trigger").click(timeout=2500)
+                page.wait_for_selector("#nexora-filter-drawer", state="visible", timeout=1500)
+                page.screenshot(path=str(out / "desktop-shop-filters.png"), full_page=False)
+                page.keyboard.press("Escape")
+                page.wait_for_selector("#nexora-filter-drawer", state="detached", timeout=1500)
+
+                # Add a preview product, verify the bag and confirm checkout stays disabled.
+                page.goto(base + "/product/aero-buds", wait_until="domcontentloaded", timeout=60000)
+                page.get_by_role("button", name="Add to demo bag").click(timeout=2500)
+                page.screenshot(path=str(out / "desktop-product-detail.png"), full_page=True)
+                page.goto(base + "/cart", wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_selector(".cart-item", state="visible", timeout=3000)
+                page.screenshot(path=str(out / "desktop-cart.png"), full_page=True)
+                page.goto(base + "/checkout", wait_until="domcontentloaded", timeout=60000)
+                if page.locator(".preview-banner").count() != 1:
+                    raise RuntimeError("Preview checkout banner is missing")
+                if page.get_by_role("button", name="Place order").count() != 0:
+                    raise RuntimeError("Preview checkout unexpectedly renders a live order button")
+                if page.get_by_label("Full name").count() != 0:
+                    raise RuntimeError("Preview checkout unexpectedly collects personal details")
+                page.screenshot(path=str(out / "desktop-checkout-preview.png"), full_page=True)
+
+                # Capture the remaining customer and owner routes.
+                for route, filename in [
+                    ("/account", "desktop-account-preview.png"),
+                    ("/track", "desktop-order-tracking.png"),
+                    ("/offers", "desktop-offers.png"),
+                    ("/contact", "desktop-contact.png"),
+                    ("/policies", "desktop-policies.png"),
+                    ("/admin", "desktop-admin-preview.png"),
+                ]:
+                    page.goto(base + route, wait_until="domcontentloaded", timeout=60000)
+                    page.wait_for_timeout(250)
+                    page.screenshot(path=str(out / filename), full_page=True)
+
+                # The assistant must open and answer using the preview catalogue.
+                page.goto(base, wait_until="domcontentloaded", timeout=60000)
+                page.get_by_role("button", name="Open assistant").click(timeout=2500)
+                page.get_by_role("textbox", name="Ask Nexora").fill("earbuds")
+                page.get_by_role("button", name="Send").click(timeout=2500)
+                page.wait_for_timeout(900)
+                page.screenshot(path=str(out / "desktop-shopping-assistant.png"), full_page=False)
+                page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_timeout(int(wait * 1000))
             qa = page.evaluate(QA_JS)
             try:
                 page.evaluate("document.querySelector('.nexora-theme-toggle')?.click()")
@@ -143,6 +216,7 @@ def with_playwright():
             report[name] = qa
             ctx.close()
         browser.close()
+    print(json.dumps(report, indent=1))
     failures = []
     for name, qa in report.items():
         if not isinstance(qa, dict):
@@ -152,7 +226,7 @@ def with_playwright():
         if qa.get("brokenImages"):
             failures.append(f"{name}: broken images: {', '.join(qa['brokenImages'])}")
         if qa.get("consoleErrors"):
-            failures.append(f"{name}: browser console errors: {', '.join(qa['consoleErrors'])}")
+            failures.append(f"{name}: browser console errors: {', '.join(qa['consoleErrors'])}; failed requests: {', '.join(qa.get('failedRequests', []))}")
     if failures:
         raise RuntimeError("Visual QA failed:\\n" + "\\n".join(failures))
     return report

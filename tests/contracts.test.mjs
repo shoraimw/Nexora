@@ -20,7 +20,7 @@ test("server validates owner membership before administrative actions",()=>{
  assert.match(src,/getUser\(auth.slice\(7\)\)/);
  assert.match(src,/admin_memberships/);
  assert.match(src,/timingSafeEqual/);
- assert.ok(src.includes("new URL(origin).origin===new URL(req.url).origin"));
+ assert.match(src,/x-forwarded-host/);assert.match(src,/x-forwarded-proto/);assert.match(src,/source\.host\.toLowerCase\(\)===host/);
  assert.match(src,/\.eq\("role","owner"\)/);
 });
 test("secret-bearing local environment files are ignored",()=>{
@@ -74,14 +74,16 @@ test("development indicator and redundant storefront banners are disabled",()=>{
  assert.ok(!read("components/CommerceHome.tsx").includes('className="retail-announcement"'));
  assert.ok(!read("components/Storefront.tsx").includes('className="retail-announcement"'));
 });
-test("hero is automatic, has no manual carousel controls and respects reduced motion",()=>{
+test("hero rotates every 6.5 seconds with accessible manual slide selection and reduced-motion support",()=>{
  const hero=read("components/RetailChrome.tsx");
  assert.match(hero,/window\.setInterval/);
- assert.doesNotMatch(hero,/retail-slider-progress|retail-slider-footer/);
+ assert.match(hero,/6500/);
+ assert.match(hero,/retail-slider-footer/);
+ assert.match(hero,/aria-pressed/);
+ assert.doesNotMatch(hero,/retail-slider-progress/);
  assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow|Pause size|Play size/);
  assert.match(hero,/prefers-reduced-motion/);
  assert.match(hero,/pausedByFocus/);
- assert.doesNotMatch(hero,/Previous banner|Next banner|Pause automatic slideshow/);
 });
 test("category navigation keeps readable contrast in light mode and a light label in dark mode",()=>{
  const categories=read("app/category-experience.css");
@@ -109,7 +111,7 @@ test("desktop category menu uses one controlled overlay and supports click-to-pi
  assert.match(categoryNav,/activeCategory\.subcategories\.map/);
  assert.doesNotMatch(categoryNav,/<details/);
  assert.doesNotMatch(categoryNav,/<summary/);
- assert.match(menu,/storeCategories\.map/);
+ assert.match(menu,/categories\.map/);assert.match(menu,/useStoreCategories/);
  assert.match(menu,/nexora-mobile-categories/);
  assert.match(taxonomy,/name:"Networking"/);
  assert.match(taxonomy,/name:"Camera"/);
@@ -235,7 +237,7 @@ test("StarTech-inspired storefront adds a utility strip and taxonomy-driven sing
  const css=read("app/startech-inspired.css");
  assert.match(layout,/nexora-utility-bar/);
  assert.match(layout,/RetailCategoryNav/);
- assert.match(nav,/storeCategories\.map/);
+ assert.match(nav,/categories\.map/);assert.match(nav,/useStoreCategories/);
  assert.match(nav,/activeCategory\.subcategories\.map/);
  assert.match(nav,/categoryHref\(activeCategory,subcategory\)/);
  assert.match(nav,/aria-expanded/);
@@ -269,7 +271,7 @@ test("Nexora taxonomy has separate Camera and Networking categories with custome
  assert.match(route,/CommerceShop initialCategory/);
  assert.match(route,/DemoShop initialCategory/);
  assert.match(admin,/categoryParentId/);
- assert.match(api,/parent_id:uuid\.nullable\(\)\.optional\(\)/);
+ assert.match(api,/parent_id:uuid/);assert.match(api,/Choose an active top-level parent category/);assert.match(admin,/Choose a top-level category/);assert.match(admin,/c\.active/);
  assert.match(dashboard,/categories/);
 });
 test("price/product card links remain bound to Nexora products, without fake claims",()=>{
@@ -283,10 +285,11 @@ test("hero carousel rotates automatically without a visible countdown bar or hov
  const hero=read("components/RetailChrome.tsx");
  const css=read("app/filter-ui.css");
  assert.match(hero,/window\.setInterval\(\(\)=>setActive/);
- assert.match(hero,/5000/);
+ assert.match(hero,/6500/);
+ assert.match(hero,/retail-slider-footer/);
+ assert.match(hero,/aria-pressed/);
  assert.match(hero,/onFocusCapture/);
  assert.doesNotMatch(hero,/onMouseEnter/);
- assert.doesNotMatch(hero,/retail-slider-footer/);
  assert.doesNotMatch(hero,/retail-slider-progress/);
  assert.doesNotMatch(css,/nexora-hero-progress/);
 });
@@ -326,11 +329,15 @@ test("custom 404 and print stylesheet are installed",()=>{
 
 
 
+test("live category visibility is shared by navigation, mobile menu, category grid, filters and direct routes",()=>{
+ const api=read("app/api/categories/route.ts"),hook=read("components/useStoreCategories.ts"),nav=read("components/RetailCategoryNav.tsx"),mobile=read("components/MobileMenu.tsx"),chrome=read("components/RetailChrome.tsx"),shop=read("components/CommerceShop.tsx"),page=read("app/category/[slug]/[[...subcategory]]/page.tsx");
+ assert.match(api,/\.eq\("active",true\)/);assert.match(hook,/data\.live===true/);assert.match(nav,/useStoreCategories/);assert.match(mobile,/useStoreCategories/);assert.match(chrome,/useStoreCategories/);assert.match(shop,/useStoreCategories/);assert.match(page,/resolveCategory/);assert.match(page,/\.eq\("active",true\)/);
+});
 test("all 13 category destinations remain visible in the featured category grid",()=>{
  const chrome=read("components/RetailChrome.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
  assert.match(chrome,/retail-category-grid/);
- assert.match(chrome,/storeCategories\.map/);
+ assert.match(chrome,/categories\.map/);
  for(const name of ["Phones","Mac","Phone Accessories","Tablets","Cases & Protectors","Watches","Headphones & Speakers","PC Accessories","Camera","Gadgets","Networking","Gaming","Drone"]){
   assert.ok(taxonomy.includes('name:"'+name+'"'),name);
  }
@@ -344,9 +351,59 @@ test("desktop and mobile visual QA runs in CI and catches broken images, overflo
  assert.ok(shoot.includes("horizontalOverflow"));
  assert.ok(shoot.includes("brokenImages"));
  assert.ok(shoot.includes("consoleErrors"));
+ assert.ok(shoot.includes('("desktop-compact", 1280, 800)'));
+ assert.ok(shoot.includes('("tablet", 768, 1024)'));
+ assert.ok(shoot.includes('("mobile-small", 360, 800)'));
  assert.ok(workflow.includes("Install Playwright for visual QA"));
  assert.ok(workflow.includes("nexora-visual-review"));
+ assert.ok(workflow.includes("Capture five responsive viewports"));
  assert.ok(workflow.includes("python scripts/shoot.py"));
+});
+
+test("cart clears after an accepted order and preserves saved items when store mode or live catalogue is unavailable",()=>{
+ const cart=read("components/CartProvider.tsx"),page=read("app/cart/page.tsx"),checkout=read("app/checkout/page.tsx");
+ assert.match(cart,/clear:\(\)=>void/);assert.match(cart,/const clear=useCallback\(\(\)=>setItems\(\[\]\)/);
+ assert.match(page,/health\?\.mode==="configured"/);assert.match(page,/catalog\?\.live===false/);
+ assert.match(page,/catalogAvailable/);assert.match(page,/mode!==true/);
+ assert.match(page,/Product details temporarily unavailable/);assert.match(page,/mode===null\|\|mode===true/);
+ assert.match(page,/Saved preview or unavailable items were removed/);
+ assert.match(checkout,/const \{items,clear\}=useCart\(\)/);assert.match(checkout,/clear\(\)/);
+});
+test("configured storefront distinguishes catalogue outages from an empty catalogue and offers retry",()=>{
+ const shop=read("components/CommerceShop.tsx");
+ assert.match(shop,/catalogError/);assert.match(shop,/x\.live!==true\|\|!Array\.isArray\(x\.products\)/);
+ assert.match(shop,/The catalogue is temporarily unavailable/);assert.match(shop,/We couldn't load the catalogue/);
+ assert.match(shop,/setReloadCount\(value=>value\+1\)/);
+});
+test("preview checkout collects no personal or payment details and shows an explicit safe state",()=>{
+ const checkout=read("app/checkout/page.tsx");assert.match(checkout,/Checkout is in preview mode/);assert.match(checkout,/No personal or payment information is collected/);assert.match(checkout,/!enabled\?/);assert.match(checkout,/items\.length===0\?/);
+});
+test("search only shows demo products when the catalogue API explicitly reports preview mode",()=>{
+ const search=read("components/SiteSearch.tsx");assert.match(search,/data\.live===false/);assert.match(search,/setCatalogError\(true\)/);assert.doesNotMatch(search,/useState<SearchProduct\[]>\(demo\)/);
+});
+test("mobile navigation traps focus and restores the previous focus target",()=>{
+ const menu=read("components/MobileMenu.tsx");assert.match(menu,/panelRef/);assert.match(menu,/event\.key!=="Tab"/);assert.match(menu,/event\.shiftKey\?last:first/);assert.match(menu,/previous\?\.focus/);
+});
+test("customer account deletion requires re-authentication, blocks owners and anonymizes retained orders",()=>{
+ const api=read("app/api/account/delete/route.ts"),sql=read("database/010_account_privacy.sql"),page=read("app/account/page.tsx");
+ assert.match(api,/signInWithPassword/);assert.match(api,/confirmEmail/);assert.match(api,/admin_memberships/);assert.match(api,/nexora_delete_customer_account/);
+ assert.match(sql,/security definer/);assert.match(sql,/role=.owner./);assert.match(sql,/Deleted customer/);assert.match(sql,/privacy\.nexora\.invalid/);assert.match(sql,/revoke all on function/);
+ assert.match(page,/deleteAccount/);assert.match(page,/Current password/);assert.match(page,/account\/delete/);
+});
+test("owner controls can hide categories and toggle variants, coupons, FAQs and delivery zones",()=>{
+ const api=read("app/api/admin/catalog/route.ts"),dashboard=read("app/api/admin/dashboard/route.ts"),admin=read("app/admin/page.tsx");
+ assert.match(api,/action==="category\.update"/);assert.match(api,/action==="coupon\.update"/);assert.match(api,/inventory/);
+ assert.match(admin,/mutation\("category\.update"/);assert.match(admin,/mutation\("variant\.update"/);assert.match(admin,/mutation\("coupon\.update"/);assert.match(admin,/mutation\("faq\.update"/);assert.match(admin,/mutation\("delivery\.set"/);
+ assert.match(dashboard,/audit_logs/);assert.match(admin,/data\.auditLogs/);
+});
+test("newsletter collection is unavailable until the private subscriber table exists",()=>{
+ const api=read("app/api/newsletter/route.ts"),ui=read("components/NewsletterSignup.tsx");assert.match(api,/export async function GET/);assert.match(api,/available:!error/);assert.match(ui,/availability==="unavailable"/);assert.match(ui,/No email is collected/);
+});
+
+test("same-origin protection respects the forwarded host while rejecting cross-origin chat requests",()=>{
+ const server=read("lib/server.ts"),workflow=read(".github/workflows/ci.yml");
+ assert.match(server,/x-forwarded-host/);assert.match(server,/x-forwarded-proto/);assert.match(server,/source\.host\.toLowerCase\(\)===host/);
+ assert.match(workflow,/attacker\.example/);assert.match(workflow,/api\/chat/);
 });
 
 test("homepage preview imagery is valid and visual QA fails on broken assets or overflow",()=>{
@@ -362,4 +419,22 @@ test("homepage preview imagery is valid and visual QA fails on broken assets or 
  assert.ok(shoot.includes('page.screenshot(path=str(out / "desktop-category-menu.png"))'));
  assert.ok(shoot.includes('page.keyboard.press("Escape")'));
  assert.ok(shoot.includes('Category mega-menu interaction QA failed'));
+});
+
+
+test("customer and owner price displays use a readable BDT fallback instead of a missing Taka glyph",()=>{
+ const files=[
+  "components/CommerceDetail.tsx",
+  "components/CommerceShop.tsx",
+  "lib/catalog.ts",
+  "app/cart/page.tsx",
+  "app/checkout/page.tsx",
+  "app/admin/page.tsx",
+  "app/track/page.tsx"
+ ];
+ for(const path of files){
+  const source=read(path);
+  assert.doesNotMatch(source,/৳/,path+" should not render an unsupported currency glyph");
+  assert.match(source,/BDT/,path+" should label monetary values in BDT");
+ }
 });
