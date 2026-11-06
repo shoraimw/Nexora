@@ -398,3 +398,11 @@ html[data-theme="dark"] .detail-page .detail-rating-picker button{
 html[data-theme="dark"] .detail-page .demo-detail-photo small{
  color:#53636e;
 }
+
+
+/* On small screens the fixed contact shortcut must not cover the product price or variants. */
+@media(max-width:790px){
+ body:has(.detail-page) .nexora-floating-contact{
+  display:none;
+ }
+}
