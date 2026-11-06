@@ -516,7 +516,11 @@ test("every Nexora product detail route has theme-aware dark-mode text, controls
   /html\[data-theme="dark"\] \.detail-page \.outline-btn/
  ]) assert.match(theme,selector);
  assert.match(theme,/body:has\(\.detail-page\) \.nexora-floating-contact/);
+ assert.match(theme,/body:has\(\.detail-page\) \.retail-mobile-nav/);
+ assert.match(theme,/body:has\(\.detail-page\)\{\s*padding-bottom:0!important/);
  assert.match(shoot,/mobile contact shortcut must not cover product information/);
+ assert.match(shoot,/mobile bottom navigation must not cover product detail controls/);
+ assert.match(shoot,/product detail must not reserve space for hidden mobile bottom navigation/);
  assert.match(page,/className="container detail-page"/);
  assert.match(live,/className="container detail-page"/);
  assert.match(shoot,/PRODUCT_CONTRAST_JS/);
