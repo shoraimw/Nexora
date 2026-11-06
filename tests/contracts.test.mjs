@@ -360,11 +360,20 @@ test("desktop and mobile visual QA runs in CI and catches broken images, overflo
  assert.ok(workflow.includes("python scripts/shoot.py"));
 });
 
-test("cart clears after an accepted order and configured mode never renders preview catalogue items",()=>{
+test("cart clears after an accepted order and preserves saved items when store mode or live catalogue is unavailable",()=>{
  const cart=read("components/CartProvider.tsx"),page=read("app/cart/page.tsx"),checkout=read("app/checkout/page.tsx");
  assert.match(cart,/clear:\(\)=>void/);assert.match(cart,/const clear=useCallback\(\(\)=>setItems\(\[\]\)/);
- assert.match(page,/health\?\.mode!=="preview"/);assert.match(page,/if\(mode\)return null/);assert.match(page,/Saved preview or unavailable items were removed/);
+ assert.match(page,/health\?\.mode==="configured"/);assert.match(page,/catalog\?\.live===false/);
+ assert.match(page,/catalogAvailable/);assert.match(page,/mode!==true/);
+ assert.match(page,/Product details temporarily unavailable/);assert.match(page,/mode===null\|\|mode===true/);
+ assert.match(page,/Saved preview or unavailable items were removed/);
  assert.match(checkout,/const \{items,clear\}=useCart\(\)/);assert.match(checkout,/clear\(\)/);
+});
+test("configured storefront distinguishes catalogue outages from an empty catalogue and offers retry",()=>{
+ const shop=read("components/CommerceShop.tsx");
+ assert.match(shop,/catalogError/);assert.match(shop,/x\.live!==true\|\|!Array\.isArray\(x\.products\)/);
+ assert.match(shop,/The catalogue is temporarily unavailable/);assert.match(shop,/We couldn't load the catalogue/);
+ assert.match(shop,/setReloadCount\(value=>value\+1\)/);
 });
 test("preview checkout collects no personal or payment details and shows an explicit safe state",()=>{
  const checkout=read("app/checkout/page.tsx");assert.match(checkout,/Checkout is in preview mode/);assert.match(checkout,/No personal or payment information is collected/);assert.match(checkout,/!enabled\?/);assert.match(checkout,/items\.length===0\?/);
