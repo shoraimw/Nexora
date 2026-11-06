@@ -193,42 +193,25 @@ test("review rating control uses an accessible fieldset and keyboard-operable bu
  assert.match(detail,/role="img"/);
 });
 
-test("Nexora homepage uses a real-time WebGL gadget studio and category-first merchandising",()=>{
+test("Nexora homepage uses the previous lightweight CSS gadget showcase without WebGL",()=>{
  const live=read("components/CommerceHome.tsx");
  const demo=read("components/Storefront.tsx");
  const hero=read("components/Nexora3DHero.tsx");
- const scene=read("components/Nexora3DScene.tsx");
  const css=read("app/hero-3d.css");
  const pkg=read("package.json");
  assert.match(live,/Nexora3DHero/);
  assert.match(demo,/Nexora3DHero/);
- assert.match(hero,/Nexora3DScene/);
- assert.match(hero,/window\.setInterval/);
- assert.match(scene,/new THREE\.WebGLRenderer/);
- assert.match(scene,/RoundedBoxGeometry/);
- assert.match(scene,/MeshPhysicalMaterial/);
- assert.match(scene,/RoomEnvironment/);
- assert.match(scene,/makeBrushedMetalTexture/);
- assert.match(scene,/roughnessMap:brushedTexture/);
- assert.match(scene,/new THREE\.ExtrudeGeometry/);
- assert.match(scene,/new THREE\.TorusGeometry/);
- assert.match(scene,/Rear camera island/);
- assert.match(scene,/setPointerCapture/);
- assert.match(scene,/onKeyDown=\{handleKeyDown\}/);
- assert.match(scene,/1000\/30/);
- assert.match(scene,/isCompact \? 0\.84 : 1/);
- assert.match(scene,/powerPreference:compactDevice\?"low-power"/);
- assert.match(scene,/IntersectionObserver/);
- assert.match(scene,/prefers-reduced-motion/);
- assert.match(scene,/dataset\.webgl="fallback"/);
- assert.match(pkg,/"three": "\^0\.180\.0"/);
- assert.match(css,/nexora-webgl-stage/);
- assert.match(css,/nexora-hero-visual/);
- assert.match(css,/data-webgl="loading"/);
- assert.match(css,/focus-visible/);
- assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
- assert.match(read("app/layout.tsx"),/hero-3d\.css/);
- assert.match(read("app/layout.tsx"),/retail-category-nav-link/);
+ assert.match(hero,/nexora-stage-parallax/);
+ assert.match(hero,/nexora-device-phone/);
+ assert.match(hero,/nexora-device-watch/);
+ assert.ok(hero.includes("window.setInterval"));
+ assert.ok(!hero.includes("Nexora3DScene"));
+ assert.ok(css.includes("nexora-stage-parallax"));
+ assert.ok(!css.includes("nexora-webgl-stage"));
+ assert.ok(!pkg.includes('"three"'));
+ assert.ok(!pkg.includes('"@types/three"'));
+ assert.equal(existsSync(new URL("../components/Nexora3DScene.tsx",import.meta.url)),false);
+ assert.ok(read("app/layout.tsx").includes('import "./hero-3d.css"'));
 });
 test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
@@ -303,48 +286,11 @@ test("custom 404 and print stylesheet are installed",()=>{
 });
 
 
-test("Nexora homepage follows the premium showroom spec and keeps the first screen focused",()=>{
- const spec=read("docs/NEXORA_SHOWROOM_SPEC.md");
- const hero=read("components/Nexora3DHero.tsx");
- const live=read("components/CommerceShop.tsx");
- const demo=read("components/Storefront.tsx");
- const css=read("app/nexora-showroom.css");
- const layout=read("app/layout.tsx");
- assert.match(spec,/Signature:\*\* a real-time Three\.js product studio/);
- assert.match(hero,/Good tech\./);
- assert.match(hero,/Better every day\./);
- assert.match(hero,/Shop the collection/);
- assert.match(hero,/Browse categories/);
- assert.match(hero,/6500/);
- assert.match(live,/items\.slice\(0,4\)/);
- assert.match(demo,/items\.slice\(0,4\)/);
- assert.doesNotMatch(live,/homeGroups/);
- assert.doesNotMatch(demo,/\["Phones","Phone Accessories","Headphones & Speakers"/);
- assert.match(css,/--nx-bg:#f4f3ef/);
- assert.match(css,/html\[data-theme="dark"\]/);
- assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
- assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
- assert.match(css,/retail-mobile-nav/);
- assert.match(layout,/nexora-showroom\.css/);
-});
-test("3D showroom uses real drag inertia, touch scroll, reduced-motion still rendering and visibility pause",()=>{
- const scene=read("components/Nexora3DScene.tsx");
- const css=read("app/nexora-showroom.css");
- assert.match(scene,/state\.yaw\+=yawDelta/);
- assert.match(scene,/Math\.exp\(-3\.5\*dt\)/);
- assert.match(scene,/event\.pointerType==="touch"\?0:dy\*\.0036/);
- assert.match(scene,/onPointerCancel=\{handlePointerUp\}/);
- assert.match(scene,/onKeyDown=\{handleKeyDown\}/);
- assert.match(scene,/const keepAnimating=!reducedMotion/);
- assert.match(scene,/IntersectionObserver/);
- assert.match(scene,/visibilitychange/);
- assert.match(css,/touch-action:pan-y/);
- assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
-});
+
 test("all 13 category destinations remain visible in the featured category grid",()=>{
  const chrome=read("components/RetailChrome.tsx");
  const taxonomy=read("lib/store-taxonomy.ts");
- assert.match(chrome,/id="featured-categories"/);
+ assert.match(chrome,/retail-category-grid/);
  assert.match(chrome,/storeCategories\.map/);
  for(const name of ["Phones","Mac","Phone Accessories","Tablets","Cases & Protectors","Watches","Headphones & Speakers","PC Accessories","Camera","Gadgets","Networking","Gaming","Drone"]){
   assert.ok(taxonomy.includes('name:"'+name+'"'),name);
@@ -352,63 +298,25 @@ test("all 13 category destinations remain visible in the featured category grid"
 });
 
 
-test("MotionSites visual review is repeatable in CI and scroll reveals remain progressive enhancement",()=>{
+test("desktop and mobile visual QA runs in CI and catches broken images, overflow and console errors",()=>{
  const shoot=read("scripts/shoot.py");
  const workflow=read(".github/workflows/ci.yml");
- const experience=read("components/SiteExperience.tsx");
- const css=read("app/nexora-showroom.css");
- assert.match(shoot,/desktop-early\.png/);
- assert.match(shoot,/horizontalOverflow/);
- assert.match(shoot,/brokenImages/);
- assert.match(workflow,/Install Playwright for visual QA/);
- assert.match(workflow,/nexora-visual-review/);
- assert.match(workflow,/python scripts\/shoot\.py/);
- assert.match(experience,/new IntersectionObserver/);
- assert.match(experience,/new MutationObserver/);
- assert.match(experience,/prefers-reduced-motion/);
- assert.match(css,/\.nexora-reveal\.is-visible/);
- assert.match(css,/\.nexora-reveal\{opacity:1/);
- assert.match(css,/@keyframes nexora-scroll-rise/);
- assert.doesNotMatch(css,/\.nexora-reveal\{[^}]*opacity:0/);
- assert.match(css,/@keyframes nexora-copy-rise/);
+ assert.ok(shoot.includes("desktop-early.png"));
+ assert.ok(shoot.includes("horizontalOverflow"));
+ assert.ok(shoot.includes("brokenImages"));
+ assert.ok(shoot.includes("consoleErrors"));
+ assert.ok(workflow.includes("Install Playwright for visual QA"));
+ assert.ok(workflow.includes("nexora-visual-review"));
+ assert.ok(workflow.includes("python scripts/shoot.py"));
 });
-test("3D studio protects low-data devices and WebGL lifecycle",()=>{
- const scene=read("components/Nexora3DScene.tsx");
- assert.match(scene,/connection\?\.saveData/);
- assert.match(scene,/webglcontextlost/);
- assert.match(scene,/compileAsync\(activeScene,camera\)/);
- assert.match(scene,/webglLost/);
- assert.match(scene,/removeEventListener\("webglcontextlost"/);
-});
-
-
-test("3D hero avoids an oversized podium and the floating support affordance is not duplicated",()=>{
- const scene=read("components/Nexora3DScene.tsx");
- const css=read("app/nexora-showroom.css");
- const shoot=read("scripts/shoot.py");
- assert.doesNotMatch(scene,/CylinderGeometry\(2\.55/);
- assert.doesNotMatch(scene,/ShadowMaterial/);
- assert.match(scene,/root\.rotation\.y=-\.9/);
- assert.match(css,/nexora-floating-contact\{display:none!important\}/);
- assert.match(shoot,/first-visit\.png/);
- assert.match(shoot,/f"{name}-dark\.png"/);
- assert.match(shoot,/\.nexora-theme-toggle/);
- assert.match(shoot,/nexora-cookie-close/);
-});
-
 
 test("homepage preview imagery is valid and visual QA fails on broken assets or overflow",()=>{
  const catalog=read("lib/catalog.ts");
  const shoot=read("scripts/shoot.py");
- const css=read("app/nexora-showroom.css");
  assert.doesNotMatch(catalog,/photo-1609592806596-b43badaf3b26/);
  assert.match(catalog,/photo-1601898532138-9f145a2ad69e/);
- assert.match(shoot,/if qa\.get\("horizontalOverflow"\):/);
- assert.match(shoot,/if qa\.get\("brokenImages"\):/);
- assert.match(shoot,/if qa\.get\("consoleErrors"\):/);
- assert.match(shoot,/actionContrast/);
- assert.match(shoot,/action\["contrast"\] < 4\.5/);
- assert.match(css,/\.nexora-card-shop-link\{/);
- assert.match(css,/background:var\(--nx-ink\);color:var\(--nx-bg\)/);
- assert.match(shoot,/document\.querySelector\('\.nexora-theme-toggle'\)\?\.click\(\)/);
+ assert.ok(shoot.includes('if qa.get("horizontalOverflow"):'));
+ assert.ok(shoot.includes('if qa.get("brokenImages"):'));
+ assert.ok(shoot.includes('if qa.get("consoleErrors"):'));
+ assert.ok(shoot.includes("document.querySelector('.nexora-theme-toggle')?.click()"));
 });

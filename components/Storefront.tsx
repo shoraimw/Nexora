@@ -28,7 +28,7 @@ function DemoProductCard({product}:{product:Product}){
 }
 function DemoProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:Product[];href?:string}){
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,4).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><DemoProductCard key={p.id} product={p}/>)}</div></section>;
 }
 export function Storefront(){
  const demoBrands=Array.from(new Set(products.map(p=>p.brand).filter((b):b is string=>!!b)));
@@ -40,6 +40,7 @@ export function Storefront(){
     <DemoProductSection eyebrow="DISCOVER THE COLLECTION" title="Trending Products" items={products.filter(p=>p.tag==="Trending"||p.student).slice(0,5)}/>
     <DemoProductSection eyebrow="LATEST CONCEPTS" title="New Arrivals" items={products.slice(-5).reverse()}/>
     <DemoProductSection eyebrow="MADE FOR STUDY DAYS" title="Student Picks" items={products.filter(p=>p.collections?.includes("Student Picks"))} href="/shop?category=Student%20Picks"/>
+    {["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Gaming"].map(name=>{const category=storeCategories.find(c=>c.name===name);const items=products.filter(p=>p.category===name);return category&&items.length?<DemoProductSection key={name} eyebrow="EXPLORE THE CATEGORY" title={name} items={items} href={categoryHref(category)}/>:null;})}
    </div><RetailPromoBanners/>
   </div><ChatWidget/>
  </main>;
