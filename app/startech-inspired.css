@@ -409,15 +409,25 @@ html[data-theme="dark"] .detail-page .demo-detail-photo small{
 
 
 /* Product actions retain clear primary/secondary hierarchy on dark surfaces. */
-html[data-theme="dark"] .detail-page .primary-button{
- background:#e66c43;
- color:#102437;
- border:1px solid #e66c43;
+html[data-theme="dark"] main.detail-page .detail-copy .buy-actions .primary-button,
+html[data-theme="dark"] main.detail-page .detail-copy .detail-add-button,
+html[data-theme="dark"] main.detail-page .detail-copy form .primary-button{
+ background:#ffb08e!important;
+ color:#102437!important;
+ border:1px solid #ffb08e!important;
 }
-html[data-theme="dark"] .detail-page .primary-button:hover:not(:disabled){
- background:#f07b51;
- color:#102437;
- border-color:#f07b51;
+html[data-theme="dark"] main.detail-page .detail-copy .buy-actions .primary-button:hover:not(:disabled),
+html[data-theme="dark"] main.detail-page .detail-copy .detail-add-button:hover:not(:disabled),
+html[data-theme="dark"] main.detail-page .detail-copy form .primary-button:hover:not(:disabled){
+ background:#ffc3a7!important;
+ color:#102437!important;
+ border-color:#ffc3a7!important;
+}
+html[data-theme="dark"] main.detail-page .detail-copy .primary-button:disabled{
+ background:#314654!important;
+ color:#d8e2e9!important;
+ border-color:#526979!important;
+ opacity:1;
 }
 html[data-theme="dark"] .detail-page .outline-btn{
  background:var(--product-detail-control);
