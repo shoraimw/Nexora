@@ -470,3 +470,14 @@ test("checkout confirmation tells the customer which email received the invoice 
  assert.match(page,/PDF invoice sent/);
  assert.match(css,/\.checkout-invoice-notice/);
 });
+
+
+test("new order invoice is prioritized and atomically claimed before older queued messages",()=>{
+ const email=read("lib/email.ts"),orders=read("app/api/orders/route.ts");
+ assert.match(email,/preferredOrderId\?:string/);
+ assert.match(email,/eq\("kind","order_received"\)/);
+ assert.match(email,/eq\("status","queued"\)/);
+ assert.match(email,/eq\("attempts",pending\.attempts\)/);
+ assert.match(email,/status:"sending"/);
+ assert.match(orders,/deliverPendingEmails\(1,data\.id\)/);
+});
