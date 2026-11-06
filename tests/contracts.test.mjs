@@ -227,7 +227,9 @@ test("StarTech-inspired storefront adds a utility strip and taxonomy-driven mega
 });
 test("homepage places promotional cards before the product-first catalog",()=>{
  const home=read("components/CommerceHome.tsx");
+ const demo=read("components/Storefront.tsx");
  assert.ok(home.indexOf("<RetailPromoBanners/>")<home.indexOf("<CommerceShop homepage/>"));
+ assert.ok(demo.indexOf("<RetailPromoBanners/>")<demo.indexOf("<div className=\"retail-home-catalog\">"));
 });
 test("Nexora taxonomy has separate Camera and Networking categories with customer subcategories and owner management",()=>{
  const taxonomy=read("lib/store-taxonomy.ts");
