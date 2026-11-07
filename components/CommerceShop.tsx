@@ -9,14 +9,15 @@ import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterStat
 import type {LiveProduct,LiveVariant} from "@/lib/catalog-live";
 import {categoryHref} from "@/lib/store-taxonomy";
 import {useStoreCategories} from "@/components/useStoreCategories";
-import {useT} from "@/components/LanguageProvider";
-const money=(value:number)=>"BDT "+(value/100).toLocaleString("en-BD",{maximumFractionDigits:2});
+import {useT,useLanguage} from "@/components/LanguageProvider";
+import {formatBDT} from "@/lib/i18n";
+const money=(value:number,locale:"en"|"bn"="en")=>formatBDT(value,locale);
 function displayVariant(product:LiveProduct):LiveVariant|undefined{
  const variants=[...product.variants].sort((a,b)=>a.price_paisa-b.price_paisa);
  return variants.find(v=>v.available>0)||variants[0];
 }
 function ProductCard({product}:{product:LiveProduct}){
- const {add}=useCart(),variant=displayVariant(product);const t=useT();
+ const {add}=useCart(),variant=displayVariant(product);const t=useT();const {locale}=useLanguage();
  const inStock=product.variants.some(v=>v.available>0);
  const discount=variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa?Math.round((1-variant.price_paisa/variant.compare_at_paisa)*100):0;
  return <article className="retail-product-card">
@@ -27,7 +28,7 @@ function ProductCard({product}:{product:LiveProduct}){
    <span className="retail-quick-view"><ArrowUpRight size={17}/></span>
   </Link>
   <div className="retail-product-info"><span className="retail-product-category">{t(product.category)}{product.subcategory?" · "+t(product.subcategory):""}</span><Link className="retail-product-name" href={"/product/"+product.slug}>{product.title}</Link><span className="retail-product-brand">{product.brand||"Brand not specified"}</span>{product.review_count>0&&<div className="retail-card-rating"><Star size={12} fill="currentColor"/><strong>{product.review_average.toFixed(1)}</strong><span>({product.review_count})</span></div>}
-   <div className="retail-price-row"><strong>{variant?money(variant.price_paisa):"Price on request"}</strong>{variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa&&<s>{money(variant.compare_at_paisa)}</s>}</div>
+   <div className="retail-price-row"><strong>{variant?money(variant.price_paisa,locale):t("Price on request")}</strong>{variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa&&<s>{money(variant.compare_at_paisa,locale)}</s>}</div>
    <span className={inStock?"retail-stock in-stock":"retail-stock out-stock"}>{t(inStock?"In stock":"Currently unavailable")}</span>
    <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{t(inStock?"Shop now":"View details")} <ArrowRight size={14}/></Link><button className="nexora-card-bag" type="button" aria-label={"Add "+product.title+" to bag"} disabled={!variant||!inStock} onClick={()=>variant&&add(variant.id)}><ShoppingBag size={16}/></button></div>
   </div>
