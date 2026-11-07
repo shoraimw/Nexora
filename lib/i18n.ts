@@ -664,6 +664,15 @@ const bn: Record<string,string> = {
   "The link may be old, the page may have moved, or the address may have a typo. Let us get you back to something useful.":"লিংকটি পুরোনো হতে পারে, পেজটি সরানো হয়ে থাকতে পারে অথবা ঠিকানায় ভুল থাকতে পারে। চলুন, আপনাকে আবার দরকারি পেজে নিয়ে যাই।",
   "Browse gadgets":"গ্যাজেট দেখুন",
   "Back home":"হোমে ফিরে যান"
+  "bKash and Nagad transaction IDs are checked manually. An order received email is not payment confirmation. Cash on Delivery is available only after Nexora enables it for the delivery area.":"বিকাশ ও নগদের ট্রানজ্যাকশন আইডি ম্যানুয়ালি যাচাই করা হয়। অর্ডার গ্রহণের ইমেইল পেমেন্ট নিশ্চিত হওয়ার প্রমাণ নয়। Nexora আপনার ডেলিভারি এলাকায় চালু করলেই ক্যাশ অন ডেলিভারি পাওয়া যাবে।",
+  "Steadfast courier dispatch is planned for Bangladesh. Fees, locations and delivery windows require Nexora owner confirmation before sale. A shipping estimate is not a guaranteed delivery date.":"বাংলাদেশে Steadfast কুরিয়ারের মাধ্যমে পণ্য পাঠানোর পরিকল্পনা রয়েছে। বিক্রয় চালুর আগে ডেলিভারি চার্জ, এলাকা ও সম্ভাব্য সময় Nexora-র মালিকদের নিশ্চিত করতে হবে। ডেলিভারির সম্ভাব্য সময় নিশ্চিত তারিখ নয়।",
+  "Warranty conditions vary per product. Read the specific product's warranty text before ordering. Exact cancellation, replacement and refund timelines must be finalized by the Nexora owners before live checkout is enabled.":"পণ্যভেদে ওয়ারেন্টির শর্ত আলাদা। অর্ডার করার আগে নির্দিষ্ট পণ্যের ওয়ারেন্টির বিবরণ পড়ুন। লাইভ চেকআউট চালুর আগে অর্ডার বাতিল, পণ্য পরিবর্তন ও রিফান্ডের সঠিক সময়সীমা Nexora-র মালিকদের চূড়ান্ত করতে হবে।",
+  "Shopping bag with":"কার্টে",
+  "Sort products":"পণ্য সাজান",
+  "Any":"যেকোনো",
+  "to preview bag":"প্রিভিউ ব্যাগে যোগ করুন",
+  "Add":"যোগ করুন",
+  "Payment details are not sent to the optional Gemini service.":"পেমেন্টের তথ্য ঐচ্ছিক Gemini সেবায় পাঠানো হয় না।"
 };
 
 export function translate(locale:Locale,source:string):string{
