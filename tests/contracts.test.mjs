@@ -567,9 +567,8 @@ test("all statically requested customer-facing translations exist in the Bengali
  ];
  for(const file of files){
   const source=read(file);
-  for(const match of source.matchAll(/\\bt\\("([^"]+)"\\)/g)){
-   assert.ok(keys.has(match[1]),file+" is missing Bengali translation for: "+match[1]);
-  }
+  const requested=source.split('t("').slice(1).map(part=>part.slice(0,part.indexOf('")')));
+  for(const key of requested)assert.ok(keys.has(key),file+" is missing Bengali translation for: "+key);
  }
  assert.equal(keys.size,dictionaryLines.length,"Bengali dictionary keys must be unique");
 });
@@ -578,11 +577,11 @@ test("Bengali commerce uses localized BDT, dates, counts, product detail and cat
  const i18n=read("lib/i18n.ts");
  const detail=read("components/CommerceDetail.tsx");
  const chat=read("app/api/chat/route.ts");
- assert.match(i18n,/bn-BD/);
- assert.match(i18n,/currency:"BDT"/);
- assert.match(detail,/formatBDT\\(value,locale\\)/);
- assert.match(detail,/formatDate\\(review\\.created_at,locale/);
- assert.match(chat,/locale:z\\.enum\\(\\["en","bn"\\]\\)/);
- assert.match(chat,/translate\\("bn",p\\.category\\)/);
- assert.match(chat,/translate\\("bn",match\\.answer\\)/);
+ assert.ok(i18n.includes('"bn-BD"'));
+ assert.ok(i18n.includes('currency:"BDT"'));
+ assert.ok(detail.includes("formatBDT(value,locale)"));
+ assert.ok(detail.includes("formatDate(review.created_at,locale"));
+ assert.ok(chat.includes('locale:z.enum(["en","bn"])'));
+ assert.ok(chat.includes('translate("bn",p.category)'));
+ assert.ok(chat.includes('translate("bn",match.answer)'));
 });
