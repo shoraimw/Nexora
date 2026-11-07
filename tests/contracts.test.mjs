@@ -567,7 +567,7 @@ test("all statically requested customer-facing translations exist in the Bengali
  ];
  for(const file of files){
   const source=read(file);
-  const requested=source.split('t("').slice(1).map(part=>part.slice(0,part.indexOf('")')));
+  const requested=[...source.matchAll(new RegExp('(?<![A-Za-z0-9_$])t\\("([^"]+)"\\)','g'))].map(match=>match[1]);
   for(const key of requested)assert.ok(keys.has(key),file+" is missing Bengali translation for: "+key);
  }
  assert.equal(keys.size,dictionaryLines.length,"Bengali dictionary keys must be unique");
