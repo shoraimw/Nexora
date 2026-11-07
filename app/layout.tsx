@@ -40,13 +40,13 @@ export const metadata:Metadata={
 export default async function RootLayout({children}:{children:React.ReactNode}){
  const locale:Locale=(await cookies()).get("nexora_locale")?.value==="bn"?"bn":"en";
  return <html lang={locale} data-locale={locale}><body><LanguageProvider initialLocale={locale}><a className="skip-link" href="#main-content">{translate(locale,"Skip to content")}</a><ConfirmProvider><CartProvider>
-  <div className="nexora-utility-bar"><div className="retail-container nexora-utility-inner"><span>{translate(locale,"Everyday technology, made easier.")}</span><div><Link href="/track"><PackageSearch size={13}/>{translate(locale,"Track order")}</Link><Link href="/contact"><LifeBuoy size={13}/>{translate(locale,"Help & support")}</Link><Link href="/policies">{translate(locale,"Delivery & returns")}</Link><LanguageSwitcher/></div></div></div>
+  <div className="nexora-utility-bar"><div className="retail-container nexora-utility-inner"><span>{translate(locale,"Everyday technology, made easier.")}</span><div><Link href="/track"><PackageSearch size={13}/>{translate(locale,"Track order")}</Link><Link href="/contact"><LifeBuoy size={13}/>{translate(locale,"Help & support")}</Link><Link href="/policies">{translate(locale,"Delivery & returns")}</Link></div></div></div>
   <header className="retail-site-header">
    <div className="retail-container retail-header-main">
     <MobileMenu/>
     <Link className="retail-brand retail-brand-header" href="/" aria-label="Nexora home"><img className="retail-brand-image nexora-logo-light-theme" src="/brand/nexora-logo-dark.png" alt="Nexora" width={280} height={160} fetchPriority="high"/><img className="retail-brand-image nexora-logo-dark-theme" src="/brand/nexora-logo-light.png" alt="" width={280} height={160} aria-hidden="true"/></Link>
     <SiteSearch/>
-    <div className="retail-header-actions"><ThemeToggle/><OffersNavLink/><Link href="/account"><UserRound size={19}/><span>{translate(locale,"Account")}</span></Link><HeaderCart/></div>
+    <div className="retail-header-actions"><LanguageSwitcher/><ThemeToggle/><OffersNavLink/><Link href="/account"><UserRound size={19}/><span>{translate(locale,"Account")}</span></Link><HeaderCart/></div>
    </div>
    <RetailCategoryNav/>
   </header>
