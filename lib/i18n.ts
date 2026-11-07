@@ -724,7 +724,6 @@ const bn: Record<string,string> = {
   "Concept":"ধারণামূলক",
   "Student pick":"শিক্ষার্থীদের পছন্দ",
   "Website language":"ওয়েবসাইটের ভাষা",
-  "Small upgrades.\nBetter everyday.":"ছোট ছোট পরিবর্তনে\nপ্রতিদিন আরও ভালো।",
   "consignment":"কনসাইনমেন্ট",
   "Sample Audio":"নমুনা অডিও",
   "Sample Wear":"নমুনা ওয়্যার",
