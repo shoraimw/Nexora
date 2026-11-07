@@ -413,7 +413,7 @@ const bn: Record<string,string> = {
   "Clever everyday tech":"দৈনন্দিন জীবনের স্মার্ট প্রযুক্তি",
   "Stay connected":"সংযুক্ত থাকুন",
   "Gear up and play":"গেমিংয়ের প্রস্তুতি নিন",
-  "Explore from above":"আকাশ থেকে দেখুন"
+  "Explore from above":"আকাশ থেকে দেখুন",
   "Customer care":"ক্রেতাসেবা",
   "About Nexora":"Nexora সম্পর্কে",
   "Mobile navigation":"মোবাইল নেভিগেশন",
@@ -534,7 +534,7 @@ const bn: Record<string,string> = {
   "Dismiss cookie notice":"কুকি নোটিশ বন্ধ করুন",
   "No products found":"কোনো পণ্য পাওয়া যায়নি",
   "Please try again shortly.":"কিছুক্ষণ পর আবার চেষ্টা করুন।",
-  "Your order was received":"আপনার অর্ডার গ্রহণ করা হয়েছে"
+  "Your order was received":"আপনার অর্ডার গ্রহণ করা হয়েছে",
   "Shop by brand":"ব্র্যান্ড অনুযায়ী দেখুন",
   "EXPLORE OUR COLLECTION":"আমাদের সংগ্রহ ঘুরে দেখুন",
   "Brands By Shop":"ব্র্যান্ড অনুযায়ী পণ্য",
@@ -663,7 +663,7 @@ const bn: Record<string,string> = {
   "This page is not in our collection.":"এই পেজটি আমাদের সংগ্রহে নেই।",
   "The link may be old, the page may have moved, or the address may have a typo. Let us get you back to something useful.":"লিংকটি পুরোনো হতে পারে, পেজটি সরানো হয়ে থাকতে পারে অথবা ঠিকানায় ভুল থাকতে পারে। চলুন, আপনাকে আবার দরকারি পেজে নিয়ে যাই।",
   "Browse gadgets":"গ্যাজেট দেখুন",
-  "Back home":"হোমে ফিরে যান"
+  "Back home":"হোমে ফিরে যান",
   "bKash and Nagad transaction IDs are checked manually. An order received email is not payment confirmation. Cash on Delivery is available only after Nexora enables it for the delivery area.":"বিকাশ ও নগদের ট্রানজ্যাকশন আইডি ম্যানুয়ালি যাচাই করা হয়। অর্ডার গ্রহণের ইমেইল পেমেন্ট নিশ্চিত হওয়ার প্রমাণ নয়। Nexora আপনার ডেলিভারি এলাকায় চালু করলেই ক্যাশ অন ডেলিভারি পাওয়া যাবে।",
   "Steadfast courier dispatch is planned for Bangladesh. Fees, locations and delivery windows require Nexora owner confirmation before sale. A shipping estimate is not a guaranteed delivery date.":"বাংলাদেশে Steadfast কুরিয়ারের মাধ্যমে পণ্য পাঠানোর পরিকল্পনা রয়েছে। বিক্রয় চালুর আগে ডেলিভারি চার্জ, এলাকা ও সম্ভাব্য সময় Nexora-র মালিকদের নিশ্চিত করতে হবে। ডেলিভারির সম্ভাব্য সময় নিশ্চিত তারিখ নয়।",
   "Warranty conditions vary per product. Read the specific product's warranty text before ordering. Exact cancellation, replacement and refund timelines must be finalized by the Nexora owners before live checkout is enabled.":"পণ্যভেদে ওয়ারেন্টির শর্ত আলাদা। অর্ডার করার আগে নির্দিষ্ট পণ্যের ওয়ারেন্টির বিবরণ পড়ুন। লাইভ চেকআউট চালুর আগে অর্ডার বাতিল, পণ্য পরিবর্তন ও রিফান্ডের সঠিক সময়সীমা Nexora-র মালিকদের চূড়ান্ত করতে হবে।",
@@ -672,7 +672,7 @@ const bn: Record<string,string> = {
   "Any":"যেকোনো",
   "to preview bag":"প্রিভিউ ব্যাগে যোগ করুন",
   "Add":"যোগ করুন",
-  "Payment details are not sent to the optional Gemini service.":"পেমেন্টের তথ্য ঐচ্ছিক Gemini সেবায় পাঠানো হয় না।"
+  "Payment details are not sent to the optional Gemini service.":"পেমেন্টের তথ্য ঐচ্ছিক Gemini সেবায় পাঠানো হয় না।",
   "pending":"অপেক্ষমাণ",
   "pending_verification":"যাচাইয়ের অপেক্ষায়",
   "verified":"যাচাইকৃত",
@@ -700,7 +700,7 @@ const bn: Record<string,string> = {
   "Clear chat":"চ্যাট মুছুন",
   "Chat unavailable":"চ্যাট এখন পাওয়া যাচ্ছে না",
   "Please try again.":"আবার চেষ্টা করুন।",
-  "The newsletter could not be saved.":"নিউজলেটার সংরক্ষণ করা যায়নি।"
+  "The newsletter could not be saved.":"নিউজলেটার সংরক্ষণ করা যায়নি।",
   "out of 5 stars":"৫-এর মধ্যে স্টার",
   "View product image":"পণ্যের ছবি দেখুন",
   "Product information is being updated by the Nexora team.":"Nexora টিম পণ্যের তথ্য আপডেট করছে।",
