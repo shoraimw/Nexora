@@ -41,7 +41,7 @@ function ProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow
 }
 type IndexedProduct=ShopFilterProduct&{product:LiveProduct};
 export function CommerceShop({homepage=false,initialCategory="All",initialSubcategory="",categoryDescription=""}:{homepage?:boolean;initialCategory?:string;initialSubcategory?:string;categoryDescription?:string}){
- const t=useT();
+ const t=useT();const {locale}=useLanguage();
  const categoryTree=useStoreCategories();
  const [items,setItems]=useState<LiveProduct[]>([]),[ready,setReady]=useState(false),[catalogError,setCatalogError]=useState(false),[reloadCount,setReloadCount]=useState(0),[filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
  useEffect(()=>{const params=new URLSearchParams(window.location.search);
