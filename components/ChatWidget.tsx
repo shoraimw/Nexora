@@ -19,17 +19,17 @@ export function ChatWidget(){
   const supabase=browserDb();if(supabase){void supabase.auth.getUser().then(({data})=>setAuthenticated(!!data.user));const {data}=supabase.auth.onAuthStateChange((_event,session)=>setAuthenticated(!!session?.user));return()=>data.subscription.unsubscribe();}
  },[]);
  useEffect(()=>{if(save){try{localStorage.setItem("nexora_chat_history",JSON.stringify(messages.slice(-40)));}catch{}}},[messages,save]);
- async function toggleSave(value:boolean){if(!value&&save&&!await confirmAction("Stop remembering this chat on this device and delete its locally saved messages?",{title:"Delete saved chat",confirmLabel:"Delete saved chat",danger:true}))return;setSave(value);if(value)localStorage.setItem("nexora_chat_consent","yes");else{localStorage.removeItem("nexora_chat_consent");localStorage.removeItem("nexora_chat_history");}}
- async function clearHistory(){if(!await confirmAction("Clear the conversation currently stored in this browser?",{title:"Clear this conversation",confirmLabel:"Clear chat",danger:true}))return;setMessages([greeting]);setSessionId(undefined);localStorage.removeItem("nexora_chat_history");}
+ async function toggleSave(value:boolean){if(!value&&save&&!await confirmAction(t("Stop remembering this chat on this device and delete its locally saved messages?"),{title:t("Delete saved chat"),confirmLabel:t("Delete saved chat"),danger:true}))return;setSave(value);if(value)localStorage.setItem("nexora_chat_consent","yes");else{localStorage.removeItem("nexora_chat_consent");localStorage.removeItem("nexora_chat_history");}}
+ async function clearHistory(){if(!await confirmAction(t("Clear the conversation currently stored in this browser?"),{title:t("Clear this conversation"),confirmLabel:t("Clear chat"),danger:true}))return;setMessages([greeting]);setSessionId(undefined);localStorage.removeItem("nexora_chat_history");}
  async function send(){
   const question=input.trim();if(!question||loading)return;
   setLoading(true);setInput("");setMessages(m=>[...m,{role:"user",text:question}]);
   try{
    const response=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json",...await authHeaders()},body:JSON.stringify({message:question,sessionId,locale})});
-   const value=await response.json();if(!response.ok)throw Error(value.error||"Chat unavailable");
+   const value=await response.json();if(!response.ok)throw Error(value.error||t("Chat unavailable"));
    if(value.sessionId)setSessionId(value.sessionId);
    setMessages(m=>[...m,{role:"assistant",text:value.answer,links:value.links}]);
-  }catch(e){setMessages(m=>[...m,{role:"assistant",text:e instanceof Error?e.message:"Please try again."}]);}finally{setLoading(false);}
+  }catch(e){setMessages(m=>[...m,{role:"assistant",text:e instanceof Error?t(e.message):t("Please try again.")}]);}finally{setLoading(false);}
  }
  return <div className="chat-wrap">
  {open&&<section className="chat-panel" aria-label={t("Nexora shopping assistant")}>
@@ -37,7 +37,7 @@ export function ChatWidget(){
   <div className="chat-scroll" role="log" aria-live="polite">{messages.map((m,i)=><div key={i} className={"message "+m.role}><p>{m.text}</p>
    {m.links?.length?<div className="chat-links">{m.links.map(p=><Link key={p.slug} href={"/product/"+p.slug} onClick={()=>setOpen(false)} className="chat-product-link">
     {authenticated&&p.image&&<img className="chat-product-image" src={p.image} alt={p.name}/>}
-    <span><b>{p.name}</b>{p.variants?.length&&<small>{p.variants.map(v=>v.name+" "+v.price+(v.available>0?" · In stock":" · Out of stock")).join(" / ")}</small>}</span><span>↗</span>
+    <span><b>{p.name}</b>{p.variants?.length&&<small>{p.variants.map(v=>v.name+" "+v.price+(v.available>0?" · "+t("In stock"):" · "+t("Out of stock"))).join(" / ")}</small>}</span><span>↗</span>
    </Link>)}</div>:null}
   </div>)}{loading&&<span className="chat-loading">{t("Checking Nexora information…")}</span>}</div>
   <div className="chat-consent"><label><input type="checkbox" checked={save} onChange={e=>void toggleSave(e.target.checked)}/> {t("Remember on this device")}</label><button onClick={()=>void clearHistory()} aria-label={t("Delete local chat")}><Trash2 size={15}/></button></div>
