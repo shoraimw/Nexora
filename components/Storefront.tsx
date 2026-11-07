@@ -23,7 +23,7 @@ function DemoProductCard({product}:{product:Product}){
   <div className="retail-product-info"><span className="retail-product-category">{t(product.category)}{product.subcategory?" · "+t(product.subcategory):""}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
    <div className="retail-price-row"><strong>{formatBDT(product.price*100,locale)}</strong>{product.previous&&<s>{formatBDT(product.previous*100,locale)}</s>}</div>
    <span className="retail-stock preview-stock">Illustrative listing</span>
-   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{t("View details")} <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={t("Add")+" "+product.name+" "+t("to preview bag")} disabled={true} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
+   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{t("View details")} <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={t("Add to demo bag")+" "+product.name} disabled={true} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
   </div>
  </article>;
 }
