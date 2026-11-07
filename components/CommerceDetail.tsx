@@ -6,7 +6,6 @@ import {useCart} from "@/components/CartProvider";
 import {authHeaders,browserDb} from "@/lib/browser";
 import {useT,useLanguage} from "@/components/LanguageProvider";
 import {formatBDT,formatDate,formatNumber} from "@/lib/i18n";
-import type {Locale} from "@/lib/i18n";
 import type {LiveProduct} from "@/lib/catalog-live";
 type Review={id:string;rating:number;title:string;body:string;verified_purchase:boolean;created_at:string};
 type ReviewPayload={count:number;average:number;reviews:Review[];canReview:boolean;hasReviewed:boolean;signedIn:boolean;emailVerified:boolean};
@@ -75,7 +74,7 @@ export function CommerceDetail({product:p}:{product:LiveProduct}){
     <div className="detail-notice"><Truck size={20}/><p>{t("Delivery charge and estimated arrival are confirmed for your district at checkout.")}</p></div>
    </div>
   </div>
-  <nav className="detail-info-tabs" aria-label={t("Product information")}><a href="#product-description">{t("Description")}</a><a href="#product-specifications">{t("Specifications")}</a><a href="#product-reviews">{t("Customer reviews")} ({reviewData.count})</a></nav>
+  <nav className="detail-info-tabs" aria-label={t("Product information")}><a href="#product-description">{t("Description")}</a><a href="#product-specifications">{t("Specifications")}</a><a href="#product-reviews">{t("Customer reviews")} ({formatNumber(reviewData.count,locale)})</a></nav>
   <section id="product-description" className="detail-info-section"><span className="retail-eyebrow">{t("GET TO KNOW IT")}</span><h2>{t("Product description")}</h2><p className="detail-long-description">{t(p.description||"Detailed product information will be added by Nexora before publication.")}</p></section>
   <section id="product-specifications" className="detail-info-section"><span className="retail-eyebrow">{t("THE DETAILS")}</span><h2>{t("Specifications")}</h2>
    {Object.keys(p.specs||{}).length>0?<table className="spec-table"><tbody>{Object.entries(p.specs).map(([key,value])=><tr key={key}><th>{t(key.replace(/_/g," "))}</th><td>{t(String(value))}</td></tr>)}</tbody></table>:<p className="detail-muted">{t("Specifications have not been added yet.")}</p>}
@@ -84,7 +83,7 @@ export function CommerceDetail({product:p}:{product:LiveProduct}){
    <div className="detail-review-heading"><div><span className="retail-eyebrow">{t("REAL CUSTOMER FEEDBACK")}</span><h2>{t("Customer reviews")}</h2><p>{t("Reviews are accepted only from customers with a delivered Nexora order.")}</p></div>
     <div className="detail-review-score"><strong>{reviewData.count?reviewData.average.toFixed(1):"—"}</strong><StarDisplay value={reviewData.average} label={starsLabel(reviewData.average)}/><small>{formatNumber(reviewData.count,locale)} {t("verified")} {t(reviewData.count===1?"review":"reviews")}</small></div>
    </div>
-   {reviewLoading?<p className="detail-muted">{t("Loading customer reviews…")}</p>:reviewError?<p className="detail-review-notice" role="status">{t(reviewError)}</p>:reviewData.reviews.length?<div className="detail-review-list">{reviewData.reviews.map(review=><article className="detail-review-card" key={review.id}><div className="detail-review-card-top"><StarDisplay value={review.rating}/><time dateTime={review.created_at}>{formatDate(review.created_at,locale,{day:"numeric",month:"short",year:"numeric"})}</time></div><h3>{review.title}</h3><p>{review.body}</p>{review.verified_purchase&&<span className="detail-verified-buyer"><CheckCircle2 size={13}/> {t("Verified purchase")}</span>}</article>)}</div>:<div className="detail-no-reviews"><Star size={24}/><strong>{t("No customer reviews yet")}</strong><p>{t("Be the first verified buyer to share your experience.")}</p></div>}
+   {reviewLoading?<p className="detail-muted">{t("Loading customer reviews…")}</p>:reviewError?<p className="detail-review-notice" role="status">{t(reviewError)}</p>:reviewData.reviews.length?<div className="detail-review-list">{reviewData.reviews.map(review=><article className="detail-review-card" key={review.id}><div className="detail-review-card-top"><StarDisplay value={review.rating} label={starsLabel(review.rating)}/><time dateTime={review.created_at}>{formatDate(review.created_at,locale,{day:"numeric",month:"short",year:"numeric"})}</time></div><h3>{review.title}</h3><p>{review.body}</p>{review.verified_purchase&&<span className="detail-verified-buyer"><CheckCircle2 size={13}/> {t("Verified purchase")}</span>}</article>)}</div>:<div className="detail-no-reviews"><Star size={24}/><strong>{t("No customer reviews yet")}</strong><p>{t("Be the first verified buyer to share your experience.")}</p></div>}
    <div className="detail-review-form-wrap">
     <h3>{t("Share your experience")}</h3>
     {reviewMessage&&<p className="detail-review-notice" role="status">{t(reviewMessage)}</p>}
