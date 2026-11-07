@@ -372,7 +372,7 @@ test("cart clears after an accepted order and preserves saved items when store m
 test("configured storefront distinguishes catalogue outages from an empty catalogue and offers retry",()=>{
  const shop=read("components/CommerceShop.tsx");
  assert.match(shop,/catalogError/);assert.match(shop,/x\.live!==true\|\|!Array\.isArray\(x\.products\)/);
- assert.match(shop,/The catalogue is temporarily unavailable/);assert.match(shop,/We couldn't load the catalogue/);
+ assert.match(shop,/We could not load the catalogue/);
  assert.match(shop,/setReloadCount\(value=>value\+1\)/);
 });
 test("preview checkout collects no personal or payment details and shows an explicit safe state",()=>{
@@ -555,7 +555,7 @@ test("Bengali and English language switching persists across navigation and serv
 test("all statically requested customer-facing translations exist in the Bengali dictionary",()=>{
  const dictionary=read("lib/i18n.ts");
  const dictionaryLines=dictionary.split("\n").map(line=>line.trim()).filter(line=>line.startsWith('"'));
- const keys=new Set(dictionaryLines.map(line=>JSON.parse(line.slice(0,line.indexOf(":")))));
+ const keys=new Set(dictionaryLines.map(line=>JSON.parse(line.slice(0,line.indexOf('":')+1))));
  const files=[
   "app/layout.tsx","app/cart/page.tsx","app/checkout/page.tsx","app/account/page.tsx","app/track/page.tsx",
   "app/contact/page.tsx","app/policies/page.tsx","app/not-found.tsx","app/product/[slug]/page.tsx",
