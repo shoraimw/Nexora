@@ -2,11 +2,12 @@
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import {ArrowRight,CalendarClock,Gift,Copy,CheckCircle2} from "lucide-react";
+import {useT,useLanguage} from "@/components/LanguageProvider";
+import {formatDate} from "@/lib/i18n";
 import {useT} from "@/components/LanguageProvider";
 type Offer={id:string;title:string;description:string;badge:string;coupon_code:string|null;target_url:string;cta_label:string;starts_at:string|null;ends_at:string|null};
-function dateLabel(value:string|null){return value?new Date(value).toLocaleString("en-BD",{dateStyle:"medium",timeStyle:"short"}):null;}
 export function OffersPage(){
- const t=useT();
+ const t=useT();const {locale}=useLanguage();
  const [offers,setOffers]=useState<Offer[]>([]);
  const [loading,setLoading]=useState(true);
  const [error,setError]=useState("");
@@ -33,7 +34,7 @@ export function OffersPage(){
    <div className="retail-offer-art"><span><Gift size={42}/></span><small>NEXORA / {t("SPECIAL OFFER")}</small></div>
    <div className="retail-offer-copy"><h2>{offer.title}</h2><p>{offer.description}</p>
     {offer.coupon_code&&<div className="retail-offer-code"><span><small>{t("USE PROMO CODE")}</small><strong>{offer.coupon_code}</strong></span><button onClick={()=>void copyCode(offer.coupon_code!)} aria-label="Copy promo code">{copied===offer.coupon_code?<CheckCircle2 size={17}/>:<Copy size={17}/>} {copied===offer.coupon_code?"Copied":"Copy"}</button></div>}
-    <div className="retail-offer-validity"><CalendarClock size={14}/>{offer.ends_at?"Valid until "+dateLabel(offer.ends_at):offer.starts_at?"Started "+dateLabel(offer.starts_at):t("Limited-time promotion")}</div>
+    <div className="retail-offer-validity"><CalendarClock size={14}/>{offer.ends_at?t("Valid until")+" "+formatDate(offer.ends_at,locale,{dateStyle:"medium",timeStyle:"short"}):offer.starts_at?t("Started")+" "+formatDate(offer.starts_at,locale,{dateStyle:"medium",timeStyle:"short"}):t("Limited-time promotion")}</div>
     <Link className="retail-offer-cta" href={offer.target_url}>{offer.cta_label}<ArrowRight size={16}/></Link>
    </div>
   </article>)}</div>}
