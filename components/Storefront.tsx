@@ -53,7 +53,7 @@ export function DemoShop({initialCategory="All",initialSubcategory="",categoryDe
  const [filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
  useEffect(()=>{const p=new URLSearchParams(window.location.search);const cn=p.get("connection");setFilters(f=>({...f,query:p.get("q")||"",category:p.get("category")||initialCategory||"All",subcategory:p.get("subcategory")||initialSubcategory||"",brand:p.get("brand")||"",connection:cn==="wireless"?"wireless":cn==="wired"?"wired":"all"}));},[]);
  const indexed=useMemo<IndexedProduct[]>(()=>products.map((p,index)=>({
-  id:p.id,name:p.name,category:p.category,subcategory:p.subcategory||"",brand:p.brand||"",collections:p.collections||(p.student?["Student Picks"]:[]),searchText:[p.description,t(p.category),t(p.subcategory),...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
+  id:p.id,name:p.name,category:p.category,subcategory:p.subcategory||"",brand:p.brand||"",collections:p.collections||(p.student?["Student Picks"]:[]),searchText:[p.description,t(p.category),t(p.subcategory||""),...p.features,...p.variants].join(" "),connectionType:p.connectionType||"",
   pricePaisa:Math.round(p.price*100),compareAtPaisa:p.previous?Math.round(p.previous*100):undefined,
   available:false,featured:index<3,
   createdAt:String(products.length-index).padStart(3,"0"),product:p
