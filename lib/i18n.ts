@@ -717,5 +717,6 @@ export function formatBDT(paisa:number,locale:Locale):string{
 }
 
 export function formatDate(value:Date|string|number,locale:Locale,options:Intl.DateTimeFormatOptions={}):string{
-  return new Intl.DateTimeFormat(locale==="bn"?"bn-BD":"en-BD",{dateStyle:"medium",...options}).format(new Date(value));
+  const defaults=Object.keys(options).length===0?{dateStyle:"medium" as const}:{};
+  return new Intl.DateTimeFormat(locale==="bn"?"bn-BD":"en-BD",{...defaults,...options}).format(new Date(value));
 }
