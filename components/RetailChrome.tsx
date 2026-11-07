@@ -42,7 +42,7 @@ export function RetailHero(){
    {slides.map((slide,index)=><div key={slide.kicker} className={"retail-hero-slide"+(index===active?" is-active":"")} role="group" aria-roledescription="slide" aria-label={t(slide.kicker)} aria-hidden={index!==active}>
     <img src={slide.image} alt={slide.alt} fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"}/>
     <div className="retail-hero-shade"/>
-    <div className="retail-hero-copy"><span className="retail-hero-kicker">{t(slide.kicker)}</span><h1>{slide.title.split("\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{t(slide.description)}</p><Link tabIndex={active===index?0:-1} href={slide.href} className="retail-primary-link">{t(slide.cta)}<ArrowRight size={17}/></Link></div>
+    <div className="retail-hero-copy"><span className="retail-hero-kicker">{t(slide.kicker)}</span><h1>{t(slide.title).split("\n").map((line,i)=><span key={line}>{line}{i===0&&<br/>}</span>)}</h1><p>{t(slide.description)}</p><Link tabIndex={active===index?0:-1} href={slide.href} className="retail-primary-link">{t(slide.cta)}<ArrowRight size={17}/></Link></div>
    </div>)}
    <div className="retail-slider-footer"><span>{String(active+1).padStart(2,"0")} / {String(slides.length).padStart(2,"0")}</span><div className="retail-slider-dots" role="group" aria-label={t("Choose a featured collection")}>{slides.map((slide,index)=><button key={slide.kicker} type="button" className={index===active?"active":""} aria-label={t("Show slide")+" "+(index+1)+": "+t(slide.kicker)} aria-pressed={active===index} onClick={()=>setActive(index)}/>)}</div></div>
   </div>
