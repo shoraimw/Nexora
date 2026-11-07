@@ -52,10 +52,10 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
   return()=>{active=false;};
  },[reloadCount]);
  const indexed=useMemo<IndexedProduct[]>(()=>items.map(p=>{const v=displayVariant(p);return{
-  id:p.id,name:p.title,category:p.category,subcategory:p.subcategory,brand:p.brand,collections:p.collections,searchText:[p.description,p.warranty,...Object.values(p.specs||{}).map(String),...p.variants.flatMap(v=>[v.name,v.color||""])].join(" "),connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
+  id:p.id,name:p.title,category:p.category,subcategory:p.subcategory,brand:p.brand,collections:p.collections,searchText:[p.description,p.warranty,t(p.category),t(p.subcategory),...Object.values(p.specs||{}).map(String),...p.variants.flatMap(v=>[v.name,v.color||""])].join(" "),connectionType:String(p.specs?.connection_type||p.specs?.connectivity||""),
   pricePaisa:v?.price_paisa||0,compareAtPaisa:v?.compare_at_paisa,available:p.variants.some(v=>v.available>0),
   featured:p.featured,createdAt:p.created_at,product:p
- };}),[items]);
+ };}),[items,t]);
  const shown=useMemo(()=>selectMatchingProducts(indexed,filters),[indexed,filters]);
  const brands=useMemo(()=>distinctBrands(indexed),[indexed]);
  const categories=useMemo(()=>[...categoryTree.map(category=>category.name),"Student Picks","Mystery Box"],[categoryTree]);
