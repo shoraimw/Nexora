@@ -4,9 +4,10 @@ import Link from "next/link";
 import {ArrowLeft,AlertTriangle,ShieldCheck} from "lucide-react";
 import {useCart} from "@/components/CartProvider";
 import {authHeaders} from "@/lib/browser";
-import {useT} from "@/components/LanguageProvider";
+import {useT,useLanguage} from "@/components/LanguageProvider";
+import {formatBDT,formatNumber} from "@/lib/i18n";
 export default function Checkout(){
- const t=useT();
+ const t=useT();const {locale}=useLanguage();
  const {items,clear}=useCart();
  const [enabled,setEnabled]=useState(false),[configured,setConfigured]=useState(false),[settings,setSettings]=useState({bkashEnabled:false,bkashNumber:"",nagadEnabled:false,nagadNumber:"",codEnabled:false,deliveryNotice:"Delivery fee confirmed separately.",deliveryEstimate:"ETA confirmed by support."}),[method,setMethod]=useState<"bkash"|"nagad"|"cod">("cod"),[loading,setLoading]=useState(false),[message,setMessage]=useState(""),[order,setOrder]=useState<{orderNo:string;trackingToken:string;invoiceEmail:string;invoiceEmailStatus:string}|null>(null),[key,setKey]=useState("");
  const [quote,setQuote]=useState<{subtotalPaisa:number;deliveryPaisa:number;discountPaisa:number;totalPaisa:number;deliveryEta:string}|null>(null),[quoteError,setQuoteError]=useState("");
@@ -38,7 +39,7 @@ export default function Checkout(){
  {method!=="cod"&&<div className="payment-claim"><p><strong>{t("Manual verification only.")}</strong> {t("Pay only to the official receiving number published by Nexora.")} {method==="bkash"?(settings.bkashEnabled?t("Official bKash number:")+" "+settings.bkashNumber:t("bKash payments are not yet enabled.")):(settings.nagadEnabled?t("Official Nagad number:")+" "+settings.nagadNumber:t("Nagad payments are not yet enabled."))} {t("Do not pay until you confirm the official recipient.")}</p><label>{t("Transaction ID")}<input value={transactionId} onChange={e=>setTransactionId(e.target.value)} placeholder={t("Transaction ID")} required minLength={5}/></label><label>{t("Sender mobile (optional)")}<input value={sender} onChange={e=>setSender(e.target.value)}/></label></div>}
  <p className="checkout-warning"><strong>{t("Delivery:")}</strong> {settings.deliveryNotice} {settings.deliveryEstimate}</p><h2>03 / {t("Discount")}</h2><label className="coupon-field">{t("Coupon code (optional)")}<input value={coupon} onChange={e=>setCoupon(e.target.value)} placeholder="e.g. NEXORA10"/></label>
  {configured&&<div className="checkout-quote"><h2>{t("Your order total")}</h2>
- {quote?<><p>{t("Items")}: BDT {(quote.subtotalPaisa/100).toLocaleString("en-BD")}</p><p>{t("Delivery")}: BDT {(quote.deliveryPaisa/100).toLocaleString("en-BD")}</p><p>{t("Discount")}: −BDT {(quote.discountPaisa/100).toLocaleString("en-BD")}</p><strong>{t("Payable")}: BDT {(quote.totalPaisa/100).toLocaleString("en-BD")}</strong><small>{t("Estimated shipping")}: {quote.deliveryEta}</small></>:<p>{quoteError||"Enter a delivery district to calculate your full total."}</p>}</div>}
+ {quote?<><p>{t("Items")}: {formatBDT(quote.subtotalPaisa,locale)}</p><p>{t("Delivery")}: {formatBDT(quote.deliveryPaisa,locale)}</p><p>{t("Discount")}: −{formatBDT(quote.discountPaisa,locale)}</p><strong>{t("Payable")}: {formatBDT(quote.totalPaisa,locale)}</strong><small>{t("Estimated shipping")}: {quote.deliveryEta}</small></>:<p>{quoteError||"Enter a delivery district to calculate your full total."}</p>}</div>}
  <p className="checkout-warning">Final total is recalculated from official Nexora prices on the server. Submit does not automatically verify bKash/Nagad payment.</p>
  {message&&<p role="alert" className="form-error">{message}</p>}
  <button disabled={!enabled||!quote||loading||items.length===0||(method==="bkash"&&!settings.bkashEnabled)||(method==="nagad"&&!settings.nagadEnabled)||(method==="cod"&&!settings.codEnabled)} className="primary-button">{t(loading?"Placing order…":"Place order")} </button>
