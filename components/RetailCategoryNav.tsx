@@ -4,10 +4,12 @@ import Link from "next/link";
 import {ArrowRight,ChevronDown} from "lucide-react";
 import {categoryHref} from "@/lib/store-taxonomy";
 import {useStoreCategories} from "@/components/useStoreCategories";
+import {useT} from "@/components/LanguageProvider";
 
 export function RetailCategoryNav(){
  const navRef=useRef<HTMLElement|null>(null);
  const categories=useStoreCategories();
+ const t=useT();
  const [activeSlug,setActiveSlug]=useState<string|null>(null);
  const [locked,setLocked]=useState(false);
  const activeCategory=categories.find(category=>category.slug===activeSlug);
@@ -58,14 +60,14 @@ export function RetailCategoryNav(){
  return <nav
   ref={navRef}
   className="retail-nav"
-  aria-label="Shop categories"
+  aria-label={t("Shop categories")}
   onPointerLeave={closePreview}
   onBlurCapture={event=>{
    if(!locked&&!event.currentTarget.contains(event.relatedTarget as Node|null))setActiveSlug(null);
   }}
  >
   <div className="retail-container retail-nav-inner">
-   <Link className="nexora-nav-all" href="/shop" onClick={dismiss}>All products</Link>
+   <Link className="nexora-nav-all" href="/shop" onClick={dismiss}>{t("All products")}</Link>
    {categories.map(category=><button
     key={category.slug}
     type="button"
@@ -76,22 +78,22 @@ export function RetailCategoryNav(){
     onFocus={()=>preview(category.slug)}
     onClick={()=>toggle(category.slug)}
    >
-    <span>{category.name}</span><ChevronDown size={12}/>
+    <span>{t(category.name)}</span><ChevronDown size={12}/>
    </button>)}
   </div>
   {activeCategory&&<div
    id="nexora-category-mega-menu"
    className="nexora-category-mega"
    role="region"
-   aria-label={activeCategory.name+" category menu"}
+   aria-label={t(activeCategory.name)+" "+t("category menu")}
    onPointerEnter={()=>preview(activeCategory.slug)}
   >
    <div className="retail-container nexora-category-mega-inner">
     <div className="nexora-category-mega-intro">
-     <span>SHOP CATEGORY</span>
-     <strong>{activeCategory.name}</strong>
-     <p>{activeCategory.description||activeCategory.hint}</p>
-     <Link href={categoryHref(activeCategory)} onClick={dismiss}>View all {activeCategory.name}<ArrowRight size={14}/></Link>
+     <span>{t("SHOP CATEGORY")}</span>
+     <strong>{t(activeCategory.name)}</strong>
+     <p>{t(activeCategory.description||activeCategory.hint)}</p>
+     <Link href={categoryHref(activeCategory)} onClick={dismiss}>{t("View all")} {t(activeCategory.name)}<ArrowRight size={14}/></Link>
     </div>
     <div className="nexora-category-mega-links">
      {activeCategory.subcategories.map(subcategory=><Link
@@ -99,7 +101,7 @@ export function RetailCategoryNav(){
       href={categoryHref(activeCategory,subcategory)}
       onClick={dismiss}
      >
-      <span>{subcategory.name}</span><small>{subcategory.hint}</small>
+      <span>{t(subcategory.name)}</span><small>{t(subcategory.hint)}</small>
      </Link>)}
     </div>
    </div>
