@@ -4,3 +4,10 @@
 html[lang="bn"] body{font-family:"Noto Sans Bengali","Hind Siliguri","Nirmala UI","Vrinda",system-ui,sans-serif}
 html[lang="bn"] .nexora-language-switcher{font-family:"Noto Sans Bengali","Hind Siliguri",sans-serif}
 @media(max-width:680px){.nexora-language-switcher{gap:4px}.nexora-language-label{display:none}.nexora-language-switcher select{max-width:86px;padding:5px 18px 5px 6px;font-size:11px}}
+
+.nexora-mobile-language{display:flex;align-items:center;justify-content:flex-end;padding:12px 18px;border-bottom:1px solid var(--line,#e3e8ed)}
+.nexora-mobile-language .nexora-language-switcher{color:var(--ink,#203244)}
+.nexora-mobile-language .nexora-language-label{display:inline}
+@media(max-width:790px){.retail-header-actions .nexora-language-switcher{display:none}}
+html[lang="bn"] body{line-height:1.65}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{line-height:1.3}
