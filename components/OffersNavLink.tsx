@@ -3,9 +3,10 @@ import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {useEffect,useState} from "react";
 import {Gift} from "lucide-react";
-import {useT} from "@/components/LanguageProvider";
+import {useT,useLanguage} from "@/components/LanguageProvider";
+import {formatNumber} from "@/lib/i18n";
 export function OffersNavLink({compact=false}:{compact?:boolean}){
- const t=useT();
+ const t=useT();const {locale}=useLanguage();
  const [count,setCount]=useState<number|null>(null);
  const pathname=usePathname();
  useEffect(()=>{
@@ -19,8 +20,8 @@ export function OffersNavLink({compact=false}:{compact?:boolean}){
  },[pathname]);
  const live=(count||0)>0;
  const label=count===0?(compact?t("No offers"):t("No offers now")):t("Offers");
- const ariaLabel=live?(String(count)+" "+t("active offer")+(count===1?"":" "+t("offers"))):count===0?t("No offers are active right now"):t("View Nexora offers");
+ const ariaLabel=live?(formatNumber(count||0,locale)+" "+t("active offer")+(count===1?"":" "+t("offers"))):count===0?t("No offers are active right now"):t("View Nexora offers");
  return <Link href="/offers" className={"retail-offers-nav"+(live?" is-live":count===0?" is-empty":"")+(compact?" retail-offers-nav-compact":"")} aria-label={ariaLabel}>
-  <Gift size={compact?17:15}/><span>{label}</span>{live&&<span className="retail-offers-count">{count}</span>}
+  <Gift size={compact?17:15}/><span>{label}</span>{live&&<span className="retail-offers-count">{formatNumber(count||0,locale)}</span>}
  </Link>;
 }
