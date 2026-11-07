@@ -4,7 +4,6 @@ import {useEffect,useState} from "react";
 import {ArrowRight,CalendarClock,Gift,Copy,CheckCircle2} from "lucide-react";
 import {useT,useLanguage} from "@/components/LanguageProvider";
 import {formatDate} from "@/lib/i18n";
-import {useT} from "@/components/LanguageProvider";
 type Offer={id:string;title:string;description:string;badge:string;coupon_code:string|null;target_url:string;cta_label:string;starts_at:string|null;ends_at:string|null};
 export function OffersPage(){
  const t=useT();const {locale}=useLanguage();
