@@ -5,14 +5,15 @@ import {ArrowRight,ShoppingBag,ChevronRight,ArrowUpRight} from "lucide-react";
 import {currency,products, type Product} from "@/lib/catalog";
 import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 import {useCart} from "@/components/CartProvider";
-import {useT} from "@/components/LanguageProvider";
+import {useT,useLanguage} from "@/components/LanguageProvider";
+import {formatBDT} from "@/lib/i18n";
 import {ChatWidget} from "@/components/ChatWidget";
 import {ShopFilterToolbar} from "@/components/ShopFilterToolbar";
 import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterState,type ShopFilterProduct} from "@/lib/shop-filters";
 import {RetailHero,RetailTrustBar,RetailCategoryGrid,RetailPromoBanners} from "@/components/RetailChrome";
 import {RetailBrandDirectory} from "@/components/RetailBrandDirectory";
 function DemoProductCard({product}:{product:Product}){
- const {add}=useCart();const t=useT();
+ const {add}=useCart();const t=useT();const {locale}=useLanguage();
  return <article className="retail-product-card">
   <Link href={"/product/"+product.slug} className="retail-product-image" aria-label={t("View")+" "+product.name}>
    <span className="retail-image-placeholder">{product.art}</span>{product.image&&<img src={product.image} alt={product.name} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>}
@@ -20,7 +21,7 @@ function DemoProductCard({product}:{product:Product}){
    <span className="retail-preview-badge">{t("Preview")}</span><span className="retail-quick-view"><ArrowUpRight size={17}/></span>
   </Link>
   <div className="retail-product-info"><span className="retail-product-category">{t(product.category)}{product.subcategory?" · "+t(product.subcategory):""}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
-   <div className="retail-price-row"><strong>{currency(product.price)}</strong>{product.previous&&<s>{currency(product.previous)}</s>}</div>
+   <div className="retail-price-row"><strong>{formatBDT(product.price*100,locale)}</strong>{product.previous&&<s>{formatBDT(product.previous*100,locale)}</s>}</div>
    <span className="retail-stock preview-stock">Illustrative listing</span>
    <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{t("View details")} <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={t("Add")+" "+product.name+" "+t("to preview bag")} disabled={true} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
   </div>
