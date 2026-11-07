@@ -9,13 +9,14 @@ import {initialFilters,selectMatchingProducts,distinctBrands,type ShopFilterStat
 import type {LiveProduct,LiveVariant} from "@/lib/catalog-live";
 import {categoryHref} from "@/lib/store-taxonomy";
 import {useStoreCategories} from "@/components/useStoreCategories";
+import {useT} from "@/components/LanguageProvider";
 const money=(value:number)=>"BDT "+(value/100).toLocaleString("en-BD",{maximumFractionDigits:2});
 function displayVariant(product:LiveProduct):LiveVariant|undefined{
  const variants=[...product.variants].sort((a,b)=>a.price_paisa-b.price_paisa);
  return variants.find(v=>v.available>0)||variants[0];
 }
 function ProductCard({product}:{product:LiveProduct}){
- const {add}=useCart(),variant=displayVariant(product);
+ const {add}=useCart(),variant=displayVariant(product);const t=useT();
  const inStock=product.variants.some(v=>v.available>0);
  const discount=variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa?Math.round((1-variant.price_paisa/variant.compare_at_paisa)*100):0;
  return <article className="retail-product-card">
@@ -25,19 +26,21 @@ function ProductCard({product}:{product:LiveProduct}){
    {discount>0&&<span className="retail-discount-badge">{discount}% OFF</span>}
    <span className="retail-quick-view"><ArrowUpRight size={17}/></span>
   </Link>
-  <div className="retail-product-info"><span className="retail-product-category">{product.category}{product.subcategory?" · "+product.subcategory:""}</span><Link className="retail-product-name" href={"/product/"+product.slug}>{product.title}</Link><span className="retail-product-brand">{product.brand||"Brand not specified"}</span>{product.review_count>0&&<div className="retail-card-rating"><Star size={12} fill="currentColor"/><strong>{product.review_average.toFixed(1)}</strong><span>({product.review_count})</span></div>}
+  <div className="retail-product-info"><span className="retail-product-category">{t(product.category)}{product.subcategory?" · "+t(product.subcategory):""}</span><Link className="retail-product-name" href={"/product/"+product.slug}>{product.title}</Link><span className="retail-product-brand">{product.brand||"Brand not specified"}</span>{product.review_count>0&&<div className="retail-card-rating"><Star size={12} fill="currentColor"/><strong>{product.review_average.toFixed(1)}</strong><span>({product.review_count})</span></div>}
    <div className="retail-price-row"><strong>{variant?money(variant.price_paisa):"Price on request"}</strong>{variant?.compare_at_paisa&&variant.compare_at_paisa>variant.price_paisa&&<s>{money(variant.compare_at_paisa)}</s>}</div>
-   <span className={inStock?"retail-stock in-stock":"retail-stock out-stock"}>{inStock?"In stock":"Currently unavailable"}</span>
-   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{inStock?"Shop now":"View details"} <ArrowRight size={14}/></Link><button className="nexora-card-bag" type="button" aria-label={"Add "+product.title+" to bag"} disabled={!variant||!inStock} onClick={()=>variant&&add(variant.id)}><ShoppingBag size={16}/></button></div>
+   <span className={inStock?"retail-stock in-stock":"retail-stock out-stock"}>{t(inStock?"In stock":"Currently unavailable")}</span>
+   <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{t(inStock?"Shop now":"View details")} <ArrowRight size={14}/></Link><button className="nexora-card-bag" type="button" aria-label={"Add "+product.title+" to bag"} disabled={!variant||!inStock} onClick={()=>variant&&add(variant.id)}><ShoppingBag size={16}/></button></div>
   </div>
  </article>;
 }
 function ProductSection({title,eyebrow,items,href="/shop"}:{title:string;eyebrow:string;items:LiveProduct[];href?:string}){
+ const t=useT();
  if(!items.length)return null;
- return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{eyebrow}</span><h2>{title}</h2></div><Link href={href} className="retail-section-link">View all <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
+ return <section className="retail-product-section"><div className="retail-section-heading"><div><span className="retail-eyebrow">{t(eyebrow)}</span><h2>{t(title)}</h2></div><Link href={href} className="retail-section-link">{t("View all")} <ArrowRight size={16}/></Link></div><div className="retail-product-grid">{items.slice(0,5).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>;
 }
 type IndexedProduct=ShopFilterProduct&{product:LiveProduct};
 export function CommerceShop({homepage=false,initialCategory="All",initialSubcategory="",categoryDescription=""}:{homepage?:boolean;initialCategory?:string;initialSubcategory?:string;categoryDescription?:string}){
+ const t=useT();
  const categoryTree=useStoreCategories();
  const [items,setItems]=useState<LiveProduct[]>([]),[ready,setReady]=useState(false),[catalogError,setCatalogError]=useState(false),[reloadCount,setReloadCount]=useState(0),[filters,setFilters]=useState<ShopFilterState>({...initialFilters,category:initialCategory,subcategory:initialSubcategory});
  useEffect(()=>{const params=new URLSearchParams(window.location.search);
@@ -63,7 +66,7 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
  const homeGroups=useMemo(()=>["Phones","Phone Accessories","Headphones & Speakers","Watches","PC Accessories","Networking","Gaming"].map(name=>({name,items:items.filter(p=>p.category.toLowerCase()===name.toLowerCase()).slice(0,5),category:categoryTree.find(c=>c.name===name)})).filter(g=>g.items.length),[items,categoryTree]);
  if(homepage)return <div className="retail-home-catalog"><div className="retail-container">
   <RetailBrandDirectory brands={brands}/>
-  {!ready?<div className="retail-loading">Loading the Nexora collection…</div>:catalogError?<div className="retail-empty" role="alert"><h3>The catalogue is temporarily unavailable</h3><p>We couldn't verify the live product collection. Please try again in a moment.</p><button type="button" onClick={()=>setReloadCount(value=>value+1)}>Try again</button></div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>Our team is preparing the Nexora collection. Check back soon.</p><Link href="/shop">Explore the shop <ArrowRight size={15}/></Link></div>:<>
+  {!ready?<div className="retail-loading">{t("Loading the Nexora collection…")}</div>:catalogError?<div className="retail-empty" role="alert"><h3>The catalogue is temporarily unavailable</h3><p>We couldn't verify the live product collection. Please try again in a moment.</p><button type="button" onClick={()=>setReloadCount(value=>value+1)}>{t("Try again")}</button></div>:!items.length?<div className="retail-empty"><h3>New products are on the way</h3><p>{t("Our team is preparing the Nexora collection. Check back soon.")}</p><Link href="/shop">{t("Explore the shop")} <ArrowRight size={15}/></Link></div>:<>
    <ProductSection eyebrow="HANDPICKED BY NEXORA" title="Featured Products" items={featured}/>
    <ProductSection eyebrow="CUSTOMER FAVOURITES" title="Trending Products" items={trending}/>
    <ProductSection eyebrow="LATEST ADDITIONS" title="New Arrival" items={newest}/>
@@ -72,12 +75,12 @@ export function CommerceShop({homepage=false,initialCategory="All",initialSubcat
   </>}
  </div></div>;
  return <main className="retail-container retail-shop-page">
-  <div className="retail-breadcrumb"><Link href="/">Home</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">Shop</Link><ChevronRight size={13}/><span>{initialSubcategory||initialCategory}</span></>:<span>Shop</span>}</div>
-  <div className="retail-shop-heading"><div><span className="retail-eyebrow">{initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES"}</span><h1>{filters.subcategory||filters.category!=="All"?filters.subcategory||filters.category:"Shop all gadgets"}</h1><p>{categoryDescription||"Search by brand, connection, availability and price."}</p></div><span>{shown.length} products</span></div>
-  {categoryTree.find(category=>category.name===filters.category)?.subcategories.length?<nav className="nexora-subcategory-nav" aria-label={filters.category+" subcategories"}><Link href={categoryHref(categoryTree.find(category=>category.name===filters.category)!)} className={!filters.subcategory?"is-active":""}>All {filters.category}</Link>{categoryTree.find(category=>category.name===filters.category)!.subcategories.map(subcategory=><Link key={subcategory.slug} href={categoryHref(categoryTree.find(category=>category.name===filters.category)!,subcategory)} className={filters.subcategory===subcategory.name?"is-active":""}>{subcategory.name}</Link>)}</nav>:null}
+  <div className="retail-breadcrumb"><Link href="/">{t("Home")}</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">Shop</Link><ChevronRight size={13}/><span>{t(initialSubcategory||initialCategory)}</span></>:<span>{t("Shop")}</span>}</div>
+  <div className="retail-shop-heading"><div><span className="retail-eyebrow">{t(initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES")}</span><h1>{t(filters.subcategory||filters.category!=="All"?filters.subcategory||filters.category:"Shop all gadgets")}</h1><p>{t(categoryDescription||"Search by brand, connection, availability and price.")}</p></div><span>{shown.length} {t("products")}</span></div>
+  {categoryTree.find(category=>category.name===filters.category)?.subcategories.length?<nav className="nexora-subcategory-nav" aria-label={t(filters.category)+" "+t("subcategories")}><Link href={categoryHref(categoryTree.find(category=>category.name===filters.category)!)} className={!filters.subcategory?"is-active":""}>{t("All")+" "+t(filters.category)}</Link>{categoryTree.find(category=>category.name===filters.category)!.subcategories.map(subcategory=><Link key={subcategory.slug} href={categoryHref(categoryTree.find(category=>category.name===filters.category)!,subcategory)} className={filters.subcategory===subcategory.name?"is-active":""}>{t(subcategory.name)}</Link>)}</nav>:null}
   <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={shown.length} categories={categories} subcategories={subcategories}/>
-  <section className="retail-shop-results"><div className="retail-result-label"><strong>{filters.subcategory||(filters.category==="All"?"All products":filters.category)}</strong><span>{!ready?"Loading catalog":catalogError?"Catalogue unavailable":"Verified catalog listings"}</span></div>
-   {!ready?<div className="retail-loading">Loading products…</div>:catalogError?<div className="retail-empty" role="alert"><h3>We couldn't load the catalogue</h3><p>Your filters are unchanged. Retry when the connection is available.</p><button type="button" onClick={()=>setReloadCount(value=>value+1)}>Try again</button></div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>{items.length?"No matching products":"No products published yet"}</h3><p>Adjust your search or open filters to refine the collection.</p><button onClick={()=>setFilters({...initialFilters,category:filters.category,query:filters.query})}>Clear filters in this category</button></div>}
+  <section className="retail-shop-results"><div className="retail-result-label"><strong>{t(filters.subcategory||(filters.category==="All"?"All products":filters.category))}</strong><span>{t(!ready?"Loading catalog":catalogError?"Catalogue unavailable":"Verified catalog listings")}</span></div>
+   {!ready?<div className="retail-loading">{t("Loading products…")}</div>:catalogError?<div className="retail-empty" role="alert"><h3>We couldn't load the catalogue</h3><p>Your filters are unchanged. Retry when the connection is available.</p><button type="button" onClick={()=>setReloadCount(value=>value+1)}>Try again</button></div>:shown.length?<div className="retail-product-grid">{shown.map(p=><ProductCard key={p.id} product={p.product}/>)}</div>:<div className="retail-empty"><h3>{t(items.length?"No matching products":"No products published yet")}</h3><p>{t("Adjust your search or open filters to refine the collection.")}</p><button onClick={()=>setFilters({...initialFilters,category:filters.category,query:filters.query})}>{t("Clear filters in this category")}</button></div>}
   </section>
  </main>;
 }
