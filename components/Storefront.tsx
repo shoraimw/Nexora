@@ -2,7 +2,7 @@
 import Link from "next/link";
 import {useEffect,useMemo,useState} from "react";
 import {ArrowRight,ShoppingBag,ChevronRight,ArrowUpRight} from "lucide-react";
-import {currency,products, type Product} from "@/lib/catalog";
+import {products, type Product} from "@/lib/catalog";
 import {storeCategories,categoryHref} from "@/lib/store-taxonomy";
 import {useCart} from "@/components/CartProvider";
 import {useT,useLanguage} from "@/components/LanguageProvider";
@@ -17,12 +17,12 @@ function DemoProductCard({product}:{product:Product}){
  return <article className="retail-product-card">
   <Link href={"/product/"+product.slug} className="retail-product-image" aria-label={t("View")+" "+product.name}>
    <span className="retail-image-placeholder">{product.art}</span>{product.image&&<img src={product.image} alt={product.name} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>}
-   {product.tag&&<span className="retail-product-badge">{product.tag}</span>}
+   {product.tag&&<span className="retail-product-badge">{t(product.tag)}</span>}
    <span className="retail-preview-badge">{t("Preview")}</span><span className="retail-quick-view"><ArrowUpRight size={17}/></span>
   </Link>
-  <div className="retail-product-info"><span className="retail-product-category">{t(product.category)}{product.subcategory?" · "+t(product.subcategory):""}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||"Sample product"}</span>
+  <div className="retail-product-info"><span className="retail-product-category">{t(product.category)}{product.subcategory?" · "+t(product.subcategory):""}</span><Link href={"/product/"+product.slug} className="retail-product-name">{product.name}</Link><span className="retail-product-brand">{product.brand||t("Sample product")}</span>
    <div className="retail-price-row"><strong>{formatBDT(product.price*100,locale)}</strong>{product.previous&&<s>{formatBDT(product.previous*100,locale)}</s>}</div>
-   <span className="retail-stock preview-stock">Illustrative listing</span>
+   <span className="retail-stock preview-stock">{t("Illustrative listing")}</span>
    <div className="nexora-card-actions"><Link className="nexora-card-shop-link" href={"/product/"+product.slug}>{t("View details")} <ArrowRight size={14}/></Link><button type="button" className="nexora-card-bag" aria-label={t("Add to demo bag")+" "+product.name} disabled={true} onClick={()=>add(product.id)}><ShoppingBag size={16}/></button></div>
   </div>
  </article>;
@@ -63,7 +63,7 @@ export function DemoShop({initialCategory="All",initialSubcategory="",categoryDe
  const categoryOptions=[...storeCategories.map(category=>category.name),"Student Picks","Mystery Box"];
  const subcategories=storeCategories.find(category=>category.name===filters.category)?.subcategories.map(subcategory=>subcategory.name)||[];
  return <main className="retail-container retail-shop-page">
-  <div className="retail-breadcrumb"><Link href="/">{t("Home")}</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">Shop</Link><ChevronRight size={13}/><span>{t(initialSubcategory||initialCategory)}</span></>:<span>{t("Shop")}</span>}</div>
+  <div className="retail-breadcrumb"><Link href="/">{t("Home")}</Link><ChevronRight size={13}/>{initialCategory!=="All"?<><Link href="/shop">{t("Shop")}</Link><ChevronRight size={13}/><span>{t(initialSubcategory||initialCategory)}</span></>:<span>{t("Shop")}</span>}</div>
   <div className="retail-shop-heading"><div><span className="retail-eyebrow">{t(initialCategory==="All"?"THE NEXORA COLLECTION":"BROWSE NEXORA CATEGORIES")}</span><h1>{t(filters.subcategory||filters.category!=="All"?filters.subcategory||filters.category:"Shop all gadgets")}</h1><p>{t(categoryDescription||"Search by brand, connection, availability and price.")}</p></div><span>{visible.length} {t("preview products")}</span></div>
   {storeCategories.find(category=>category.name===filters.category)?.subcategories.length?<nav className="nexora-subcategory-nav" aria-label={t(filters.category)+" "+t("subcategories")}><Link href={categoryHref(storeCategories.find(category=>category.name===filters.category)!)} className={!filters.subcategory?"is-active":""}>{t("All")+" "+t(filters.category)}</Link>{storeCategories.find(category=>category.name===filters.category)!.subcategories.map(subcategory=><Link key={subcategory.slug} href={categoryHref(storeCategories.find(category=>category.name===filters.category)!,subcategory)} className={filters.subcategory===subcategory.name?"is-active":""}>{t(subcategory.name)}</Link>)}</nav>:null}
   <ShopFilterToolbar filters={filters} onChange={setFilters} brands={brands} results={visible.length} categories={categoryOptions} subcategories={subcategories}/>
