@@ -554,7 +554,8 @@ test("Bengali and English language switching persists across navigation and serv
 
 test("all statically requested customer-facing translations exist in the Bengali dictionary",()=>{
  const dictionary=read("lib/i18n.ts");
- const keys=new Set([...dictionary.matchAll(/^\\s*"((?:[^"\\\\]|\\\\.)*)"\\s*:/gm)].map(match=>JSON.parse('"'+match[1]+'"')));
+ const dictionaryLines=dictionary.split("\n").map(line=>line.trim()).filter(line=>line.startsWith('"'));
+ const keys=new Set(dictionaryLines.map(line=>JSON.parse(line.slice(0,line.indexOf(":")))));
  const files=[
   "app/layout.tsx","app/cart/page.tsx","app/checkout/page.tsx","app/account/page.tsx","app/track/page.tsx",
   "app/contact/page.tsx","app/policies/page.tsx","app/not-found.tsx","app/product/[slug]/page.tsx",
@@ -566,13 +567,11 @@ test("all statically requested customer-facing translations exist in the Bengali
  ];
  for(const file of files){
   const source=read(file);
-  for(const match of source.matchAll(/\\bt\\("((?:[^"\\\\]|\\\\.)*)"\\)/g)){
-   const key=JSON.parse('"'+match[1]+'"');
-   assert.ok(keys.has(key),file+" is missing Bengali translation for: "+key);
+  for(const match of source.matchAll(/\\bt\\("([^"]+)"\\)/g)){
+   assert.ok(keys.has(match[1]),file+" is missing Bengali translation for: "+match[1]);
   }
  }
- const all=[...dictionary.matchAll(/^\\s*"((?:[^"\\\\]|\\\\.)*)"\\s*:/gm)].map(match=>match[1]);
- assert.equal(new Set(all).size,all.length,"Bengali dictionary keys must be unique");
+ assert.equal(keys.size,dictionaryLines.length,"Bengali dictionary keys must be unique");
 });
 
 test("Bengali commerce uses localized BDT, dates, counts, product detail and catalog-grounded chat",()=>{
@@ -581,9 +580,9 @@ test("Bengali commerce uses localized BDT, dates, counts, product detail and cat
  const chat=read("app/api/chat/route.ts");
  assert.match(i18n,/bn-BD/);
  assert.match(i18n,/currency:"BDT"/);
- assert.match(detail,/formatBDT\(value,locale\)/);
- assert.match(detail,/formatDate\(review\.created_at,locale/);
- assert.match(chat,/locale:z\.enum\(\["en","bn"\]\)/);
- assert.match(chat,/translate\("bn",p\.category\)/);
- assert.match(chat,/translate\("bn",match\.answer\)/);
+ assert.match(detail,/formatBDT\\(value,locale\\)/);
+ assert.match(detail,/formatDate\\(review\\.created_at,locale/);
+ assert.match(chat,/locale:z\\.enum\\(\\["en","bn"\\]\\)/);
+ assert.match(chat,/translate\\("bn",p\\.category\\)/);
+ assert.match(chat,/translate\\("bn",match\\.answer\\)/);
 });
