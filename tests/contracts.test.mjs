@@ -147,7 +147,7 @@ test("offers navigation glows only with active offers and offers page has empty 
  const css=read("app/offers.css");
  assert.match(nav,/is-live/);
  assert.match(nav,/No offers/);
- assert.match(layout,/retail-header-actions"><ThemeToggle\/><OffersNavLink/);
+ assert.match(layout,/retail-header-actions"><LanguageSwitcher\/><ThemeToggle\/><OffersNavLink/);
  assert.match(layout,/OffersNavLink compact/);
  assert.match(page,/No offers now/);
  assert.match(page,/offer\.coupon_code/);
@@ -372,7 +372,7 @@ test("cart clears after an accepted order and preserves saved items when store m
 test("configured storefront distinguishes catalogue outages from an empty catalogue and offers retry",()=>{
  const shop=read("components/CommerceShop.tsx");
  assert.match(shop,/catalogError/);assert.match(shop,/x\.live!==true\|\|!Array\.isArray\(x\.products\)/);
- assert.match(shop,/The catalogue is temporarily unavailable/);assert.match(shop,/We couldn't load the catalogue/);
+ assert.match(shop,/We could not load the catalogue/);
  assert.match(shop,/setReloadCount\(value=>value\+1\)/);
 });
 test("preview checkout collects no personal or payment details and shows an explicit safe state",()=>{
@@ -530,4 +530,58 @@ test("every Nexora product detail route has theme-aware dark-mode text, controls
  assert.match(shoot,/page\.mouse\.move\(0, 0\)/);
  assert.match(shoot,/productPagesDarkModeChecked/);
  assert.match(shoot,/product detail contrast failed|product dark-mode contrast failed/i);
+});
+
+
+test("Bengali and English language switching persists across navigation and server refresh",()=>{
+ const provider=read("components/LanguageProvider.tsx");
+ const switcher=read("components/LanguageSwitcher.tsx");
+ const layout=read("app/layout.tsx");
+ const mobile=read("components/MobileMenu.tsx");
+ const css=read("app/language.css");
+ assert.match(provider,/nexora_locale=/);
+ assert.match(provider,/localStorage\.setItem\("nexora_locale"/);
+ assert.match(provider,/router\.refresh\(\)/);
+ assert.match(provider,/document\.documentElement\.lang=next/);
+ assert.match(layout,/cookies\(\).*nexora_locale/s);
+ assert.match(layout,/initialLocale=\{locale\}/);
+ assert.match(layout,/LanguageSwitcher/);
+ assert.match(mobile,/LanguageSwitcher/);
+ assert.match(switcher,/<option value="en">English<\/option>/);
+ assert.match(switcher,/<option value="bn">বাংলা<\/option>/);
+ assert.match(css,/Noto Sans Bengali/);
+});
+
+test("all statically requested customer-facing translations exist in the Bengali dictionary",()=>{
+ const dictionary=read("lib/i18n.ts");
+ const dictionaryLines=dictionary.split("\n").map(line=>line.trim()).filter(line=>line.startsWith('"'));
+ const keys=new Set(dictionaryLines.map(line=>JSON.parse(line.slice(0,line.indexOf('":')+1))));
+ const files=[
+  "app/layout.tsx","app/cart/page.tsx","app/checkout/page.tsx","app/account/page.tsx","app/track/page.tsx",
+  "app/contact/page.tsx","app/policies/page.tsx","app/not-found.tsx","app/product/[slug]/page.tsx",
+  "components/CommerceDetail.tsx","components/CommerceShop.tsx","components/Storefront.tsx","components/RetailChrome.tsx",
+  "components/RetailCategoryNav.tsx","components/MobileMenu.tsx","components/SiteSearch.tsx","components/ShopFilterToolbar.tsx",
+  "components/OffersPage.tsx","components/OffersNavLink.tsx","components/NewsletterSignup.tsx","components/ChatWidget.tsx",
+  "components/RetailBrandDirectory.tsx","components/HeaderCart.tsx","components/AddProductButton.tsx",
+  "components/PasswordField.tsx","components/FaqAccordion.tsx","components/LastUpdated.tsx"
+ ];
+ for(const file of files){
+  const source=read(file);
+  const requested=[...source.matchAll(new RegExp('(?<![A-Za-z0-9_$])t\\("([^"]+)"\\)','g'))].map(match=>match[1]);
+  for(const key of requested)assert.ok(keys.has(key),file+" is missing Bengali translation for: "+key);
+ }
+ assert.equal(keys.size,dictionaryLines.length,"Bengali dictionary keys must be unique");
+});
+
+test("Bengali commerce uses localized BDT, dates, counts, product detail and catalog-grounded chat",()=>{
+ const i18n=read("lib/i18n.ts");
+ const detail=read("components/CommerceDetail.tsx");
+ const chat=read("app/api/chat/route.ts");
+ assert.ok(i18n.includes('"bn-BD"'));
+ assert.ok(i18n.includes('currency:"BDT"'));
+ assert.ok(detail.includes("formatBDT(value,locale)"));
+ assert.ok(detail.includes("formatDate(review.created_at,locale"));
+ assert.ok(chat.includes('locale:z.enum(["en","bn"])'));
+ assert.ok(chat.includes('translate("bn",p.category)'));
+ assert.ok(chat.includes('translate("bn",match.answer)'));
 });
