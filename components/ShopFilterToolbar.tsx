@@ -3,7 +3,8 @@ import {useEffect,useRef,useState} from "react";
 import {Search,SlidersHorizontal,RotateCcw,X,Check} from "lucide-react";
 import type {ShopFilterState,ConnectionFilter,ProductSort} from "@/lib/shop-filters";
 import {initialFilters} from "@/lib/shop-filters";
-import {useT} from "@/components/LanguageProvider";
+import {useT,useLanguage} from "@/components/LanguageProvider";
+import {formatNumber} from "@/lib/i18n";
 
 type Props={
  filters:ShopFilterState;
@@ -18,7 +19,7 @@ function activeFilterCount(f:ShopFilterState){
   Number(f.inStockOnly)+Number(f.onSaleOnly)+Number(!!f.minPriceBdt.trim())+Number(!!f.maxPriceBdt.trim());
 }
 export function ShopFilterToolbar({filters,onChange,brands,results,categories=["All"],subcategories=[]}:Props){
- const t=useT();
+ const t=useT();const {locale}=useLanguage();
  const [open,setOpen]=useState(false);
  const [draft,setDraft]=useState<ShopFilterState>(filters);
  const triggerRef=useRef<HTMLButtonElement>(null);
@@ -49,10 +50,10 @@ export function ShopFilterToolbar({filters,onChange,brands,results,categories=["
  return <>
   <div className="retail-shop-toolbar">
    <label className="retail-shop-search"><Search size={17}/><input type="search" value={filters.query} onChange={e=>onChange({...filters,query:e.target.value})} placeholder={t("Search products, brands and categories...")} aria-label={t("Search products")}/></label>
-   <button ref={triggerRef} type="button" className={"retail-filter-trigger"+(count?" has-filters":"")} onClick={openDrawer} aria-expanded={open} aria-controls="nexora-filter-drawer"><SlidersHorizontal size={16}/> {t("Filters")} {count>0&&<span>{count}</span>}</button>
+   <button ref={triggerRef} type="button" className={"retail-filter-trigger"+(count?" has-filters":"")} onClick={openDrawer} aria-expanded={open} aria-controls="nexora-filter-drawer"><SlidersHorizontal size={16}/> {t("Filters")} {count>0&&<span>{formatNumber(count,locale)}</span>}</button>
    <label className="retail-sort-control"><span>{t("Sort")}</span><select value={filters.sort} onChange={e=>onChange({...filters,sort:e.target.value as ProductSort})} aria-label={t("Sort products")}><option value="featured">{t("Featured")}</option><option value="newest">{t("Newest")}</option><option value="low">{t("Price: low to high")}</option><option value="high">{t("Price: high to low")}</option><option value="discount">{t("Biggest discount")}</option><option value="name">{t("Name: A to Z")}</option></select></label>
   </div>
-  <div className="retail-shop-result-meta"><span>{results} {t(results===1?"product":"products")} {t("found")}</span>{count>0&&<button type="button" onClick={clear}>{t("Clear filters")} <X size={13}/></button>}</div>
+  <div className="retail-shop-result-meta"><span>{formatNumber(results,locale)} {t(results===1?"product":"products")} {t("found")}</span>{count>0&&<button type="button" onClick={clear}>{t("Clear filters")} <X size={13}/></button>}</div>
   {open&&<div className="retail-filter-backdrop" onMouseDown={event=>{if(event.target===event.currentTarget)setOpen(false);}}>
    <aside ref={drawerRef} tabIndex={-1} id="nexora-filter-drawer" className="retail-filter-drawer" role="dialog" aria-modal="true" aria-labelledby="nexora-filter-title">
     <header><div><span className="retail-eyebrow">{t("REFINE YOUR SEARCH")}</span><h2 id="nexora-filter-title">{t("Filters")}</h2><p>{t("Find the right gadget for you.")}</p></div><button type="button" className="retail-filter-close" onClick={()=>setOpen(false)} aria-label={t("Close filters")}><X size={19}/></button></header>
